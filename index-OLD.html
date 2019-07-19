@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<head>
+<style>
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.filled {
+    background-color: #cccccc;
+    border-color: #888888;
+    border-width: 4px;
+    border-style: solid;
+}
+
+#page_container {
+    width:100vw;
+    height:100vh;
+    max-width:100vw;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between
+}
+
+header {
+    display:flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    background-color:#cc33cc;
+    border: 4px solid #444444;
+    grid-column: 1/-1;
+    grid-row: 1;
+}
+header .header_element {
+    margin-left: .5vMin;
+    margin-right: .5vMin;
+}
+header #title {
+
+}
+header #navbar {
+    margin-left: 0px;
+    margin-right: auto;
+}
+header #settings {
+
+}
+
+body {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    grid-gap: 2vMin;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+#sidebar_left {
+    grid-column: 1;
+    grid-row: 1/4;
+}
+#content_main {
+    grid-column: 2;
+    grid-row: 1/4;
+}
+#sidebar_right {
+    grid-column: 3;
+    grid-row: 1/4;
+}
+
+footer {
+    height:auto;
+}
+
+
+
+@media (max-width: 1500px) {
+    body {
+        display: flex;
+        flex-direction:column;
+        width: 100vw;
+        height: 100vh;
+        justify-content: space-between;
+        /*grid-template-columns: 1fr;
+        grid-template-rows: auto repeat(4, 1fr);*/
+
+      }
+    header {
+        grid-column: 1;
+        grid-row: 1;
+        display:flex;
+        flex-direction: row;
+        justify-content:flex-start;
+        background-color:#cc33cc;
+        border: 4px solid #444444;
+        
+    }
+    header .header_element {
+        margin-left: .5vMin;
+        margin-right: .5vMin;
+    }
+    header #title {
+    
+    }
+    header #navbar {
+        margin-left: 0px;
+        margin-right: auto;
+    }
+    header #settings {
+
+    }
+    #sidebar_left {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    #content_main {
+        grid-column: 1;
+        grid-row: 3;
+    }
+    #sidebar_right {
+        grid-column: 1;
+        grid-row: 4;
+    }
+    footer {
+        grid-column: 1;
+        grid-row: 5;
+    }
+}
+
+/* @media (min-width: 500px) and (max-width: 1000px) {
+  .wrapper {
+    display: grid;
+    margin: 0px;
+    margin-top:0px;
+    grid-gap: 2vMin;
+    grid-template-columns: 1fr 5fr;
+    grid-template-rows: repeat(5, 100%);
+    grid-template-areas:
+      "header   header"
+      "sleft    cont"
+      "sleft    cont"
+      "sleft    cont"
+      "footer   footer";
+  }
+
+} */
+
+
+
+
+</style>
+</head>
+<html>
+<div id=page_container>
+    <header>
+        <div id="title" class="filled header_element">title</div>
+        <div id="navbar" class="filled header_element">navbar</div>
+        <div id="settings" class="filled header_element">settings</div>
+    </header>
+    <body>
+        <div id="sidebar_left" class="filled">
+            Left sidebar
+        </div>
+        <div id="content_main" class="filled">
+            <div class="searchbar filled">searchbar
+                <!-- display option show all -->
+                <div class="search_field">search field</div>
+                <div class="primary_action_button">primary action button</div>
+                <div class="dropdown">dropdown menu 1</div>
+                <div class="dropdown">dropdown menu 2</div>
+            </div>
+        </div>
+        <div id="sidebar_right" class="filled">
+            Right sidebar
+        </div>
+    </body>
+    <footer class="filled">
+        Footer
+    </footer>
+</div>
+</html>
+
+

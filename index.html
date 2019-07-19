@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" type="text/css" href="flex-only.css">
+</head>
+<html>
+<div id=page_container>
+    <div class="header">
+        <div id="title" class="header_element">Page Title or Logo</div>
+        <div id="navbar" class="header_element">
+            <ul>
+                <li class="navbar_item">One</li>
+                <li class="navbar_item">Two</li>
+                <li class="navbar_item">Three</li>
+                <li class="navbar_item">Four</li>
+                <li class="navbar_item list_end">Five</li>
+            </ul>
+        </div>
+        <div id="settings" class="header_element">settings</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="main">
+        <div class="side_spacer"></div>
+        <div class="sidebar left filled">
+            Left sidebar
+        </div>
+        <div class="spacer"></div>
+        <div id="content_main" class="filled">
+            <div class="searchbar filled element">searchbar
+                <!-- display option show all -->
+                <div class="search_field element">
+                    <div class="searchIcon">icon <!--mainCategoryDropdown--></div>
+                    <div class="textField">textField</div>
+                </div>
+                <div class="dropdown element">dropdown menu 1</div>
+                <div class="dropdown element">dropdown menu 2</div>
+                <div class="primary_action_button element">primary action button</div>
+            </div>
+            <div class="category grid">
+
+                <div class="category card">
+                    <img src="library.png" alt="" class="category">
+                    <p class="category label">API/library</p>
+                    <p class="category desc">Mods that make other mods work!</p>
+                </div>
+                <div class="category card">
+                    <img src="" alt="" class="category">
+                    <p class="category label">Tech & Tools</p>
+                    <p class="category desc">Construct incredible machines to aid you in your adventures.</p>
+                </div>
+                <div class="category card">
+                    <img src="" alt="" class="category">
+                    <p class="category label">Magic</p>
+                    <p class="category desc">Harness arcane forces to bolster your power!</p>
+                </div>
+                <div class="category card">
+                    <img src="https://i.postimg.cc/Rh0WRyd0/tbo.png" alt="" class="category">
+                    <p class="category label">Adventure</p>
+                    <p class="category desc">Go on exhilirating journies to discover new and exciting locations and creatures.</p>
+                </div>
+                <div class="category card">
+                    <img src="utility.png" alt="" class="category">
+                    <p class="category label">Utility</p>
+                    <p class="category desc">Streamline your game experience with these tweaks to UI and gameplay.</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="sidebar right filled">
+            Right sidebar
+        </div>
+        <div class="side_spacer"></div>
+    </div>
+    <div class="spacer"></div>
+    <footer>
+        <div id="col_1">
+            <h3 class="text_element">Footer title thing</h3>
+            <p class="text_element">This site is a work in progress!</p>
+            <h4 class="text_element">Author:</h4>
+            <p class="text_element">JP79194</p>
+        </div>
+        <div id="col_2">
+            <h3 class="text_element">Footer title thing</h3>
+            <p class="text_element">This site is a work in progress!</p>
+            <h4 class="text_element">Author:</h4>
+            <p class="text_element">JP79194</p>
+        </div>
+        <mat-divider
+            [vertical]="true">
+        </mat-divider>
+        <div id="col_3">
+            <h3 class="text_element">Credits</h3>
+            <h4 class="text_element">Images</h4>
+            <p class="text_element">Valoeghese ("Adventure")</p>
+            <p class="text_element">JP79194</p>
+        </div>
+    </footer>
+</div>
+</html>
+
+
