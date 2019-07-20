@@ -244,9 +244,12 @@ hr {
     max-height:40vMin;
     background-color:var(--color-base);
     box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*//*0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
-    margin:calc(2*var(--spacing-amount));
-    border-radius:4px;
+    margin-top:calc(2*var(--spacing-amount));
+    margin-bottom:calc(2*var(--spacing-amount));
+    margin-left:calc(0.5*var(--spacing-amount));
+    margin-right:calc(0.5*var(--spacing-amount));
 
+    border-radius:4px;
     display:flex;
     flex-direction:column;
     justify-content: flex-start;

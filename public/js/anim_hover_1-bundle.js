@@ -3,11 +3,11 @@
 
     function animHoverEnter(event) {
         console.log("hoverEnter");
-        TweenMax.to(event.target, .25, { scale:1.05 });
+        TweenMax.to(event.target, .15, { scale:1.05 });
     }
     function animHoverLeave(event) {
         console.log("hoverLeave");
-        TweenMax.to(event.target, .25, { scale:1 });
+        TweenMax.to(event.target, .15, { scale:1 });
     }
     (function () {
         var elements = document.getElementsByClassName("category card");
