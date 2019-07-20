@@ -10,10 +10,10 @@
     --color-accent-1: #aaaaaa;
     --color-accent-2: #888888;
     --color-inverse: #333333;
-    --color-text: #454545;
+    --color-text: #606060;
     --color-text-inverse: #d0d0d0;
     
-    --shadow:0 3px 5px rgba(0, 0, 0, 0.2);
+    --shadow:0 0px 8px rgba(0, 0, 0, 0.15);
 
     --TEMPLATING-COLOR: none; /* #ff00ff */ /* #e0e0e0 */
     
@@ -168,13 +168,14 @@ ul {
     box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*/
     margin:8px;
     height:auto;
-    /*width:66%;*/
+    width:66%;
     display:flex;
     flex-direction:row;
     justify-content:flex-start;
     align-items:stretch;
     
-    --default-scale:1.1;
+    /*Does not work in js retrieval for some reason*/
+    --default-scale:0.95;
     scale:var(--default-scale);
 }
 .searchbar * {
@@ -182,17 +183,25 @@ ul {
     border:none;
     border-radius:4px;
     outline:none;
+    
+    font-size:1.2em;
+    padding-top:1%;
+    padding-bottom:.75%;
+}
+.searchbar .dropdown {
+    justify-self:flex-end;
 }
 .searchbar .element {
     margin-right:4px;
 }
-.searchbar .primary_action_button {
-    justify-self:flex-end;
-    margin:0;
-    padding:0;
-}
+
 .searchField {
-    padding-left:4px;
+    padding-left:0px;
+    width:100%
+}
+input.searchField::placeholder {
+    color:var(--color-text);
+    opacity:0.6;
 }
 .material-icons {
     margin:4px;
