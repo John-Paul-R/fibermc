@@ -3,58 +3,27 @@
 <head>
     <link rel="stylesheet" type="text/css" href="css/flex-only.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script> var exports = {}; </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
     <script src="js/palette_picker.js"></script>
-    
+    <script src="js/anim_hover_1-bundle.js" async></script>
+    <script src="js/searchbar_focus.js">
+        searchbarFocus(val);
+    </script>
+<!--     <script src="js/anim_inverse_square_hover.js" async>
+    </script> -->
+    <script src="js/palette_light_dark.js">
+        swapPalette();
+    </script>
     <script>
         function testFunc() {
             console.log("test");
         }
-        function swapPalette() {
-            root = document.documentElement;
-            cPalette = root.style.getPropertyValue('--current-palette');
-            console.log(cPalette);
-            console.log("test");
-            
-            if (cPalette == 0) {
-                root.style.setProperty('--color-base', '#252525');
-                root.style.setProperty('--color-background', '#353535');
-                root.style.setProperty('--color-element-1', '#ff0000');
-                root.style.setProperty('--color-accent-1', '#af0404');
-                root.style.setProperty('--color-accent-2', '#888888');
-                root.style.setProperty('--color-inverse', '#f0f0f0');
-                root.style.setProperty('--color-text', '#f0f0f0');
-                root.style.setProperty('--color-text-inverse', '#414141');
-                root.style.setProperty('--current-palette', 1);
-                document.getElementById("settings").textContent = "Light Mode"
-            } else if (cPalette == 1) {
-                root.style.setProperty('--color-base', '#e0e0e0');
-                root.style.setProperty('--color-background', '#f0f0f0');
-                root.style.setProperty('--color-element-1', '#e0e0e0');
-                root.style.setProperty('--color-accent-1', '#aaaaaa');
-                root.style.setProperty('--color-accent-2', '#888888');
-                root.style.setProperty('--color-inverse', '#333333');
-                root.style.setProperty('--color-text', '#454545');
-                root.style.setProperty('--color-text-inverse', '#d0d0d0');
-                root.style.setProperty('--current-palette', 0);
-                document.getElementById("settings").textContent = "Dark Mode"
-            }
-        }
+        
         function opacity(val) {
             
         }
-        function searchbarFocus(val) {
-            parent = event.target.parentElement
-            newOpacity = 1;
-            if (val == 'in') {
-
-            } else {
-                if (event.target.parentElement.querySelector(".searchField").value == "") {
-                    newOpacity = 0.6
-                }
-
-            }
-            parent.style.setProperty('opacity', newOpacity);
-        }
+        
         function takeFocus() {
             console.log("Attempting to focus search bar");
             document.getElementsByClassName(".searchField")[0].focus();
@@ -104,7 +73,7 @@
 <!--                 <button class="primary_action_button element" onclick="modSearch">Search</button>
  -->            </div>
             <h1>Categories</h1>
-            <!--<hr>-->
+            <hr>
             <div class="category grid">
                 <div class="category card">
                     <img src="img/library.png" alt="" class="category">

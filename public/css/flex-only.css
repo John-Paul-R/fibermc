@@ -4,7 +4,7 @@
     --spacing-amount: 2vMin;
     
     --current-palette: 0;
-    --color-base: #e0e0e0;
+    --color-base: #fafafa;
     --color-background: #f0f0f0;
     --color-element-1: #e0e0e0;
     --color-accent-1: #aaaaaa;
@@ -12,22 +12,8 @@
     --color-inverse: #333333;
     --color-text: #454545;
     --color-text-inverse: #d0d0d0;
-
-    --light-base: #f0f0f0;
-    --light-element-1: #e0e0e0;
-    --light-element-2: #888888;
-    --light-accent-1: #aaaaaa;
-    --light-inverse: #333333;
-    --light-text: #454545;
-    --light-text-inverse: #d0d0d0;
-
-    --dark-base: #333333;
-    --dark-element-1: #e0e0e0;
-    --dark-element-2: #888888;
-    --dark-accent-1: #aaaaaa;
-    --dark-inverse: #333333;
-    --dark-text: #454545;
-    --dark-text-inverse: #d0d0d0;
+    
+    --shadow:0 3px 5px rgba(0, 0, 0, 0.2);
 
     --TEMPLATING-COLOR: none; /* #ff00ff */ /* #e0e0e0 */
     
@@ -87,7 +73,7 @@ ul {
     justify-content:flex-start;
     align-items:baseline;
     /*border: 4px solid #444444;*/
-    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: var(--shadow);/*0 3px 6px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);*/
 }
 .header .header_element {
     margin-right: var(--spacing-amount);
@@ -146,7 +132,7 @@ ul {
     padding-bottom:.15%;
     border:none;
     border-radius:4px;
-    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*/
 }
 
 .main {
@@ -179,7 +165,7 @@ ul {
     
     background-color: var(--color-base);
     /*opacity:0.6;*/
-    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*/
     margin:8px;
     height:auto;
     /*width:66%;*/
@@ -187,6 +173,9 @@ ul {
     flex-direction:row;
     justify-content:flex-start;
     align-items:stretch;
+    
+    --default-scale:1.1;
+    scale:var(--default-scale);
 }
 .searchbar * {
     background-color:inherit;
@@ -238,13 +227,16 @@ hr {
 }
 .category.card {
     /*max-width:40vMin;*/
-    
     width:300px;
+    height:300px;
     min-height:30vMin;
+    min-width:300px;
+    max-width:450px;
+    max-height:40vMin;
     background-color:var(--color-base);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*//*0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
     margin:calc(2*var(--spacing-amount));
-
+    border-radius:4px;
 
     display:flex;
     flex-direction:column;
@@ -270,6 +262,7 @@ hr {
 .card img.category {
     justify-self: stretch;
     align-self:stretch;
+    border-radius:inherit;
     /*width:300px*/
     height:200px;
     background-color:var(--TEMPLATING-COLOR);
