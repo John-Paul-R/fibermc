@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/flex-only.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="js/palette_picker.js"></script>
+
+    <script>
+        function testFunc() {
+            console.log("test");
+        }
+        function swapPalette() {
+            root = document.documentElement;
+            cPalette = root.style.getPropertyValue('--current-palette');
+            console.log(cPalette);
+            console.log("test");
+            
+            if (cPalette == 0) {
+                root.style.setProperty('--color-base', '#252525');
+                root.style.setProperty('--color-background', '#353535');
+                root.style.setProperty('--color-element-1', '#ff0000');
+                root.style.setProperty('--color-element-2', '#888888');
+                root.style.setProperty('--color-accent-1', '#af0404');
+                root.style.setProperty('--color-inverse', '#f0f0f0');
+                root.style.setProperty('--color-text', '#f0f0f0');
+                root.style.setProperty('--color-text-inverse', '#414141');
+                root.style.setProperty('--current-palette', 1);
+            } else if (cPalette == 1) {
+                root.style.setProperty('--color-base', '#e0e0e0');
+                root.style.setProperty('--color-background', '#f0f0f0');
+                root.style.setProperty('--color-element-1', '#e0e0e0');
+                root.style.setProperty('--color-element-2', '#888888');
+                root.style.setProperty('--color-accent-1', '#aaaaaa');
+                root.style.setProperty('--color-inverse', '#333333');
+                root.style.setProperty('--color-text', '#454545');
+                root.style.setProperty('--color-text-inverse', '#d0d0d0');
+                root.style.setProperty('--current-palette', 0);
+            }
+        }
+    </script>
+</head>
+<div id=page_container>
+    <div class="header">
+        <div id="title" class="header_element">Page Title or Logo</div>
+        <div id="navbar" class="header_element">
+            <ul>
+                <li class="navbar_item">One</li>
+                <li class="navbar_item">Two</li>
+                <li class="navbar_item">Three</li>
+                <li class="navbar_item">Four</li>
+                <li class="navbar_item list_end">Five</li>
+            </ul>
+        </div>
+        <div id="settings" class="header_element" onclick="swapPalette()">settings</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="main">
+        <div class="side_spacer"></div>
+        <div class="sidebar left filled">
+            Left sidebar
+        </div>
+        <div class="spacer"></div>
+        <div id="content_main" class="filled">
+            <div class="searchbar filled">
+                <!-- display option show all -->
+                <i class="material-icons">search</i>
+                <input type="text" class="searchField" placeholder="Search Fabric Mods">
+                <select id="dropdown_1" name="dropdown_1">
+                    <option value="fabric">Fabric</option>
+                    <option value="forge">Forge</option>
+                    <option value="all">All</option>
+                </select>
+                <select id="gVers" name="Game Version">
+                    <option value="1.14">1.14</option>
+                    <option value="1.13">1.13</option>
+                    <option value="1.12">1.12</option>
+                    <option value="OLD">Older...</option>
+                </select>
+<!--                 <button class="primary_action_button element" onclick="modSearch">Search</button>
+ -->            </div>
+            <h1>Categories</h1>
+            <!--<hr>-->
+            <div class="category grid">
+                <div class="category card">
+                    <img src="img/library.png" alt="" class="category">
+                    <p class="category label">API/library</p>
+                    <p class="category desc">Mods that make other mods work!</p>
+                </div>
+                <div class="category card">
+                    <img src="" alt="" class="category">
+                    <p class="category label">Tech & Tools</p>
+                    <p class="category desc">Construct incredible machines to aid you in your adventures.</p>
+                </div>
+                <div class="category card">
+                    <img src="" alt="" class="category">
+                    <p class="category label">Magic</p>
+                    <p class="category desc">Harness arcane forces to bolster your power!</p>
+                </div>
+                <div class="category card">
+                    <img src="img/adventure.png" alt="" class="category">
+                    <p class="category label">Adventure</p>
+                    <p class="category desc">Go on exhilirating journies to discover new and exciting locations and creatures.</p>
+                </div>
+                <div class="category card">
+                    <img src="img/utility.png" alt="" class="category">
+                    <p class="category label">Utility</p>
+                    <p class="category desc">Streamline your game experience with these tweaks to UI and gameplay.</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="sidebar right filled">
+            Right sidebar
+        </div>
+        <div class="side_spacer"></div>
+    </div>
+    <div class="spacer"></div>
+    <footer>
+        <div id="col_1">
+            <h3>Footer title thing</h3>
+            <p class="text_element">This site is a work in progress!</p>
+            <h4>Author:</h4>
+            <p class="text_element">JP79194</p>
+        </div>
+        <div id="col_2">
+            <h3>Footer title thing</h3>
+            <p class="text_element">This site is a work in progress!</p>
+            <h4>Author:</h4>
+            <p class="text_element">JP79194</p>
+        </div>
+        <div id="col_3">
+            <h3>Sources</h3>
+            <h4>Assets</h4>
+            <div class="flex row">
+                <a href="https://www.curseforge.com/members/valoeghese" class="text_element">Valoeghese</a>
+                <p class="text_element">-("Adventure")</p>
+            </div>
+            <p class="text_element">JP79194</p>
+            <div class="flex row">
+                <a href="https://material.io/tools/icons/?style=baseline" class="text_element">Material Icons</a>
+                <p> - </p>
+                <a href="https://www.apache.org/licenses/LICENSE-2.0.html" class="text_element">License</a>
+             </div>
+        </div>
+    </footer>
+</div>
+</html>
+
+

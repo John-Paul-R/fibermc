@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "types": ["node"],
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outDir": "public/js",
+        "sourceMap": true,
+        "typeRoots": [
+            "node_modules/@types"
+          ],
+    },
+    "include": [
+        "public/js/*",
+        "*.ts",
+        "webserver.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}

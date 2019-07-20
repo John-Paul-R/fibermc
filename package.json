@@ -1,0 +1,28 @@
+{
+  "name": "fibermc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webserver.js",
+  "scripts": {
+    "start": "note webserver.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/John-Paul-R/FabricMC-Mod-List-Website.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/John-Paul-R/FabricMC-Mod-List-Website/issues"
+  },
+  "homepage": "https://github.com/John-Paul-R/FabricMC-Mod-List-Website#readme",
+  "dependencies": {
+    "@types/node": "^12.6.8",
+    "commonjs": "0.0.1",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.3"
+  }
+}
