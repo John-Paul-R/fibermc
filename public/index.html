@@ -4,7 +4,7 @@
     <link rel="stylesheet" type="text/css" href="css/flex-only.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="js/palette_picker.js"></script>
-
+    
     <script>
         function testFunc() {
             console.log("test");
@@ -19,29 +19,54 @@
                 root.style.setProperty('--color-base', '#252525');
                 root.style.setProperty('--color-background', '#353535');
                 root.style.setProperty('--color-element-1', '#ff0000');
-                root.style.setProperty('--color-element-2', '#888888');
                 root.style.setProperty('--color-accent-1', '#af0404');
+                root.style.setProperty('--color-accent-2', '#888888');
                 root.style.setProperty('--color-inverse', '#f0f0f0');
                 root.style.setProperty('--color-text', '#f0f0f0');
                 root.style.setProperty('--color-text-inverse', '#414141');
                 root.style.setProperty('--current-palette', 1);
+                document.getElementById("settings").textContent = "Light Mode"
             } else if (cPalette == 1) {
                 root.style.setProperty('--color-base', '#e0e0e0');
                 root.style.setProperty('--color-background', '#f0f0f0');
                 root.style.setProperty('--color-element-1', '#e0e0e0');
-                root.style.setProperty('--color-element-2', '#888888');
                 root.style.setProperty('--color-accent-1', '#aaaaaa');
+                root.style.setProperty('--color-accent-2', '#888888');
                 root.style.setProperty('--color-inverse', '#333333');
                 root.style.setProperty('--color-text', '#454545');
                 root.style.setProperty('--color-text-inverse', '#d0d0d0');
                 root.style.setProperty('--current-palette', 0);
+                document.getElementById("settings").textContent = "Dark Mode"
             }
         }
+        function opacity(val) {
+            
+        }
+        function searchbarFocus(val) {
+            parent = event.target.parentElement
+            newOpacity = 1;
+            if (val == 'in') {
+
+            } else {
+                if (event.target.parentElement.querySelector(".searchField").value == "") {
+                    newOpacity = 0.6
+                }
+
+            }
+            parent.style.setProperty('opacity', newOpacity);
+        }
+        function takeFocus() {
+            console.log("Attempting to focus search bar");
+            document.getElementsByClassName(".searchField")[0].focus();
+            console.log("Search bar should be focused.");
+        }
     </script>
+
+    <title class="header_element">FiberMC - Mod List</title>
 </head>
 <div id=page_container>
     <div class="header">
-        <div id="title" class="header_element">Page Title or Logo</div>
+        <div id="title" class="header_element">[Fiber MC - Logo]</div>
         <div id="navbar" class="header_element">
             <ul>
                 <li class="navbar_item">One</li>
@@ -51,7 +76,7 @@
                 <li class="navbar_item list_end">Five</li>
             </ul>
         </div>
-        <div id="settings" class="header_element" onclick="swapPalette()">settings</div>
+        <button id="settings" class="header_element" onclick="swapPalette()">Dark Mode</button>
     </div>
     <div class="spacer"></div>
     <div class="main">
@@ -61,10 +86,10 @@
         </div>
         <div class="spacer"></div>
         <div id="content_main" class="filled">
-            <div class="searchbar filled">
+            <div class="searchbar filled" onfocusin="searchbarFocus('in')" onfocusout="searchbarFocus('out')">
                 <!-- display option show all -->
                 <i class="material-icons">search</i>
-                <input type="text" class="searchField" placeholder="Search Fabric Mods">
+                <input type="text" class="searchField" placeholder="Search Fabric Mods" tabindex="1" autofocus>
                 <select id="dropdown_1" name="dropdown_1">
                     <option value="fabric">Fabric</option>
                     <option value="forge">Forge</option>
@@ -87,19 +112,19 @@
                     <p class="category desc">Mods that make other mods work!</p>
                 </div>
                 <div class="category card">
-                    <img src="" alt="" class="category">
+                    <img src="img/technology.png" alt="" class="category">
                     <p class="category label">Tech & Tools</p>
                     <p class="category desc">Construct incredible machines to aid you in your adventures.</p>
                 </div>
                 <div class="category card">
-                    <img src="" alt="" class="category">
+                    <img src="img/TC4_Infusion_Altar.png" alt="" class="category">
                     <p class="category label">Magic</p>
                     <p class="category desc">Harness arcane forces to bolster your power!</p>
                 </div>
                 <div class="category card">
                     <img src="img/adventure.png" alt="" class="category">
                     <p class="category label">Adventure</p>
-                    <p class="category desc">Go on exhilirating journies to discover new and exciting locations and creatures.</p>
+                    <p class="category desc">Go on exhilirating journies to discover breathtaking locations and creatures.</p>
                 </div>
                 <div class="category card">
                     <img src="img/utility.png" alt="" class="category">
@@ -116,6 +141,7 @@
         <div class="side_spacer"></div>
     </div>
     <div class="spacer"></div>
+
     <footer>
         <div id="col_1">
             <h3>Footer title thing</h3>
@@ -141,9 +167,19 @@
                 <a href="https://material.io/tools/icons/?style=baseline" class="text_element">Material Icons</a>
                 <p> - </p>
                 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" class="text_element">License</a>
-             </div>
+            </div>
+            <div class="flex row">
+                <a href="https://www.curseforge.com/minecraft/mc-mods/vivatech" class="text_element">Vivatech</a>
+                <p class="text_element">-("Tech & Tools")</p>
+            </div>
+            <div class="flex row">
+                <a href="https://ftb.gamepedia.com/File:TC4_Infusion_Altar.png#file" class="text_element">FTB Wiki</a>
+                <p> - </p>
+                <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" class="text_element">License</a>
+            </div>
         </div>
     </footer>
+
 </div>
 </html>
 
