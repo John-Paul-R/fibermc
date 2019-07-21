@@ -5,16 +5,15 @@
         "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "public/js",
+        "outDir": "backend",
         "sourceMap": true,
         "typeRoots": [
             "node_modules/@types"
-          ],
+        ],
     },
     "include": [
         "public/js/*",
-        "*.ts",
-        "webserver.ts"
+        "ts/*.ts",
     ],
     "exclude": [
         "node_modules",

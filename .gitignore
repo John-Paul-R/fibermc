@@ -10,3 +10,6 @@ bin/*
 .VSCodeCounter
 
 node_modules
+
+backend/session_secret
+backend/site_stats.csv
