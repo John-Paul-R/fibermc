@@ -7,7 +7,7 @@ function loadExitHandler() {
     function exitHandler(options, exitCode) {
         if (options.cleanup) {
             console.log('Attempting cleanup...');
-            site_stats_1.logStats(webserver_1.getSessionConnectionCount());
+            site_stats_1.logStats(webserver_1.getCountExpressUse());
             console.log('Cleanup complete!');
         }
         if (exitCode || exitCode === 0)

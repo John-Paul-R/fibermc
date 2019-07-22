@@ -1,5 +1,5 @@
 import {logStats} from './site_stats';
-import {getSessionConnectionCount} from './webserver';
+import {getCountExpressUse} from './webserver';
 
 export function loadExitHandler() {
     process.stdin.resume();//so the program will not close instantly
@@ -8,7 +8,7 @@ export function loadExitHandler() {
         if (options.cleanup) {
             console.log('Attempting cleanup...');
 
-            logStats(getSessionConnectionCount());
+            logStats(getCountExpressUse());
 
             console.log('Cleanup complete!');
         }
