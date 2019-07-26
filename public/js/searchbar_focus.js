@@ -7,7 +7,7 @@ function searchbarFocus(val) {
         parent.style.setProperty("border", "1px var(--color-base) solid");
     } else {
         if (event.target.parentElement.querySelector(".searchField").value == "") {
-            newOpacity = 0.6
+            newOpacity = 0.8
             //var default_scale = parseInt(parent.style.getPropertyValue('--default-scale'));
             TweenMax.to(parent, .15, { scale: .99, opacity: newOpacity});
             parent.style.setProperty("box-shadow", "none");

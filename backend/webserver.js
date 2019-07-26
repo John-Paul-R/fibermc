@@ -44,8 +44,11 @@ app.use(function (req, res, next) {
     countExpressUse += 1;
     next();
 });
+app.get('/modlist', function (req, res) {
+    res.sendFile(path.join(siteDir, 'html/modlist.html'));
+});
 app.get('/', function (req, res) {
-    res.sendFile(path.join(siteDir, 'html/index.html'));
+    res.sendFile(path.join(siteDir, 'html/experimental.html'));
 });
 app.get(/\/test(\/\d*$|\/$|$)/, function (req, res, next) {
     if (req.session.test_page_views) {

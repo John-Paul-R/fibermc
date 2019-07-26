@@ -3,7 +3,7 @@ import * as util from "util";
 import * as express from "express";
 import * as fs from 'fs';
 import {loadExitHandler} from './exit_handler';
-import * as io from 'socket.io';
+//import * as io from 'socket.io';
 import * as net from 'net';
 import * as log4js from "log4js"
 import * as session from 'express-session';
@@ -49,8 +49,11 @@ app.use((req, res, next) => {
     countExpressUse += 1;
     next();
 });
+app.get('/modlist', (req, res) => {
+    res.sendFile(path.join(siteDir,'html/modlist.html'));
+});
 app.get('/', (req, res) => {
-    res.sendFile(path.join(siteDir,'html/index.html'));
+    res.sendFile(path.join(siteDir,'html/experimental.html'));
 });
 app.get(/\/test(\/\d*$|\/$|$)/, (req, res, next) => {
     if(req.session.test_page_views) {
