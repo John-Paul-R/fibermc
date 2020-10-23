@@ -305,12 +305,25 @@ function createListElement(modData, includeCategories=true) {
     const desc = document.createElement('p');
     const cfButton = document.createElement('a');
     const cfButtonIcon = document.createElement('i');
+    let startContainer;
+    let dlCount;
 
     li.setAttribute('class', 'item');
     container.setAttribute('class', 'container');
     name.setAttribute('class', 'name');
     categories.setAttribute('class', 'categories');
     desc.setAttribute('class', 'desc');
+    if (results_persist){
+        startContainer = document.createElement('div');
+        dlCount = document.createElement('p');
+
+        dlCount.setAttribute('class', 'dl_count');
+        startContainer.setAttribute('class', 'start_container');
+
+        dlCount.textContent = modData.downloadCount.toLocaleString();
+        startContainer.appendChild(dlCount);
+        li.appendChild(startContainer)
+    }
 
     name.textContent = modData.name;
     for (const category of modData.categories) {
