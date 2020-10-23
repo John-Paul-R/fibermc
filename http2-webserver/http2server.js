@@ -1,6 +1,7 @@
 //  ArgVars
 var argv = process.argv.slice(2);
 const isDebug = argv.includes('debug');
+const isSecure = argv.includes('--secure');
 const isProduction = argv.includes('production')
 // const reExecPath = /(?<=\/)[\w\d]*\.js/g;
 const execModeString = isDebug?'DEBUG':'BUILT';
@@ -63,8 +64,13 @@ const options = {
 }
 
 //  Create server
-const server = http2.createSecureServer(options);
 
+var server; 
+if (isSecure) {
+    server = http2.createSecureServer(options);
+} else {
+    server = http2.createServer();
+}
 //  Handle Errors
 server.on('error', (err) => console.error(err));
 

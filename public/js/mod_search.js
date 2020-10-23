@@ -209,38 +209,6 @@ var first_contentful_container_idx;
 var last_contentful_container_idx;
 function buildList(resultsArray) {
     let listBuildTime = performance.now();
-    // Batch in chunks of 50
-    let idx = 0;
-    // let runBatches = (results, startIdx, batchSize, remainingBatches=0, waitForScrollAfter=0, callback=null) => {
-    //     const endIdx = startIdx + batchSize;
-    //     const batch_elem = document.createElement('div');
-    
-    //     for (let i = startIdx; i < endIdx; i++) {
-    //         batch_elem.appendChild(createListElement(results[i]));
-    //     }
-    //     if (remainingBatches > 0 || remainingBatches === -1) {
-    //         const nextBatchSize = Math.min(batchSize, results.length - endIdx);
-    //         const waitScroll = waitForScrollAfter > 1 || waitForScrollAfter == -1;
-    //         const nextBatchFn = (c)=>runBatches(results, endIdx, nextBatchSize, 
-    //             (remainingBatches===-1 ? -1 : remainingBatches-1), 
-    //             (waitForScrollAfter===-1 ? -1 : waitForScrollAfter>1 ? waitForScrollAfter-1 : 1),
-    //             c
-    //         );
-    //         if (nextBatchSize > 0) {
-    //             if (!waitScroll) {
-    //                 nextBatchFunc = nextBatchFn;
-    //             } else {
-    //                 setTimeout(nextBatchFn, 0);
-    //             }
-    //         } else if (waitScroll) {
-    //             nextBatchFunc = ()=>{};
-    //         }
-    //     }
-    //     resultsListElement.appendChild(batch_elem);
-    //     if (callback) {
-    //         callback();
-    //     }
-    // }
     const storeBatches = (results, startIdx, batchSize) => {
         const endIdx = startIdx + batchSize;
         const data_batch = [];
