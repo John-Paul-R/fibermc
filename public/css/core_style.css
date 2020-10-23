@@ -92,10 +92,12 @@ header * {
 }
 header button {
     display: flex;
+    align-items: center;
     padding: 0;
     padding-left: 8px;
     padding-right: 8px;
     /* border-radius:4px; */
+    height: min-content;
 }
 header button * {
     margin-right:2px;
@@ -126,8 +128,11 @@ header .flex.row > * {
     /*border: solid black 2px;*/
 }
 header > #navbar > .end,
-#navbar .end,
-#navbar .end >*:last-child {
+#navbar .end
+/* #navbar .end >*:last-child  */
+{
+    align-self: center;
+    align-items: center;
     margin-left:auto;
     margin-right:0;
     height:100%
@@ -206,4 +211,10 @@ header #navbar ul li {
 }
 header #navbar ul li.list_end {
     border-right:none;
+}
+
+header .swap_palette {
+    background-color: var(--color-element-1);
+    color: var(--color-text);
+    border: none;
 }

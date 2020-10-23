@@ -23,7 +23,7 @@ const {
 
 
 const reFileName = /(?<=\/)[\w\d]*\.js/g;
-const FILENAME = __filename.match(reFileName)[0];
+const FILENAME = Path.basename(__filename);//__filename.match(reFileName)[0];
 
 const logger = log4js.getLogger();
 log4js.configure({
@@ -63,7 +63,7 @@ const options = {
 }
 
 //  Create server
-const server = http2.createServer();
+const server = http2.createSecureServer(options);
 
 //  Handle Errors
 server.on('error', (err) => console.error(err));
@@ -96,11 +96,17 @@ server.on('stream', (stream, headers) => {
         case '/debug/nikkyGQLsuccess.json': reqPath = '/debug/NikkyGQLsuccess0.json';
 		break;
 
-		default: reqPath = path;
+		default: {
+            if (path.endsWith('.html')){
+                reqPath = '/html' + path;
+            } else {
+                reqPath = path;
+            }
+        }
 	}
 	
 	for (let i=0; i<lstDirs.length; i++) {
-		matchDir(path, lstDirs[i]);
+		matchDir(reqPath, lstDirs[i]);
 	}
     const requestedFile = contentFiles.get(reqPath);
     if (!requestedFile) {
