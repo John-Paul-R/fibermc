@@ -10,13 +10,14 @@ var cookieParser = require("cookie-parser");
 var countExpressUse = 0;
 function getCountExpressUse() { return countExpressUse; }
 exports.getCountExpressUse = getCountExpressUse;
-var reFileName = /(?<=\\)[\w\d]*\.js/;
+var reFileName = /(?<=\/)[\w\d]*\.js/;
 var filename = __filename.match(reFileName)[0];
-var root_path = "S:/Workspaces/Projects/Minecraft/Fabric Modlist Site";
+var reDir = new RegExp("^.*(?=".concat(filename,")"));
+var root_path = require('path').resolve(__dirname, '..')//__filename.match(reDir,"g")[0];
 var siteDirName = '/public/';
 var app = express();
 var router = express.Router();
-var port = 80;
+var port = 8080;
 var siteDir = path.join(root_path, siteDirName);
 var session_secret = fs.readFileSync('session_secret').join("");
 var logger = log4js.getLogger();

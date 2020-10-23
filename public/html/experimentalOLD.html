@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <link rel="stylesheet" type="text/css" href="css/core_style.css"> -->
+    <link rel="stylesheet" type="text/css" href="css/flex-only.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script> var exports = {}; </script>
+    <script defer src="js/gsap.min.js"></script>
+
+
+    <title class="header_element">FiberMC - Mod List</title>
+</head>
+
+<div id=page_container>
+    <div class="header">
+        <h1 id="title" class="header_element">FiberMC</h1>
+        <h2 id="subtitle" class="header_element">Fabric Mods for Minecraft</h2>
+        <div id="navbar" class="header_element">
+            <ul>
+                <li class="navbar_item">One</li>
+                <li class="navbar_item">Two</li>
+                <li class="navbar_item">Three</li>
+                <li class="navbar_item">Four</li>
+                <li class="navbar_item list_end">Five</li>
+            </ul>
+        </div>
+        <button id="settings" class="header_element" onclick="swapPalette()">Dark Mode</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="main">
+        <div class="side_spacer"></div>
+        <div class="sidebar left filled">
+            Left sidebar
+        </div>
+        <div class="spacer"></div>
+        <div id="content_main" class="filled">
+            <div class="searchbar filled">
+                <!-- display option show all -->
+                <i class="material-icons">search</i>
+                <input type="text" class="searchField" placeholder="Search Fabric Mods" autofocus>
+                <select id="dropdown_1" name="dropdown_1" class="dropdown">
+                    <option value="fabric">Fabric</option>
+                    <option value="forge">Forge</option>
+                    <option value="all">All</option>
+                </select>
+                <select id="gVers" name="Game Version" class="dropdown">
+                    <option value="1.14">1.14</option>
+                    <option value="1.13">1.13</option>
+                    <option value="1.12">1.12</option>
+                    <option value="OLD">Older...</option>
+                </select>
+<!--                 <button class="primary_action_button element" onclick="modSearch">Search</button>
+ -->            </div>
+            <h1>Categories</h1>
+            <hr>
+            <div class="category grid">
+                <div class="category card">
+                    <img src="img/library.webp" alt="" class="category">
+                    <p class="category label">API/library</p>
+                    <p class="category desc">Mods that make other mods work!</p>
+                </div>
+                <div class="category card">
+                    <img src="img/technology.webp" alt="" class="category">
+                    <p class="category label">Tech & Tools</p>
+                    <p class="category desc">Construct incredible machines to aid you in your adventures.</p>
+                </div>
+                <div class="category card">
+                    <img src="img/TC4_Infusion_Altar.webp" alt="" class="category">
+                    <p class="category label">Magic</p>
+                    <p class="category desc">Harness arcane forces to bolster your power!</p>
+                </div>
+                <div class="category card">
+                    <img src="img/adventure.webp" alt="" class="category">
+                    <p class="category label">Adventure</p>
+                    <p class="category desc">Go on exhilirating journies to discover breathtaking locations and creatures.</p>
+                </div>
+                <div class="category card">
+                    <img src="img/utility.webp" alt="" class="category">
+                    <p class="category label">Utility</p>
+                    <p class="category desc">Streamline your game experience with these tweaks to UI and gameplay.</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="sidebar right filled">
+            Right sidebar
+        </div>
+        <div class="side_spacer"></div>
+    </div>
+    <div class="spacer"></div>
+
+    <footer>
+        <div id="col_1">
+            <h3>Footer title thing</h3>
+            <p class="text_element">This site is a work in progress!</p>
+            <h4>Author:</h4>
+            <p class="text_element">JP79194</p>
+        </div>
+        <div id="col_2">
+            <h3>Footer title thing</h3>
+            <p class="text_element">This site is a work in progress!</p>
+            <h4>Author:</h4>
+            <p class="text_element">JP79194</p>
+        </div>
+        <div id="col_3">
+            <h3>Sources</h3>
+            <h4>Assets</h4>
+            <div class="flex row">
+                <a href="https://www.curseforge.com/members/valoeghese" class="text_element">Valoeghese</a>
+                <p class="text_element">-("Adventure")</p>
+            </div>
+            <p class="text_element">JP79194</p>
+            <div class="flex row">
+                <a href="https://material.io/tools/icons/?style=baseline" class="text_element">Material Icons</a>
+                <p> - </p>
+                <a href="https://www.apache.org/licenses/LICENSE-2.0.html" class="text_element">License</a>
+            </div>
+            <div class="flex row">
+                <a href="https://www.curseforge.com/minecraft/mc-mods/vivatech" class="text_element">Vivatech</a>
+                <p class="text_element">-("Tech & Tools")</p>
+            </div>
+            <div class="flex row">
+                <a href="https://ftb.gamepedia.com/File:TC4_Infusion_Altar.webp#file" class="text_element">FTB Wiki</a>
+                <p> - </p>
+                <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" class="text_element">License</a>
+            </div>
+        </div>
+    </footer>
+
+</div>
+<div class="scripts">
+        <!-- <script src="js/palette_picker.js"></script> -->
+        <script defer src="js/anim_hover_1.0.js"></script>
+        <script defer src="js/searchbar_focus.js">
+            searchbarFocus(val);
+        </script>
+    <!--     <script src="js/anim_inverse_square_hover.js" async>
+        </script> -->
+        <script src="js/palette_light_dark.js">
+            swapPalette();
+        </script>
+        <script>
+            function testFunc() {
+                console.log("test");
+            }
+            
+            function opacity(val) {
+                
+            }
+            
+            function takeFocus() {
+                console.log("Attempting to focus search bar");
+                document.getElementsByClassName(".searchField")[0].focus();
+                console.log("Search bar should be focused.");
+            }
+        </script>
+</div>>
+</html>
+
+

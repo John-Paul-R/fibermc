@@ -1,0 +1,13 @@
+{
+    "/html/experimental.html": [
+        { "rel": "preload", "path": "/css/flex-only.css", "as": "style" },
+        
+        { "rel": "preload", "path": "/js/palette_light_dark.js", "as": "script" },		
+		{ "rel": "preload", "path": "/js/gsap.min.js", "as": "script" },
+        { "rel": "preload", "path": "/js/searchbar_focus.js", "as": "script" },
+        { "rel": "preload", "path": "/js/fuzzysort.js", "as": "script" },
+		
+		{ "rel": "preconnect", "path": "https://pixijs.download/", "crossorigin": "anonymous"},
+		{ "rel": "preconnect", "path": "https://fonts.googleapis.com/", "crossorigin": "anonymous"}
+    ]
+}

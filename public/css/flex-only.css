@@ -238,10 +238,8 @@ hr {
     /*max-width:40vMin;*/
     width:300px;
     height:300px;
-    min-height:30vMin;
     min-width:300px;
     max-width:450px;
-    max-height:40vMin;
     background-color:var(--color-base);
     box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*//*0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
     margin-top:calc(2*var(--spacing-amount));
@@ -256,8 +254,11 @@ hr {
     align-items:center;
     
 }
+.category.card:hover {
+    cursor:pointer;
+}
 .card * {
-    
+
 }
 .card .category.label {
 
@@ -299,14 +300,12 @@ footer {
     flex:1fr;
     height:auto;
     background-color:var(--color-base);
-    
     padding-top:1vh;
     padding-bottom:1vh;
 
     display:flex;
     flex-direction:row;
     justify-content:space-evenly;
-    
 }
 footer h4 {
     font-size:1.45vMin;

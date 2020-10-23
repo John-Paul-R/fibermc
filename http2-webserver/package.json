@@ -1,0 +1,18 @@
+{
+  "name": "http2-express",
+  "version": "1.0.0",
+  "description": "tThe http/2 server for the PoE Atlas website by John Paul Rutigliano.",
+  "main": "http2server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "John Paul Rutigliano",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mime": "^2.4.6",
+    "node-dir": "^0.1.17",
+    "node-ipc": "^9.1.1",
+    "spdy": "^4.0.2"
+  }
+}

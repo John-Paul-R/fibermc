@@ -1,0 +1,204 @@
+:root {
+    --spacing-amount: 16px;
+    --shadow:0 0px 8px rgba(0, 0, 0, 0.15);
+}
+#page_container{
+    /* position:relative; */
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    /* overflow: auto; */
+  
+}
+#content_main {
+    /* position: relative; */
+    overflow-y:scroll;
+
+}
+#content_body {
+    /* height: 2000px; */
+}
+
+#content_body {
+    /* flex:3fr; */
+    padding: var(--spacing-amount);
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items:stretch;
+}
+#content_body .sidebar {
+    /* min-width: 200px; */
+    /* max-width:300px; */
+    /*height:800px;
+    align-self:center;*/
+}
+#content_body .sidebar.left {
+    /* flex:2; */
+}
+
+#content_body #content_center {
+    /* flex:8; */
+    width:900px;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+}
+#content_body #content_center .searchbar {
+    
+    background-color: var(--color-base);
+    box-shadow: var(--shadow);
+    margin:8px;
+    height:auto;
+    width:600px;
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:stretch;
+    
+    /*Does not work in js retrieval for some reason*/
+    --default-scale:0.95;
+    scale:var(--default-scale);
+}
+.searchbar * {
+    background-color:inherit;
+    border:none;
+    border-radius:4px;
+    outline:none;
+    
+    font-size:1.2em;
+    padding-top:1%;
+    padding-bottom:.75%;
+}
+.searchbar .dropdown {
+    justify-self:flex-end;
+}
+.searchbar .element {
+    margin-right:4px;
+}
+
+.searchField {
+    padding-left:0px;
+    width:100%
+}
+input.searchField::placeholder {
+    color:var(--color-text);
+    opacity:0.6;
+}
+.material-icons {
+    margin:4px;
+}
+
+#content_center h1 {
+    align-self:center;
+    margin-top:var(--spacing-amount);
+    /*border-bottom: 1px solid var(--color-accent-1);*/
+}
+hr {
+    display: block;
+    overflow: hidden;
+    padding-right: 33%;
+    border-style: inset;
+    border-width: 1px;
+    margin-top:var(--spacing-amount);
+    margin-bottom:var(--spacing-amount);
+
+}
+
+.category.grid {
+    max-width:63vw;
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:space-evenly;
+    /*background-color:orange;*/
+    border: 1px solid var(--TEMPLATING-COLOR);
+}
+.category.card {
+    /*max-width:40vMin;*/
+    width:300px;
+    height:300px;
+    min-width:300px;
+    max-width:450px;
+    background-color:var(--color-base);
+    box-shadow: var(--shadow);/*0 3px 4px rgba(0, 0, 0, 0.2);*//*0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+    margin-top:calc(2*var(--spacing-amount));
+    margin-bottom:calc(2*var(--spacing-amount));
+    margin-left:calc(0.5*var(--spacing-amount));
+    margin-right:calc(0.5*var(--spacing-amount));
+
+    border-radius:4px;
+    display:flex;
+    flex-direction:column;
+    justify-content: flex-start;
+    align-items:center;
+    
+}
+.category.card:hover {
+    cursor:pointer;
+}
+
+.card .category.label {
+
+    font-size: 1.2em;
+    margin:4%;
+    margin-top:3%;
+    margin-bottom:1.5%;
+    padding-bottom:1.5%;
+    border-bottom: 1px var(--color-accent-1) solid;
+}
+.card .category.desc {
+    margin-left:4%;
+    margin-right:4%;
+    margin-top:0%;
+    margin-bottom:4%;
+    text-align:center;
+}
+.card img.category {
+    justify-self: stretch;
+    align-self:stretch;
+    border-radius:inherit;
+    /*width:300px*/
+    height:200px;
+    background-color:var(--TEMPLATING-COLOR);
+}
+
+.main .sidebar.right {
+    flex:2;
+}
+.main .side_spacer {
+    flex:0;
+}
+.spacer {
+    flex:.15;
+/*    width:var(--spacing-amount);
+    height:var(--spacing-amount);*/
+}
+footer {
+    /* flex:1fr; */
+    height:auto;
+    background-color:var(--color-base);
+    
+    padding-top:1vh;
+    padding-bottom:1vh;
+
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    
+}
+footer h4 {
+    font-size:1.45vMin;
+}
+footer .text_element {
+    font-size:1.2vMin;
+}
+
+
+footer * {
+    /*color: var(--color-text-inverse);*/
+}
+footer h3 {
+    text-align:center;
+}

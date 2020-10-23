@@ -15,3 +15,8 @@ backend/session_secret
 backend/site_stats.csv
 
 *.log
+
+*.csr
+*.crt
+*.key
+*.pem
