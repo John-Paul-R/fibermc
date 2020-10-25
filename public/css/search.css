@@ -13,9 +13,16 @@
     /* position: relative; */
     overflow-y:scroll;
 
+    display: grid;
+    grid-template-rows: [main-start]100% [footer-start]256px[main-end];
+
 }
 #content_body {
+    grid-row: main-start / footer-start;
     /* height: 2000px; */
+}
+footer {
+    grid-row: footer-start / main-end;
 }
 
 #content_body {
@@ -32,14 +39,14 @@
 }
 #content_center {
     /* grid-column: left-end / right-start; */
-    width: min-content;
+    width: 100%;
     height:auto;
 
     display: grid;
     /* height of #searchbar_container - 8px*2 + 42px*/
-    grid-template-rows: [searchbar-start]58px[searchbar-end] minmax(0, 1fr)[list-end];
+    grid-template-rows: [searchbar-start]58px[searchbar-end] 1fr[list-end];
     /* grid-template-columns: [categories-start]384px[categories-end] min-content[content-end]; */
-    grid-template-columns: [categories-start]1fr[categories-end] min-content[content-end];
+    grid-template-columns: [categories-start]1fr[categories-end] 3fr[content-end];
 
 }
 
@@ -77,8 +84,8 @@
     /* position: absolute; */
     /*top: calc(56px + var(--spacing-amount) + (8px + 42px + 8px) );/*header + content_main.padding + searchbar*/
     max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px)));
-    max-width: 682px;
-    width: 682px;
+    /* max-width: 682px;
+    width: 682px; */
     position: relative;
     left: 0px;
     overflow-y: scroll;
@@ -102,16 +109,25 @@
 
     background-color: var(--color-element-1);
     border-radius: 8px;
-    margin-top: 10%;
+    margin-top: 32px;
     height: min-content;
     width: 256px;
     padding: 8px;
+    min-height:0;
+    max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-left: auto;
 }
 #categories_list {
     list-style-type: none;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    max-height: 100%;
+    min-height:0;
+    max-height: inherit;
+
 }
 #categories_list > li {
     border-radius: 12px;

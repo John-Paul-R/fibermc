@@ -240,7 +240,7 @@ function initSearch() {
     var sheet = createStyleSheet('mod-list-constructed');
     sheet.insertRule(`ul#search_results_list {
         max-width: 900px;
-        width: 900px;
+        /*width: 900px;*/
     }`, 0)
     // sheet.insertRule(`.item_batch {
     //     height: ${LI_HEIGHT*BATCH_SIZE}px;
@@ -547,7 +547,7 @@ function pxToBottom(el) {
  * @param {HTMLElement} el 
  */
 function pxBelowBottom(el) {
-    var rect = el.getBoundingClientRect();
+    // var rect = el.getBoundingClientRect();
     let parent = el.parentElement;
     let out = el.offsetTop - (parent.scrollTop+parent.clientHeight);
     return out;
