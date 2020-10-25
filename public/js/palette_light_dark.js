@@ -75,8 +75,10 @@
         } else {
             let mql = window.matchMedia('(prefers-color-scheme: dark)');
             if (mql.matches){
+                console.log("prefers-color-scheme = dark. Using dark theme.")
                 paletteIndex = 1;
             } else {
+                console.log("prefers-color-scheme != dark. Using light theme.")
                 paletteIndex = 0;
             }
             

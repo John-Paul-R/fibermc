@@ -373,8 +373,11 @@ function initCategoriesSidebar() {
     //TODO Group "Selected" items?
     categories_sidebar_elem = document.getElementById('categories_list');
     updateModCounts();
-    for (let i=0; i<CATEGORIES.length; i++) {
-        const category = CATEGORIES[i];
+    const sorted_CATEGORIES = CATEGORIES.slice().sort(function (a, b) {
+        return b.modCount-a.modCount;
+      });
+    for (let i=0; i<sorted_CATEGORIES.length; i++) {
+        const category = sorted_CATEGORIES[i];
         const cat_elem = document.createElement('li');
         const cat_count = document.createElement('span');
         category.htmlElement = cat_elem;
