@@ -112,6 +112,10 @@ function search(queryText, selectBest=false) {
     return results;
 }
 
+var LIST_WIDTH = 682;
+var LIST_ITEM_WIDTH = 649;
+var BATCH_SIZE = 20;
+
 var resultsListElement;
 var queryDisplayElement;
 function initSearch() {
@@ -157,7 +161,7 @@ function initSearch() {
                 if (added < numPxBelowBot) {
                     addedLessThanDiff = false;
                 }
-                added -= 38*BATCH_SIZE;
+                added -= LI_HEIGHT*BATCH_SIZE;
             }
             } else if (numPxAboveTop < 64) {
                 while (addedLessThanDiff){
@@ -171,7 +175,7 @@ function initSearch() {
                 if (added < numPxAboveTop) {
                     addedLessThanDiff = false;
                 }
-                added -= 38*BATCH_SIZE;
+                added -= LI_HEIGHT*BATCH_SIZE;
             }
             
             
@@ -179,12 +183,28 @@ function initSearch() {
         
     }, {passive: true})
 
+    // Add Stylesheet 
+    var sheet = createStyleSheet('mod-list-constructed');
+    sheet.insertRule(`ul#search_results_list {
+        max-width: 900px;
+        width: 900px;
+        }`, 0)
+    console.log(sheet.cssRules);
     queryDisplayElement = document.getElementById("search_query_text");
     console.info("atlas_search.js initialization complete!");
 }
 executeIfWhenDOMContentLoaded(initSearch);
-
-var BATCH_SIZE = 20;
+function createStyleSheet(id, media) {
+    var el   = document.createElement('style');
+    // WebKit hack
+    el.appendChild(document.createTextNode(''));
+    // el.type  = 'text/css';
+    el.rel   = 'stylesheet';
+    el.media = media || 'screen';
+    el.id    = id;
+    document.head.appendChild(el);
+    return el.sheet;
+}
 function updateSearchResultsListElement(resultsArray) {
     while (resultsListElement.firstChild) {
         resultsListElement.removeChild(resultsListElement.lastChild);
@@ -213,7 +233,9 @@ function buildList(resultsArray) {
         const endIdx = startIdx + batchSize;
         const data_batch = [];
         const batch_container = document.createElement('div');
-        batch_container.style.height = 38*batchSize+'px';
+        batch_container.style.height = LI_HEIGHT*batchSize+'px';
+        // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
+
         for (let i = startIdx; i < endIdx; i++) {
             data_batch.push(results[i]);
         }
@@ -234,10 +256,8 @@ function buildList(resultsArray) {
             first_contentful_container_idx = batchIdx;
         }
         // const batch_elem = document.createElement('div');
+        createBatch(batchIdx);
 
-        for (const result_data of data_batches[batchIdx]) {
-            batch_containers[batchIdx].appendChild(createListElement(result_data));
-        }
         if (remainingBatches > 0 || remainingBatches === -1) {
             // const nextBatchSize = Math.min(batchSize, results.length - endIdx);
             const waitScroll = waitForScrollAfter > 1 || waitForScrollAfter == -1;
@@ -270,9 +290,10 @@ function buildList(resultsArray) {
     listBuildTimeAvg = (listBuildTimeAvg * (searchCount - 1) + listBuildTime) / searchCount;
     console.log(`List Build - A:${listBuildTimeAvg.toFixed(3)} ms, I:${(listBuildTime).toFixed(3)} ms, numMatches: ${resultsArray.length}`)
 }
+var listCreationFunc = createListElement;
 function createBatch(batchIdx) {
     for (const result_data of data_batches[batchIdx]) {
-        batch_containers[batchIdx].appendChild(createListElement(result_data));
+        batch_containers[batchIdx].appendChild(listCreationFunc(result_data));
     }
 }
 /**
@@ -292,15 +313,15 @@ function clear(node) {
     node.parentNode.removeChild(node);
 }
   
-
+var LI_HEIGHT = 70;
 /**
  * Create a HTML li for this item.
  * @param {Object} modData 
  */
-function createListElement(modData, includeCategories=true) {
+function createListElementCondensed(modData, includeCategories=true) {
     const li = document.createElement('li');
     const container = document.createElement('div');
-    const name = document.createElement('b');
+    const name = document.createElement('a');
     const categories = document.createElement('ul');
     const desc = document.createElement('p');
     const cfButton = document.createElement('a');
@@ -313,6 +334,8 @@ function createListElement(modData, includeCategories=true) {
     name.setAttribute('class', 'name');
     categories.setAttribute('class', 'categories');
     desc.setAttribute('class', 'desc');
+    desc.setAttribute('data-text', modData.summary);
+
     if (results_persist){
         startContainer = document.createElement('div');
         dlCount = document.createElement('p');
@@ -348,7 +371,71 @@ function createListElement(modData, includeCategories=true) {
     li.appendChild(container);
     return li;
 }
+function createListElement(modData, includeCategories=true) {
+    const li = document.createElement('li');
+    const container = document.createElement('div');
+    const front_container = document.createElement('div');
+    const end_container = document.createElement('div');
+    const name = document.createElement('a');
+    const categories = document.createElement('ul');
+    const desc = document.createElement('p');
+    const cfButton = document.createElement('a');
+    const cfButtonIcon = document.createElement('i');
+    let startContainer;
+    let dlCount;
 
+    li.setAttribute('class', 'item');
+    container.setAttribute('class', 'container');
+    front_container.setAttribute('class', 'front_container');
+    end_container.setAttribute('class', 'end_container');
+    name.setAttribute('class', 'name');
+    categories.setAttribute('class', 'categories');
+    desc.setAttribute('class', 'desc');
+    desc.setAttribute('data-text', modData.summary);
+    cfButton.setAttribute('class', 'out_link');
+
+
+
+    if (results_persist){
+        startContainer = document.createElement('div');
+        dlCount = document.createElement('p');
+
+        dlCount.setAttribute('class', 'dl_count');
+        startContainer.setAttribute('class', 'start_container');
+
+        dlCount.textContent = modData.downloadCount.toLocaleString();
+        startContainer.appendChild(dlCount);
+        li.appendChild(startContainer)
+    }
+
+    name.textContent = modData.name;
+    for (const category of modData.categories) {
+        // if not "Fabric"
+        if (category.categoryId !== 4780) {
+            const catElem = document.createElement('li');
+            catElem.textContent = category.name;
+            categories.appendChild(catElem);    
+        }
+    }
+    desc.textContent = modData.summary;
+    cfButtonIcon.textContent = 'launch'
+    cfButtonIcon.setAttribute('class', 'material-icons');
+    cfButton.setAttribute('href', 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug);
+    cfButton.setAttribute('target', '_blank');
+    
+    cfButton.appendChild(cfButtonIcon);
+    name.setAttribute('href', 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug);
+    name.setAttribute('target', '_blank');
+
+    front_container.appendChild(name);
+    front_container.appendChild(desc);
+    container.appendChild(front_container);
+    end_container.appendChild(categories);
+    end_container.appendChild(cfButton);
+    container.appendChild(end_container);
+    li.appendChild(container);
+    return li;
+}
 /**
  * Tells how many pixels are left to be scrolled before 
  * the element has been scrolled to it bottom.

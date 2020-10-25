@@ -65,6 +65,7 @@
     /* position: absolute; */
     /*top: calc(56px + var(--spacing-amount) + (8px + 42px + 8px) );/*header + content_main.padding + searchbar*/
     max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px)));
+    max-width: 682px;
     width: 682px;
     position: relative;
     left: 0px;
@@ -76,12 +77,22 @@
     list-style-type: none;
 
     will-change: contents;
+
+    /* display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-shrink: 0; */
 }
 .item {
     /* display: flex;
     flex-direction: row;
     align-items: stretch;
     justify-items: flex-start; */
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    grid-gap: 6px;
+    height: auto;
 }
 .item:nth-child(even) > .container {
     background-color: var(--color-element-1);
@@ -93,12 +104,28 @@
 .container {
     display: flex;
     align-items: center;
-    height: 32px;
+    height: 64px;
     background-color: inherit;
     padding-left: 8px;
     padding-right: 8px;
     border: 1px solid var(--color-base);
+    max-width: 100%;
     /* width: 100%; */
+}
+.front_container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.end_container {
+    flex: 1;
+    display: grid;
+    grid-template-columns: auto 32px;
+    flex-wrap: nowrap;
+    /* width: 33%; */
+    height: 100%;
+    align-content: center;
 }
 .item:not(:first-child) {
     /* border-top: 8px solid var(--color-base); */
@@ -109,51 +136,101 @@
 .item:hover {
     /* background-color: var(--color-element-1-1); */
     /* box-shadow: var(--shadow); */
+
 }
 .container:hover {
     border: 1px solid var(--color-accent-1);
     box-shadow: var(--shadow);
 
 }
-.container > b:first-child {
+
+.desc:hover:after{
+    content:attr(data-text);
+    overflow: visible;
+    text-overflow: inherit;
+    background: var(--color-element-1-1);
+    position: absolute;
+    left: inherit;
+    top: inherit;
+    max-width: 60%;
+    height: min-content;
+    z-index: 2;
+    /* max-width: 20rem; */
+    /* border: 1px solid #eaebec; */
+    /* padding: 0 .5rem; */
+    /* box-shadow: 0 2px 4px 0 rgba(0,0,0,.28); */
+    white-space: normal;
+    word-wrap: break-word;
+    display:block;
+    /* color:black; */
+    font-size: 1em;
+    margin:0;
+    margin-top:-1.2592em; /*1-1/1.35*/
+    /* border: 1px dotted var(--color-accent-1); */
+  }
+
+.container > *:first-child {
     margin-right: 10px;
 }
 
-.container > * {
+.container > *,
+.desc {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    max-width: 100%;
 }
 .container > *:not(:last-child) {
     margin-right: 6px;
 }
 #search_results_list .container b,
+.container a,
 .container > ul,
 .container > button {
     overflow: visible;
     white-space: nowrap;
     min-width: min-content;
 }
-.container > p {
+.name {
+    font-weight: 700;
+    text-decoration: none;
+}
+.name:hover {
+    text-decoration: underline;
+}
+.desc {
+    margin: 0;
+    /* height: 18px; */
+    line-height: 1.35em;
     font-size: 0.85em;
 }
 .categories {
     font-size: 0.85em;
     list-style-type: none;
+    /* width: 128px; */
+    height: 100%;
     display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
 }
 .categories > li {
     /* display: inline; */
+    height: auto;
     margin-right: 4px;
-    padding-left: 2px;
-    padding-right: 2px;
-    border-radius: 4px;
-    border: 1px solid var(--color-accent-1);
+    margin-bottom: 2px;
+    margin-top: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 12px;
+    background-color: var(--color-element-1-1);
+    /* border: 1px solid var(--color-accent-1); */
 }
 .container > :last-child {
-    display: block;
+    /* display: block; */
     margin-left: auto;
-    justify-self: flex-end;
     padding: 0;
     background-color: transparent;
 
@@ -165,6 +242,14 @@
     font-size: 1.5em;
     font-weight: 300;
 }
+.item .out_link {
+    width: 32px;
+    height: 32px;
+    max-height: 32px;
+    line-height: 32px;    
+    margin-top: auto;
+    margin-bottom: auto;
+}
 .item:nth-child(even) .material-icons {
     color: var(--color-element-1);
 }
@@ -175,14 +260,12 @@
 li.item:hover .material-icons {
     color: var(--color-text);
 }
-.item {
-    position: relative;
-}
+
 .start_container {
     float: left;
     z-index: 1;
     width: 82px;
-    height: 32px;
+    height: inherit; /*height of .container*/
     margin-right: 6px;
     display: flex;
     flex-direction: row;
