@@ -23,4 +23,5 @@ backend/site_stats.csv
 
 .env
 __pycache__
+output
 
