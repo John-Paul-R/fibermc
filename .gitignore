@@ -20,3 +20,5 @@ backend/site_stats.csv
 *.crt
 *.key
 *.pem
+
+.env
