@@ -11,12 +11,21 @@ var loader = new AsyncDataResourceLoader();
  * @type {Array<Object>}
  */
 var mod_data;
+/**
+ * @type {Array<Object>}
+ */
+var CATEGORIES;
+var categories_sidebar_elem;
 const descending = (a, b) => (b.downloadCount - a.downloadCount);
-loader.addResource('../data/FabricModList-QIN0J9_nikkyCFGraphQLResponse.json', [
+loader.addResource('../data/mod_list-QIR82C.min.json', [
     (jsonData) => { 
-        mod_data = jsonData.data.addons;
+        mod_data = jsonData.mods;
         mod_data.sort(descending);
         console.log(mod_data);
+
+        CATEGORIES = jsonData.categories;
+        initCategoriesSidebar();
+        console.log(CATEGORIES);
     }
 ]);
 loader.addCompletionFunc(()=>executeIfWhenDOMContentLoaded(
@@ -30,16 +39,59 @@ loader.fetchResources();
 var searchElements;
 var results_persist = false;
 
+var search_objects;
+function getSelectedCategoryIds() {
+    let selected_cat_ids = []
+    for (const category of CATEGORIES) {
+        const cat_elem = category.htmlElement;
+        if (cat_elem.selected) {
+            selected_cat_ids.push(cat_elem.cat_id);
+        }
+    }
+    return selected_cat_ids;
+}
+function updateModCounts() {
+    for (const CAT of CATEGORIES) {
+        CAT.modCount = 0;
+    }
+    for (const mod of mod_data) {
+        for(const cat_id of mod.categories) {
+            CATEGORIES[cat_id].modCount += 1;
+        }
+    }
+}
+function getFilteredList(selected_cat_ids) {
+    if (!selected_cat_ids) {
+        selected_cat_ids = getSelectedCategoryIds();
+    }
+    
+    let search_objs = mod_data;
+    if (selected_cat_ids.length === 0) {
+        
+    } else {
+        search_objs = mod_data.filter(el => {
+            for (const cat_id of selected_cat_ids) {
+                if (el.categories.includes(cat_id)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+    return search_objs;
+}
+
 function searchTextChanged(query) {
     let results = null;
-    if (query.target.value){
+    search_objects = getFilteredList();
+    if (query && query.target.value){
         results = search(query.target.value).map((el) => el.obj);
         console.log(query.target.value);
     } else {
         console.log("No query data was found.")
         if (results_persist) {
-            console.log('test');
-            results = mod_data;
+            // console.log('test');
+            results = search_objects;
         }
     }
     updateSearchResultsListElement(results);
@@ -63,7 +115,7 @@ function search(queryText, selectBest=false) {
     // }; });
 
     var fuzzysortStart = performance.now();
-    let results = fuzzysort.go(queryText.trim(), mod_data, {
+    let results = fuzzysort.go(queryText.trim(), search_objects, {
         keys: ['name', 'slug'],
         allowTypo: true,
         threshold: -500,
@@ -114,6 +166,7 @@ function search(queryText, selectBest=false) {
 
 var LIST_WIDTH = 682;
 var LIST_ITEM_WIDTH = 649;
+var LI_HEIGHT = 70;
 var BATCH_SIZE = 20;
 
 var resultsListElement;
@@ -188,7 +241,10 @@ function initSearch() {
     sheet.insertRule(`ul#search_results_list {
         max-width: 900px;
         width: 900px;
-        }`, 0)
+    }`, 0)
+    // sheet.insertRule(`.item_batch {
+    //     height: ${LI_HEIGHT*BATCH_SIZE}px;
+    // }`)
     console.log(sheet.cssRules);
     queryDisplayElement = document.getElementById("search_query_text");
     console.info("atlas_search.js initialization complete!");
@@ -233,6 +289,7 @@ function buildList(resultsArray) {
         const endIdx = startIdx + batchSize;
         const data_batch = [];
         const batch_container = document.createElement('div');
+        // batch_container.setAttribute('class', 'item_batch');
         batch_container.style.height = LI_HEIGHT*batchSize+'px';
         // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
 
@@ -312,8 +369,42 @@ function clear(node) {
     }
     node.parentNode.removeChild(node);
 }
+function initCategoriesSidebar() {
+    //TODO Group "Selected" items?
+    categories_sidebar_elem = document.getElementById('categories_list');
+    updateModCounts();
+    for (let i=0; i<CATEGORIES.length; i++) {
+        const category = CATEGORIES[i];
+        const cat_elem = document.createElement('li');
+        const cat_count = document.createElement('span');
+        category.htmlElement = cat_elem;
+        cat_elem.cat_id = i;//category.categoryId;
+        cat_elem.selected = false;
+        cat_elem.textContent = category.name+' '
+        cat_elem.appendChild(cat_count);
+        cat_count.textContent = category.modCount;
+        applySelected(cat_elem);
+        cat_elem.addEventListener('click', onClick);
+        categories_sidebar_elem.appendChild(cat_elem);
+    }
+
+
+    function onClick(e) {
+        const cat_elem = e.target;
+        cat_elem.selected = !cat_elem.selected;
+        applySelected(cat_elem);
+        searchTextChanged();
+        
+    }
+    function applySelected(cat_elem) {
+        if (cat_elem.selected) {
+            cat_elem.style.border = '2px solid var(--color-accent-1)';
+        } else {
+            cat_elem.style=null;//.border = '2px solid var(--color-element-1-1)';
+        }
+    }
+}
   
-var LI_HEIGHT = 70;
 /**
  * Create a HTML li for this item.
  * @param {Object} modData 
@@ -349,11 +440,11 @@ function createListElementCondensed(modData, includeCategories=true) {
     }
 
     name.textContent = modData.name;
-    for (const category of modData.categories) {
+    for (const category in modData.categories) {
         // if not "Fabric"
-        if (category.categoryId !== 4780) {
+        if (category !== 4780) {
             const catElem = document.createElement('li');
-            catElem.textContent = category.name;
+            catElem.textContent = categories[category.name];
             categories.appendChild(catElem);    
         }
     }
@@ -389,7 +480,7 @@ function createListElement(modData, includeCategories=true) {
     front_container.setAttribute('class', 'front_container');
     end_container.setAttribute('class', 'end_container');
     name.setAttribute('class', 'name');
-    categories.setAttribute('class', 'categories');
+    categories.setAttribute('class', 'item_categories');
     desc.setAttribute('class', 'desc');
     desc.setAttribute('data-text', modData.summary);
     cfButton.setAttribute('class', 'out_link');
@@ -411,9 +502,9 @@ function createListElement(modData, includeCategories=true) {
     name.textContent = modData.name;
     for (const category of modData.categories) {
         // if not "Fabric"
-        if (category.categoryId !== 4780) {
+        if (category !== 4780) {
             const catElem = document.createElement('li');
-            catElem.textContent = category.name;
+            catElem.textContent = CATEGORIES[category].name;
             categories.appendChild(catElem);    
         }
     }
