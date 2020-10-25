@@ -22,3 +22,5 @@ backend/site_stats.csv
 *.pem
 
 .env
+__pycache__
+
