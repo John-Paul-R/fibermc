@@ -373,15 +373,19 @@ function initCategoriesSidebar() {
     //TODO Group "Selected" items?
     categories_sidebar_elem = document.getElementById('categories_list');
     updateModCounts();
+    // TODO Restructure this, jfc
+    for (let i=0; i<CATEGORIES.length; i++) {
+        const cat_elem = document.createElement('li');
+        CATEGORIES[i].htmlElement = cat_elem;
+        cat_elem.cat_id = i;//category.categoryId;
+    }
     const sorted_CATEGORIES = CATEGORIES.slice().sort(function (a, b) {
         return b.modCount-a.modCount;
       });
     for (let i=0; i<sorted_CATEGORIES.length; i++) {
         const category = sorted_CATEGORIES[i];
-        const cat_elem = document.createElement('li');
+        const cat_elem = category.htmlElement;
         const cat_count = document.createElement('span');
-        category.htmlElement = cat_elem;
-        cat_elem.cat_id = i;//category.categoryId;
         cat_elem.selected = false;
         cat_elem.textContent = category.name+' '
         cat_elem.appendChild(cat_count);
