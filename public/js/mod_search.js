@@ -15,6 +15,7 @@ var mod_data;
  * @type {Array<Object>}
  */
 var CATEGORIES;
+var fabric_category_id;
 var categories_sidebar_elem;
 const descending = (a, b) => (b.downloadCount - a.downloadCount);
 loader.addResource('../data/mod_list-QIR82C.min.json', [
@@ -371,7 +372,17 @@ function clear(node) {
 }
 function initCategoriesSidebar() {
     //TODO Group "Selected" items?
+    //TODO "select multiple" toggle
+    //TODO Option to sort categories by name or by num mods in category
+    //TODO Display "searching in these categories" under searchbar. With option to click them to remove.
+
     categories_sidebar_elem = document.getElementById('categories_list');
+    for (let i=0; i<CATEGORIES.length; i++) {
+        if (CATEGORIES[i].name.toUpperCase() === "FABRIC") {
+            fabric_category_id = i;
+            break;
+        }
+    }
     updateModCounts();
     // TODO Restructure this, jfc
     for (let i=0; i<CATEGORIES.length; i++) {
@@ -509,7 +520,7 @@ function createListElement(modData, includeCategories=true) {
     name.textContent = modData.name;
     for (const category of modData.categories) {
         // if not "Fabric"
-        if (category !== 4780) {
+        if (category !== fabric_category_id) {
             const catElem = document.createElement('li');
             catElem.textContent = CATEGORIES[category].name;
             categories.appendChild(catElem);    
