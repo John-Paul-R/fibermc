@@ -39,7 +39,7 @@ footer {
 }
 #content_center {
     /* grid-column: left-end / right-start; */
-    width: 100%;
+    width: auto;
     height:auto;
 
     display: grid;
