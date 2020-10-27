@@ -95,7 +95,9 @@ server.on('stream', (stream, headers) => {
 
 	//Get file from request path
 	switch (path) {
-		case '/': reqPath = '/html/experimental.html';
+        case '/': reqPath = '/html/search.html';
+		break;
+		case '/experimental': reqPath = '/html/experimental.html';
 		break;
 		case '/modlist': reqPath = '/html/modlist.html';
         break;
