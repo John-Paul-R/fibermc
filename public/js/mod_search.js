@@ -18,7 +18,7 @@ var CATEGORIES;
 var fabric_category_id;
 var categories_sidebar_elem;
 const descending = (a, b) => (b.downloadCount - a.downloadCount);
-loader.addResource('../data/mod_list-QIR82C.min.json', [
+loader.addResource('../data/mod_list.min.json', [
     (jsonData) => { 
         mod_data = jsonData.mods;
         mod_data.sort(descending);
