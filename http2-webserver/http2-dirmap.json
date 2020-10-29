@@ -1,0 +1,330 @@
+{
+  "/": {
+    "alias": "html/search.html"
+  },
+  "experimental": {
+    "alias": "html/experimental.html"
+  },
+  "search": {
+    "alias": "html/search.html"
+  },
+  "css": {
+    "core_style.css": {
+      "headers": {
+        "content-length": 4389,
+        "last-modified": "Fri, 23 Oct 2020 14:04:20 GMT",
+        "content-type": "text/css",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "flex-only.css": {
+      "headers": {
+        "content-length": 7093,
+        "last-modified": "Mon, 31 Aug 2020 14:56:46 GMT",
+        "content-type": "text/css",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "flex_new.css": {
+      "headers": {
+        "content-length": 6606,
+        "last-modified": "Fri, 23 Oct 2020 14:04:20 GMT",
+        "content-type": "text/css",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "search.css": {
+      "headers": {
+        "content-length": 10869,
+        "last-modified": "Tue, 27 Oct 2020 13:09:29 GMT",
+        "content-type": "text/css",
+        "cache-control": "max-age=31536000"
+      }
+    }
+  },
+  "data": {
+    "FabricModList-QIN0J9_nikkyCFGraphQLResponse.json": {
+      "headers": {
+        "content-length": 3184856,
+        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "content-type": "application/json",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "mod_list-QIR82C.min.json": {
+      "headers": {
+        "content-length": 2219427,
+        "last-modified": "Sun, 25 Oct 2020 11:36:51 GMT",
+        "content-type": "application/json",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "mod_list-QIV515.min.json": {
+      "headers": {
+        "content-length": 2226053,
+        "last-modified": "Tue, 27 Oct 2020 13:48:52 GMT",
+        "content-type": "application/json",
+        "cache-control": "max-age=31536000"
+      },
+      ".br": "data/mod_list-QIV515.min.json.br"
+    },
+    "mod_list-QIV515.min.json.br": {
+      "headers": {
+        "content-length": 220293,
+        "last-modified": "Tue, 27 Oct 2020 13:48:56 GMT",
+        "content-type": null,
+        "content-encoding": "br",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "mod_list-QIZHK6.min.json": {
+      "headers": {
+        "content-length": 2240764,
+        "last-modified": "Thu, 29 Oct 2020 22:09:51 GMT",
+        "content-type": "application/json",
+        "cache-control": "max-age=31536000"
+      }
+    }
+  },
+  "debug": {
+    "NikkyGQLsuccess0.json": {
+      "headers": {
+        "content-length": 2877751,
+        "last-modified": "Thu, 03 Sep 2020 18:34:28 GMT",
+        "content-type": "application/json",
+        "cache-control": "max-age=31536000"
+      }
+    }
+  },
+  "html": {
+    "experimental.html": {
+      "headers": {
+        "content-length": 8257,
+        "last-modified": "Fri, 23 Oct 2020 15:44:50 GMT",
+        "content-type": "text/html",
+        "cache-control": "max-age=0"
+      }
+    },
+    "experimentalOLD.html": {
+      "headers": {
+        "content-length": 6987,
+        "last-modified": "Sun, 30 Aug 2020 14:21:47 GMT",
+        "content-type": "text/html",
+        "cache-control": "max-age=0"
+      }
+    },
+    "index-OLD.html": {
+      "headers": {
+        "content-length": 3695,
+        "last-modified": "Sun, 21 Jul 2019 06:57:23 GMT",
+        "content-type": "text/html",
+        "cache-control": "max-age=0"
+      }
+    },
+    "modlist.html": {
+      "headers": {
+        "content-length": 1304,
+        "last-modified": "Fri, 26 Jul 2019 22:17:22 GMT",
+        "content-type": "text/html",
+        "cache-control": "max-age=0"
+      }
+    },
+    "search.html": {
+      "headers": {
+        "content-length": 5368,
+        "last-modified": "Tue, 27 Oct 2020 16:14:45 GMT",
+        "content-type": "text/html",
+        "cache-control": "max-age=0"
+      }
+    }
+  },
+  "img": {
+    "webp": {},
+    "Robocode sleep siphon 2019 testing1.bmp": {
+      "headers": {
+        "content-length": 12573654,
+        "last-modified": "Mon, 05 Aug 2019 02:39:12 GMT",
+        "content-type": "image/bmp",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "TC4_Infusion_Altar.png": {
+      "headers": {
+        "content-length": 352006,
+        "last-modified": "Sat, 20 Jul 2019 00:18:50 GMT",
+        "content-type": "image/png",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "TC4_Infusion_Altar.webp": {
+      "headers": {
+        "content-length": 26808,
+        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "content-type": "image/webp",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "Untitled (Recovered).bmp": {
+      "headers": {
+        "content-length": 12573654,
+        "last-modified": "Mon, 05 Aug 2019 02:38:45 GMT",
+        "content-type": "image/bmp",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "adventure.png": {
+      "headers": {
+        "content-length": 508158,
+        "last-modified": "Fri, 19 Jul 2019 23:28:54 GMT",
+        "content-type": "image/png",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "adventure.webp": {
+      "headers": {
+        "content-length": 25480,
+        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "content-type": "image/webp",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "library.png": {
+      "headers": {
+        "content-length": 334813,
+        "last-modified": "Fri, 19 Jul 2019 19:52:02 GMT",
+        "content-type": "image/png",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "library.webp": {
+      "headers": {
+        "content-length": 30988,
+        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "content-type": "image/webp",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "technology.png": {
+      "headers": {
+        "content-length": 550633,
+        "last-modified": "Sat, 20 Jul 2019 01:44:46 GMT",
+        "content-type": "image/png",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "technology.webp": {
+      "headers": {
+        "content-length": 18884,
+        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "content-type": "image/webp",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "utility.png": {
+      "headers": {
+        "content-length": 303505,
+        "last-modified": "Fri, 19 Jul 2019 19:52:02 GMT",
+        "content-type": "image/png",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "utility.webp": {
+      "headers": {
+        "content-length": 32476,
+        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "content-type": "image/webp",
+        "cache-control": "max-age=31536000"
+      }
+    }
+  },
+  "js": {
+    "anim_hover_1.0.js": {
+      "headers": {
+        "content-length": 776,
+        "last-modified": "Thu, 27 Aug 2020 18:21:18 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "anim_inverse_square_hover.js": {
+      "headers": {
+        "content-length": 983,
+        "last-modified": "Sat, 20 Jul 2019 09:43:47 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "fuzzysort.js": {
+      "headers": {
+        "content-length": 27426,
+        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "gsap.min.js": {
+      "headers": {
+        "content-length": 60533,
+        "last-modified": "Thu, 27 Aug 2020 18:20:31 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "mod_search.js": {
+      "headers": {
+        "content-length": 20299,
+        "last-modified": "Thu, 29 Oct 2020 22:12:57 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "palette_light_dark.js": {
+      "headers": {
+        "content-length": 5528,
+        "last-modified": "Sun, 25 Oct 2020 11:36:51 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "palette_light_dark_old.js": {
+      "headers": {
+        "content-length": 1534,
+        "last-modified": "Sat, 20 Jul 2019 09:43:47 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "resource_loader.js": {
+      "headers": {
+        "content-length": 2552,
+        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "searchbar_focus.js": {
+      "headers": {
+        "content-length": 2302,
+        "last-modified": "Thu, 27 Aug 2020 18:17:42 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "util.js": {
+      "headers": {
+        "content-length": 3305,
+        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    }
+  },
+  "index.html": {
+    "headers": {
+      "content-length": 7953,
+      "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+      "content-type": "text/html",
+      "cache-control": "max-age=0"
+    }
+  }
+}

@@ -25,3 +25,4 @@ backend/site_stats.csv
 __pycache__
 output
 
+*.pyc

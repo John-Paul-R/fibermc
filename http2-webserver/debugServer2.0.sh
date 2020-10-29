@@ -1,0 +1,1 @@
+nodemon --inspect --watch ../public_src --watch ./ ./http2server2.0.js -c debugCert.pem -k debugKey.pem -p 8082 --debug --pubpath ../public_src

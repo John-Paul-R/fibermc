@@ -9,6 +9,7 @@
   "author": "John Paul Rutigliano",
   "license": "ISC",
   "dependencies": {
+    "command-line-args": "^5.1.1",
     "express": "^4.17.1",
     "mime": "^2.4.6",
     "node-dir": "^0.1.17",
