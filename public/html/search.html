@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="keywords" content="fibermc,minecraft,mods,mod list,minecraft mod,fabric mods,fabric,list">
     <meta name="Description" content="A searchable list of (almost) all mods for Minecraft Fabric.">
-    <meta name="viewport" content="width=device-width, height=device-height">
+    <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" type="text/css" href="css/core_style.css">
     <link rel="stylesheet" type="text/css" href="css/search.css">
@@ -26,13 +26,11 @@
             <script src="js/palette_light_dark.js"></script>                    
         </div>
     </header>
-    <!-- <div class="spacer"></div> -->
     <div id="content_main">
         <div id="content_body">
             <div id="content_center" class="filled">
                 <div id="search_container">
-                    <div class="searchbar filled">
-                        <!-- display option show all -->
+                    <label for="search_input" class="searchbar filled">
                         <i class="material-icons"><label for="search_input">search</label></i>
                         <input id="search_input" type="text" class="searchField" placeholder="Search Fabric Mods" autofocus>
                         <!-- <select id="dropdown_1" name="dropdown_1" class="dropdown">
@@ -49,8 +47,7 @@
                             <option value="OLD">Older...</option>
                         </select> -->
                     <!--<button class="primary_action_button element" onclick="modSearch">Search</button>-->
-                    </div>
-                    
+                    </label>
                 </div>
                 <div id="categories">
                     <h2>Categories</h2>
@@ -60,7 +57,6 @@
                 <ul id="search_results_list" class="persist filled hidden">
                     test
                 </ul>   
-                <!-- TODO: SIDEBAR ON RIGHT "Add to download list - download a batch of mods at once?"  -->
             </div>
         </div>
 
@@ -91,35 +87,11 @@
     
     </body>
     </div>
-    <!-- <div class="spacer"></div> -->
-
 
 <div class="scripts">
-    <!-- <script src="js/palette_picker.js"></script> -->
     <script defer src="js/anim_hover_1.0.js"></script>
-    <script defer src="js/searchbar_focus.js">
-        searchbarFocus(val);
-    </script>
-<!--     <script src="js/anim_inverse_square_hover.js" async>
-    </script> -->
-    <script src="js/palette_light_dark.js">
-        swapPalette();
-    </script>
-    <script>
-        function testFunc() {
-            console.log("test");
-        }
-        
-        function opacity(val) {
-            
-        }
-        
-        function takeFocus() {
-            console.log("Attempting to focus search bar");
-            document.getElementsByClassName(".searchField")[0].focus();
-            console.log("Search bar should be focused.");
-        }
-    </script>
+    <script defer src="js/searchbar_focus.js"></script>
+    <script src="js/palette_light_dark.js"></script>
     <script src="js/util.js" type="module"></script>
     <script src="js/fuzzysort.js"></script>
     <script src="js/resource_loader.js" type="module"></script>

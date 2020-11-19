@@ -1,6 +1,6 @@
 :root {
     --spacing-amount: 16px;
-    --shadow:0 0px 8px rgba(0, 0, 0, 0.15);
+    --shadow:0 0px 8px rgba(var(--color-text-rgb), 0.15);
 }
 #page_container{
     /* position:relative; */
@@ -26,7 +26,6 @@ footer {
 }
 
 #content_body {
-    padding: var(--spacing-amount);
     box-sizing: border-box;
     /* display: block; */
     width: 100%;
@@ -37,6 +36,9 @@ footer {
     /* display: grid;
     grid-template-columns: 128px[left-end] minmax(0, 1fr) [right-start]; */
 }
+.filled {
+    background-color: var(--color-background);
+}
 #content_center {
     /* grid-column: left-end / right-start; */
     width: auto;
@@ -44,20 +46,61 @@ footer {
 
     display: grid;
     /* height of #searchbar_container - 8px*2 + 42px*/
-    grid-template-rows: [searchbar-start]58px[searchbar-end] 1fr[list-end];
-    /* grid-template-columns: [categories-start]384px[categories-end] min-content[content-end]; */
-    grid-template-columns: [categories-start]1fr[categories-end] 3fr[content-end];
 
 }
 
-.filled {
-    background-color: var(--color-background);
+@media only screen and (max-width: 1162px) {
+    #content_body {
+        padding: 0px;
+    }    
+    #content_center {
+        grid-template-rows: [searchbar-start]58px[searchbar-end] 256px[categories-end] 1fr[list-end];
+        grid-template-columns: 1fr;
+        justify-items: center;
+        justify-content: center;
+    }
+    #search_container {
+        grid-row: searchbar-start / searchbar-end;  
+    }
+    #categories {
+        grid-row: searchbar-end / categories-end;
+    }
+    #search_results_list {
+        grid-row: categories-end / list-end;
+        max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + 256px));
+    }    
 }
 
+@media only screen and (min-width: 1162px) {
+    #content_body {
+        /* padding: var(--spacing-amount); */
+    }    
+    #content_center {
+        grid-template-rows: [searchbar-start]58px[searchbar-end] 1fr[list-end];
+        /* grid-template-columns: [categories-start]384px[categories-end] min-content[content-end]; */
+        grid-template-columns: [categories-start]1fr[categories-end] 3fr[content-end];
+    }
+    #search_container {
+        grid-row: searchbar-start / searchbar-end;
+        grid-column: categories-end / content-end;    
+    }
+    #categories {
+        grid-row: searchbar-end / list-end;
+        grid-column: categories-start / categories-end;
+        margin-top: 32px;
+        width: 256px;
+        height: min-content;
+        min-height:0;
+        max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));    
+    }
+    #search_results_list {
+        grid-row: searchbar-end / list-end;
+        grid-column: categories-end / content-end;
+        max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px)));
+    }    
+}
 
 #search_container {
-    grid-row: searchbar-start / searchbar-end;
-    grid-column: categories-end / content-end;
     width:auto;
     height:auto;
     display:flex;
@@ -74,16 +117,13 @@ footer {
     position: relative;
     z-index: 2;
 }
-/*#search_results_list,*/ .searchbar {
+.searchbar {
     width: 600px;
 }
 #search_results_list {
-    grid-row: searchbar-end / list-end;
-    grid-column: categories-end / content-end;
-
     /* position: absolute; */
     /*top: calc(56px + var(--spacing-amount) + (8px + 42px + 8px) );/*header + content_main.padding + searchbar*/
-    max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px)));
+    
     /* max-width: 682px;
     width: 682px; */
     position: relative;
@@ -104,20 +144,14 @@ footer {
     flex-shrink: 0; */
 }
 #categories {
-    grid-row: searchbar-end / list-end;
-    grid-column: categories-start / categories-end;
-
     background-color: var(--color-element-1);
     border-radius: 8px;
-    margin-top: 32px;
-    height: min-content;
-    width: 256px;
+    
     padding: 8px;
-    min-height:0;
-    max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));
+    margin-left: auto;
     overflow-y: auto;
     overflow-x: hidden;
-    margin-left: auto;
+
 }
 #categories_list {
     list-style-type: none;
@@ -347,7 +381,6 @@ li.item:hover .material-icons {
 
 #content_body #content_center .searchbar {
     background-color: var(--color-base);
-    box-shadow: var(--shadow);
     margin:8px;
     height:42px;
     display:flex;

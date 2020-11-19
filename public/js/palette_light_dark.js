@@ -95,7 +95,15 @@
         displayPalette(paletteIndex);
         window.localStorage.setItem(STORAGE_KEY, paletteIndex);
     }
-
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        f= result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+        return f.r+","+f.g+","+f.b;
+    }
     function displayPalette(paletteID) {
         const style = document.documentElement.style;
         let p = colorPalettes[paletteID];
@@ -110,6 +118,7 @@
         style.setProperty('--color-accent-2-1',     p.accent2_1);
         style.setProperty('--color-inverse',        p.inverse);
         style.setProperty('--color-text',           p.text);
+        style.setProperty('--color-text-rgb',       hexToRgb(p.text));
         style.setProperty('--color-text-inverse',   p.textInverse);
         // for (let i=0; i<buttonElements.length; i++) {
         //     buttonElements[i].textContent = p.paletteName;

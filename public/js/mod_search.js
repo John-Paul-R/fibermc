@@ -241,7 +241,7 @@ function initSearch() {
     var sheet = createStyleSheet('mod-list-constructed');
     sheet.insertRule(`ul#search_results_list {
         max-width: 900px;
-        /*width: 900px;*/
+        width: 900px;
     }`, 0)
     // sheet.insertRule(`.item_batch {
     //     height: ${LI_HEIGHT*BATCH_SIZE}px;
@@ -482,14 +482,20 @@ function createListElementCondensed(modData, includeCategories=true) {
 }
 function createListElement(modData, includeCategories=true) {
     const li = document.createElement('li');
+    
     const container = document.createElement('div');
     const front_container = document.createElement('div');
     const end_container = document.createElement('div');
+
+    const title_container = document.createElement('div');
     const name = document.createElement('a');
+    const author = document.createElement('a');
+
     const categories = document.createElement('ul');
     const desc = document.createElement('p');
     const cfButton = document.createElement('a');
     const cfButtonIcon = document.createElement('i');
+    
     let startContainer;
     let dlCount;
 
@@ -498,13 +504,14 @@ function createListElement(modData, includeCategories=true) {
     front_container.setAttribute('class', 'front_container');
     end_container.setAttribute('class', 'end_container');
     name.setAttribute('class', 'name');
+    author.setAttribute('class', 'author');
     categories.setAttribute('class', 'item_categories');
     desc.setAttribute('class', 'desc');
     desc.setAttribute('data-text', modData.summary);
     cfButton.setAttribute('class', 'out_link');
 
 
-
+    // Add DL Count Element
     if (results_persist){
         startContainer = document.createElement('div');
         dlCount = document.createElement('p');
@@ -517,7 +524,9 @@ function createListElement(modData, includeCategories=true) {
         li.appendChild(startContainer)
     }
 
+    // Fill content of elements
     name.textContent = modData.name;
+    author.textContent = modData.authors[0].name;
     for (const category of modData.categories) {
         // if not "Fabric"
         if (category !== fabric_category_id) {
@@ -529,14 +538,21 @@ function createListElement(modData, includeCategories=true) {
     desc.textContent = modData.summary;
     cfButtonIcon.textContent = 'launch'
     cfButtonIcon.setAttribute('class', 'material-icons');
-    cfButton.setAttribute('href', 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug);
+    let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
+    cfButton.setAttribute('href', cflink);
     cfButton.setAttribute('target', '_blank');
     
     cfButton.appendChild(cfButtonIcon);
-    name.setAttribute('href', 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug);
+    name.setAttribute('href', cflink);
     name.setAttribute('target', '_blank');
+    author.setAttribute('href', modData.authors[0].url);
+    author.setAttribute('target', '_blank');
 
-    front_container.appendChild(name);
+    // Add elements as children where they belong and return root elem
+    title_container.appendChild(name);
+    title_container.insertAdjacentText("beforeend", " by ");
+    title_container.appendChild(author);
+    front_container.appendChild(title_container);
     front_container.appendChild(desc);
     container.appendChild(front_container);
     end_container.appendChild(categories);
@@ -545,6 +561,7 @@ function createListElement(modData, includeCategories=true) {
     li.appendChild(container);
     return li;
 }
+
 /**
  * Tells how many pixels are left to be scrolled before 
  * the element has been scrolled to it bottom.
