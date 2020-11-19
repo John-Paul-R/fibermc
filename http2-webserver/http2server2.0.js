@@ -396,7 +396,7 @@ function updateDirMap(existingDirMap=undefined) {
               if (contentEncoding) {
                 headers[HTTP2_HEADER_CONTENT_ENCODING] = contentEncoding;
               }
-              if (contentType != 'text/html') {
+              if (false && contentType != 'text/html') {
                 headers[HTTP2_HEADER_CACHE_CONTROL] = `max-age=${86400*365}`;
               } else {
                 headers[HTTP2_HEADER_CACHE_CONTROL] = `max-age=${0}`;
