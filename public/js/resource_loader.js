@@ -4,6 +4,7 @@ export {
 };
 
 import {
+    executeIfWhenDOMContentLoaded,
     FunctionBatch
 } from './util.js';
 
@@ -22,13 +23,20 @@ class ResourceEntry {
 class AsyncDataResourceLoader {
     /**
      * 
-     * @param {Array<ResourceEnrty>} arrResources 
+     * @param {Object} options
+     * @param {Array<ResourceEnrty>} options.arrResources 
+     * @param {boolean} options.completionWaitForDCL 
      */
-    constructor(arrResources) {
+    constructor(options={
+        arrResources: [],
+        completionWaitForDCL: false 
+    }) {
         /**
          * @type {Array<ResourceEntry>}
          */
-        this.resources = arrResources || [];
+        this.resources = options.arrResources || [];
+        this.completionWaitForDCL = options.completionWaitForDCL;
+
         this.data = {};
         for (const address of this.resources) {
             this.data[address] = null;
@@ -85,7 +93,12 @@ class AsyncDataResourceLoader {
             for (const value of values) {
                 console.debug(value);
             }
-            this.completionFuncs.runAll();
+            if (this.completionWaitForDCL) {
+                executeIfWhenDOMContentLoaded(()=>this.completionFuncs.runAll());
+            } else {
+                this.completionFuncs.runAll();
+            }
+            
         });
     }
 }

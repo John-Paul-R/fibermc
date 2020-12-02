@@ -37,7 +37,7 @@ loader.addCompletionFunc(()=>executeIfWhenDOMContentLoaded(
 ));
 loader.fetchResources();
 
-var searchElements;
+var searchHTMLElements;
 var results_persist = false;
 
 var search_objects;
@@ -61,11 +61,9 @@ function updateModCounts() {
         }
     }
 }
-function getFilteredList(selected_cat_ids) {
-    if (!selected_cat_ids) {
-        selected_cat_ids = getSelectedCategoryIds();
-    }
-    
+function getFilteredList() {
+    const selected_cat_ids = getSelectedCategoryIds();
+
     let search_objs = mod_data;
     if (selected_cat_ids.length === 0) {
         
@@ -174,12 +172,12 @@ var resultsListElement;
 var queryDisplayElement;
 function initSearch() {
     // searchElements = document.getElementsByClassName("searchField");
-    searchElements = [];//Array.from(searchElements);
-    searchElements.push(document.getElementById("search_input"));
+    searchHTMLElements = [];//Array.from(searchElements);
+    searchHTMLElements.push(document.getElementById("search_input"));
     
-    for (let i=0; i<searchElements.length; i++) {
-        searchElements[i].addEventListener('input', (e)=>setTimeout(searchTextChanged, 0, e));
-        searchElements[i].addEventListener('keydown', (e) => {
+    for (let i=0; i<searchHTMLElements.length; i++) {
+        searchHTMLElements[i].addEventListener('input', (e)=>setTimeout(searchTextChanged, 0, e));
+        searchHTMLElements[i].addEventListener('keydown', (e) => {
             
             if (e.key === "Enter") {
                 // clearSearchDisplayMods(nodePixiObjects);
@@ -199,8 +197,8 @@ function initSearch() {
         let added = 0;
         let addedLessThanDiff = true;
         
-            if (numPxBelowBot < 64) {
-                while (addedLessThanDiff){
+        if (numPxBelowBot < 64) {
+            while (addedLessThanDiff){
                 // nextBatchFunc(()=>{
                 //     let first = batch_containers[first_contentful_container_idx];
                 //     // if (pxToTop(first) < 64)
@@ -217,8 +215,8 @@ function initSearch() {
                 }
                 added -= LI_HEIGHT*BATCH_SIZE;
             }
-            } else if (numPxAboveTop < 64) {
-                while (addedLessThanDiff){
+        } else if (numPxAboveTop < 64) {
+            while (addedLessThanDiff){
                 if (first_contentful_container_idx > 0){
                     createBatch(first_contentful_container_idx-1);
                     clearInner(batch_containers[last_contentful_container_idx]);
@@ -423,63 +421,6 @@ function initCategoriesSidebar() {
     }
 }
   
-/**
- * Create a HTML li for this item.
- * @param {Object} modData 
- */
-function createListElementCondensed(modData, includeCategories=true) {
-    const li = document.createElement('li');
-    const container = document.createElement('div');
-    const name = document.createElement('a');
-    const categories = document.createElement('ul');
-    const desc = document.createElement('p');
-    const cfButton = document.createElement('a');
-    const cfButtonIcon = document.createElement('i');
-    let startContainer;
-    let dlCount;
-
-    li.setAttribute('class', 'item');
-    container.setAttribute('class', 'container');
-    name.setAttribute('class', 'name');
-    categories.setAttribute('class', 'categories');
-    desc.setAttribute('class', 'desc');
-    desc.setAttribute('data-text', modData.summary);
-
-    if (results_persist){
-        startContainer = document.createElement('div');
-        dlCount = document.createElement('p');
-
-        dlCount.setAttribute('class', 'dl_count');
-        startContainer.setAttribute('class', 'start_container');
-
-        dlCount.textContent = modData.downloadCount.toLocaleString();
-        startContainer.appendChild(dlCount);
-        li.appendChild(startContainer)
-    }
-
-    name.textContent = modData.name;
-    for (const category in modData.categories) {
-        // if not "Fabric"
-        if (category !== 4780) {
-            const catElem = document.createElement('li');
-            catElem.textContent = categories[category.name];
-            categories.appendChild(catElem);    
-        }
-    }
-    desc.textContent = modData.summary;
-    cfButtonIcon.textContent = 'launch'
-    cfButtonIcon.setAttribute('class', 'material-icons');
-    cfButton.setAttribute('href', 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug);
-    cfButton.setAttribute('target', '_blank');
-    cfButton.appendChild(cfButtonIcon);
-
-    container.appendChild(name);
-    container.appendChild(categories);
-    container.appendChild(desc);
-    container.appendChild(cfButton);
-    li.appendChild(container);
-    return li;
-}
 function createListElement(modData, includeCategories=true) {
     const li = document.createElement('li');
     
@@ -562,15 +503,6 @@ function createListElement(modData, includeCategories=true) {
     return li;
 }
 
-/**
- * Tells how many pixels are left to be scrolled before 
- * the element has been scrolled to it bottom.
- * @param {HTMLElement} el 
- */
-function pxToBottom(el) {
-    var rect = el.getBoundingClientRect();
-    return (el.scrollHeight-el.clientHeight) - el.scrollTop;
-}
 /** 
  * @param {HTMLElement} el 
  */
@@ -587,17 +519,4 @@ function pxAboveTop(el) {
     let parent = el.parentElement;
     let out = (parent.scrollTop) - el.offsetTop;
     return out;
-}
-
-
-function isScrolledIntoView(el) {
-    var rect = el.getBoundingClientRect();
-    var elemTop = rect.top;
-    var elemBottom = rect.bottom;
-
-    // Only completely visible elements return true:
-    var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
-    // Partially visible elements return true:
-    //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
-    return isVisible;
 }
