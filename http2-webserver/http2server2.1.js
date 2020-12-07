@@ -115,11 +115,22 @@ server.on('stream', (stream, headers) => {
 
     // Handle 404
     if (!requestedFile) {
+      try {
+        let fpath = resolveReqPath(path);
+        let fd = fs.openSync(fpath);
+        stream.respondWithFD(fd);
+        stream.on('close', () => fs.closeSync(fd));
+
+      } catch (error) {
+        console.warn(error);
         stream.respond({
             'content-type': 'text/html; charset=utf-8',
             ':status': 404
         });
         stream.end('<h1>HTTP Error 404 - Requested file not found.</h1>');
+
+      }
+        
         return;
     }
 
@@ -303,7 +314,7 @@ function updateDirMap(existingDirMap=undefined) {
         const files = objPaths.files;
         if (dirs) {
           for (let i=0; i<dirs.length; i++) {
-            if (filterIgnoreGit(dirs[i])) {
+            if (filterIgnore(dirs[i])) {
               let fdirs = Path.relative(exec_path, Path.dirname(dirs[i])).split(Path.sep)
               const name = Path.basename(dirs[i]);
               let dir = dirmapResolvePath(dirmap, fdirs);
@@ -314,7 +325,7 @@ function updateDirMap(existingDirMap=undefined) {
         if (files) {
           let brFiles = [];
           for (let i=0; i<files.length; i++) {
-            if (filterIgnoreGit(files[i])) {
+            if (filterIgnore(files[i])) {
               const relDirPath = Path.relative(exec_path, Path.dirname(files[i]));
               const relPath = Path.relative(exec_path, files[i]);
               let fdirs = relDirPath.split(Path.sep)
@@ -367,8 +378,8 @@ function updateDirMap(existingDirMap=undefined) {
 
 }
 
-function filterIgnoreGit (path) {
-  if (path.includes("git"))
+function filterIgnore (path) {
+  if (path.includes("git") || path.includes(".well-known"))
       return false;
   return true;
 }

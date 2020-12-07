@@ -11,11 +11,14 @@
   "table": {
     "alias": "html/search_table.html"
   },
+  "gist": {
+    "alias": "html/modlist.html"
+  },
   "css": {
     "core_style.css": {
       "headers": {
         "content-length": 4437,
-        "last-modified": "Wed, 02 Dec 2020 19:48:35 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=0"
       }
@@ -23,7 +26,7 @@
     "flex-only.css": {
       "headers": {
         "content-length": 7093,
-        "last-modified": "Mon, 31 Aug 2020 14:56:46 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=0"
       }
@@ -31,15 +34,15 @@
     "flex_new.css": {
       "headers": {
         "content-length": 6606,
-        "last-modified": "Thu, 19 Nov 2020 05:22:31 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=0"
       }
     },
     "search.css": {
       "headers": {
-        "content-length": 11141,
-        "last-modified": "Wed, 02 Dec 2020 20:54:27 GMT",
+        "content-length": 11542,
+        "last-modified": "Mon, 07 Dec 2020 20:37:59 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=0"
       }
@@ -47,7 +50,7 @@
     "mod_table.css": {
       "headers": {
         "content-length": 3956,
-        "last-modified": "Wed, 02 Dec 2020 22:01:08 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=0"
       }
@@ -55,7 +58,7 @@
     "mod_categories.scss": {
       "headers": {
         "content-length": 73,
-        "last-modified": "Wed, 02 Dec 2020 21:00:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=0"
       }
@@ -63,23 +66,23 @@
     "mod_table.scss": {
       "headers": {
         "content-length": 4357,
-        "last-modified": "Wed, 02 Dec 2020 22:40:51 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=0"
       }
     },
     "search.css.map": {
       "headers": {
-        "content-length": 2392,
-        "last-modified": "Wed, 02 Dec 2020 20:54:27 GMT",
+        "content-length": 2473,
+        "last-modified": "Mon, 07 Dec 2020 20:37:59 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       }
     },
     "search.scss": {
       "headers": {
-        "content-length": 11750,
-        "last-modified": "Wed, 02 Dec 2020 21:00:44 GMT",
+        "content-length": 12150,
+        "last-modified": "Mon, 07 Dec 2020 20:37:57 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=0"
       }
@@ -87,7 +90,7 @@
     "mod_table.css.map": {
       "headers": {
         "content-length": 1022,
-        "last-modified": "Wed, 02 Dec 2020 22:01:08 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       }
@@ -97,7 +100,7 @@
     "FabricModList-QIN0J9_nikkyCFGraphQLResponse.json": {
       "headers": {
         "content-length": 3184856,
-        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       }
@@ -105,7 +108,7 @@
     "mod_list-QIR82C.min.json": {
       "headers": {
         "content-length": 2219427,
-        "last-modified": "Sun, 25 Oct 2020 11:36:51 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       }
@@ -138,16 +141,16 @@
     },
     "mod_list-text_response.json": {
       "headers": {
-        "content-length": 3911744,
-        "last-modified": "Wed, 02 Dec 2020 20:24:01 GMT",
+        "content-length": 3961000,
+        "last-modified": "Mon, 07 Dec 2020 17:20:52 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       }
     },
     "mod_list.min.json": {
       "headers": {
-        "content-length": 2401664,
-        "last-modified": "Wed, 02 Dec 2020 20:24:01 GMT",
+        "content-length": 2432015,
+        "last-modified": "Mon, 07 Dec 2020 17:20:52 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       },
@@ -155,8 +158,8 @@
     },
     "mod_list.min.json.br": {
       "headers": {
-        "content-length": 231467,
-        "last-modified": "Wed, 02 Dec 2020 20:24:06 GMT",
+        "content-length": 234499,
+        "last-modified": "Mon, 07 Dec 2020 17:20:57 GMT",
         "content-type": null,
         "content-encoding": "br",
         "cache-control": "max-age=0"
@@ -167,7 +170,7 @@
     "NikkyGQLsuccess0.json": {
       "headers": {
         "content-length": 2877751,
-        "last-modified": "Thu, 03 Sep 2020 18:34:28 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=0"
       }
@@ -177,7 +180,7 @@
     "experimental.html": {
       "headers": {
         "content-length": 8257,
-        "last-modified": "Fri, 23 Oct 2020 15:44:50 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
@@ -185,7 +188,7 @@
     "experimentalOLD.html": {
       "headers": {
         "content-length": 6987,
-        "last-modified": "Sun, 30 Aug 2020 14:21:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
@@ -193,23 +196,23 @@
     "index-OLD.html": {
       "headers": {
         "content-length": 3695,
-        "last-modified": "Sun, 21 Jul 2019 06:57:23 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
     },
     "modlist.html": {
       "headers": {
-        "content-length": 1304,
-        "last-modified": "Fri, 26 Jul 2019 22:17:22 GMT",
+        "content-length": 1009,
+        "last-modified": "Mon, 07 Dec 2020 20:24:47 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
     },
     "search.html": {
       "headers": {
-        "content-length": 4587,
-        "last-modified": "Wed, 02 Dec 2020 19:47:49 GMT",
+        "content-length": 4673,
+        "last-modified": "Mon, 07 Dec 2020 20:28:08 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
@@ -225,7 +228,7 @@
     "search_table.html": {
       "headers": {
         "content-length": 4159,
-        "last-modified": "Wed, 02 Dec 2020 23:01:53 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
@@ -236,7 +239,7 @@
     "Robocode sleep siphon 2019 testing1.bmp": {
       "headers": {
         "content-length": 12573654,
-        "last-modified": "Mon, 05 Aug 2019 02:39:12 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/bmp",
         "cache-control": "max-age=0"
       }
@@ -244,7 +247,7 @@
     "TC4_Infusion_Altar.png": {
       "headers": {
         "content-length": 352006,
-        "last-modified": "Sat, 20 Jul 2019 00:18:50 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/png",
         "cache-control": "max-age=0"
       }
@@ -252,7 +255,7 @@
     "TC4_Infusion_Altar.webp": {
       "headers": {
         "content-length": 26808,
-        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/webp",
         "cache-control": "max-age=0"
       }
@@ -260,7 +263,7 @@
     "Untitled (Recovered).bmp": {
       "headers": {
         "content-length": 12573654,
-        "last-modified": "Mon, 05 Aug 2019 02:38:45 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/bmp",
         "cache-control": "max-age=0"
       }
@@ -268,7 +271,7 @@
     "adventure.png": {
       "headers": {
         "content-length": 508158,
-        "last-modified": "Fri, 19 Jul 2019 23:28:54 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/png",
         "cache-control": "max-age=0"
       }
@@ -276,7 +279,7 @@
     "adventure.webp": {
       "headers": {
         "content-length": 25480,
-        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/webp",
         "cache-control": "max-age=0"
       }
@@ -284,7 +287,7 @@
     "library.png": {
       "headers": {
         "content-length": 334813,
-        "last-modified": "Fri, 19 Jul 2019 19:52:02 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/png",
         "cache-control": "max-age=0"
       }
@@ -292,7 +295,7 @@
     "library.webp": {
       "headers": {
         "content-length": 30988,
-        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/webp",
         "cache-control": "max-age=0"
       }
@@ -300,7 +303,7 @@
     "technology.png": {
       "headers": {
         "content-length": 550633,
-        "last-modified": "Sat, 20 Jul 2019 01:44:46 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/png",
         "cache-control": "max-age=0"
       }
@@ -308,7 +311,7 @@
     "technology.webp": {
       "headers": {
         "content-length": 18884,
-        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/webp",
         "cache-control": "max-age=0"
       }
@@ -316,7 +319,7 @@
     "utility.png": {
       "headers": {
         "content-length": 303505,
-        "last-modified": "Fri, 19 Jul 2019 19:52:02 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/png",
         "cache-control": "max-age=0"
       }
@@ -324,7 +327,7 @@
     "utility.webp": {
       "headers": {
         "content-length": 32476,
-        "last-modified": "Sun, 30 Aug 2020 11:18:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "image/webp",
         "cache-control": "max-age=0"
       }
@@ -334,7 +337,7 @@
     "anim_hover_1.0.js": {
       "headers": {
         "content-length": 776,
-        "last-modified": "Thu, 27 Aug 2020 18:21:18 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -342,7 +345,7 @@
     "anim_inverse_square_hover.js": {
       "headers": {
         "content-length": 983,
-        "last-modified": "Sat, 20 Jul 2019 09:43:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -350,7 +353,7 @@
     "fuzzysort.js": {
       "headers": {
         "content-length": 27426,
-        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -358,7 +361,7 @@
     "gsap.min.js": {
       "headers": {
         "content-length": 60533,
-        "last-modified": "Thu, 27 Aug 2020 18:20:31 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -366,7 +369,7 @@
     "mod_search.js": {
       "headers": {
         "content-length": 18073,
-        "last-modified": "Tue, 01 Dec 2020 12:35:12 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -374,7 +377,7 @@
     "palette_light_dark.js": {
       "headers": {
         "content-length": 6937,
-        "last-modified": "Wed, 02 Dec 2020 23:00:28 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -382,7 +385,7 @@
     "palette_light_dark_old.js": {
       "headers": {
         "content-length": 1534,
-        "last-modified": "Sat, 20 Jul 2019 09:43:47 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -390,7 +393,7 @@
     "resource_loader.js": {
       "headers": {
         "content-length": 3000,
-        "last-modified": "Wed, 02 Dec 2020 18:45:07 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -398,7 +401,7 @@
     "searchbar_focus.js": {
       "headers": {
         "content-length": 2302,
-        "last-modified": "Thu, 27 Aug 2020 18:17:42 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -406,7 +409,7 @@
     "util.js": {
       "headers": {
         "content-length": 3305,
-        "last-modified": "Fri, 23 Oct 2020 14:04:21 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -414,15 +417,15 @@
     "build_mod_li.js": {
       "headers": {
         "content-length": 3130,
-        "last-modified": "Thu, 19 Nov 2020 07:56:11 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
     },
     "build_mod_tr.js": {
       "headers": {
-        "content-length": 0,
-        "last-modified": "Thu, 19 Nov 2020 06:50:17 GMT",
+        "content-length": 1364,
+        "last-modified": "Fri, 04 Dec 2020 18:35:45 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -430,7 +433,7 @@
     "build_categories_sidebar.js": {
       "headers": {
         "content-length": 0,
-        "last-modified": "Thu, 19 Nov 2020 06:50:33 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -446,7 +449,7 @@
     "mod_search_list.js": {
       "headers": {
         "content-length": 0,
-        "last-modified": "Thu, 19 Nov 2020 07:56:38 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -454,7 +457,7 @@
     "build_mod_li_condensed.js": {
       "headers": {
         "content-length": 2120,
-        "last-modified": "Thu, 19 Nov 2020 07:51:39 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -462,7 +465,7 @@
     "item_batcher.js": {
       "headers": {
         "content-length": 0,
-        "last-modified": "Thu, 19 Nov 2020 07:43:45 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -470,7 +473,7 @@
     "mod_search_table.js": {
       "headers": {
         "content-length": 7067,
-        "last-modified": "Wed, 02 Dec 2020 23:06:48 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -478,7 +481,7 @@
     "mod_search_logic.js": {
       "headers": {
         "content-length": 17115,
-        "last-modified": "Wed, 02 Dec 2020 21:45:22 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -486,7 +489,7 @@
     "palette_light_dark_old2.js": {
       "headers": {
         "content-length": 5898,
-        "last-modified": "Thu, 19 Nov 2020 05:30:16 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=0"
       }
@@ -502,8 +505,16 @@
     "searchbar_focusv2.js": {
       "headers": {
         "content-length": 2336,
-        "last-modified": "Wed, 02 Dec 2020 19:56:17 GMT",
+        "last-modified": "Thu, 03 Dec 2020 19:53:56 GMT",
         "content-type": "application/javascript",
+        "cache-control": "max-age=0"
+      }
+    },
+    "test.html": {
+      "headers": {
+        "content-length": 1173,
+        "last-modified": "Fri, 04 Dec 2020 19:14:48 GMT",
+        "content-type": "text/html",
         "cache-control": "max-age=0"
       }
     }
@@ -588,6 +599,38 @@
           }
         }
       }
+    }
+  },
+  "test.html": {
+    "headers": {
+      "content-length": 20,
+      "last-modified": "Fri, 04 Dec 2020 20:59:42 GMT",
+      "content-type": "text/html",
+      "cache-control": "max-age=0"
+    }
+  },
+  "test2.html": {
+    "headers": {
+      "content-length": 20,
+      "last-modified": "Fri, 04 Dec 2020 21:00:51 GMT",
+      "content-type": "text/html",
+      "cache-control": "max-age=0"
+    }
+  },
+  "test3.html": {
+    "headers": {
+      "content-length": 20,
+      "last-modified": "Fri, 04 Dec 2020 21:11:53 GMT",
+      "content-type": "text/html",
+      "cache-control": "max-age=0"
+    }
+  },
+  "test4.html": {
+    "headers": {
+      "content-length": 20,
+      "last-modified": "Fri, 04 Dec 2020 21:12:06 GMT",
+      "content-type": "text/html",
+      "cache-control": "max-age=0"
     }
   }
 }
