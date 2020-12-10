@@ -130,6 +130,12 @@ header .flex.row > * {
 header #navbar_front {
     align-items: baseline;
 }
+header #navbar_front > a {
+    text-decoration: none;
+}
+header #navbar_front > a:hover {
+    text-decoration: underline;
+}
 header > #navbar > .end,
 #navbar .end
 /* #navbar .end >*:last-child  */

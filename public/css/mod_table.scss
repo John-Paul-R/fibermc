@@ -1,5 +1,6 @@
 
 @import 'mod_categories';
+@import 'searchbar';
 
 /* Page structure */
 #page_container{
@@ -135,20 +136,6 @@
   }
   
   /* Searchbar */
-  #search_container {
-    width:auto;
-    height:auto;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:center;
-  
-  }
-  
-  #search_container {
-    position: relative;
-    z-index: 2;
-  }
   
   #content_body {
       --searchbar-total-height: 58px;
