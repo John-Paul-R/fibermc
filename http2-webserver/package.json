@@ -1,19 +1,27 @@
 {
-  "name": "http2-express",
-  "version": "1.0.0",
-  "description": "tThe http/2 server for the PoE Atlas website by John Paul Rutigliano.",
-  "main": "http2server.js",
+  "name": "fibermc-webserver",
+  "version": "1.2.0",
+  "description": "The http/2 server for the FiberMC website by John Paul Rutigliano.",
+  "homepage": "https://github.com/John-Paul-R/FabricMC-Mod-List-Website",
+  "repository": "github:John-Paul-R/FabricMC-Mod-List-Website",
+  "bugs": {
+    "url": "https://github.com/John-Paul-R/FabricMC-Mod-List-Website/issues"
+  },
+  "main": "http2server2.1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "John Paul Rutigliano",
+  "author": {
+    "name": "John Paul Rutigliano",
+    "email": "jp@jpcode.dev",
+    "url": "https://jpcode.dev"
+  },
   "license": "ISC",
   "dependencies": {
     "command-line-args": "^5.1.1",
-    "express": "^4.17.1",
+    "log4js": "^6.3.0",
     "mime": "^2.5.2",
     "node-dir": "^0.1.17",
-    "node-ipc": "^9.1.4",
     "nodemon": "^2.0.7",
     "spdy": "^4.0.2"
   }
