@@ -19,7 +19,7 @@
     overflow-y:scroll;
 
     display: grid;
-    grid-template-rows: [main-start]100% [footer-start]256px[main-end];
+    grid-template-rows: [main-start]100% [footer-start]min-content[main-end];
 
 }
 #content_body {
@@ -515,7 +515,7 @@ footer {
     display:flex;
     flex-direction:row;
     justify-content:space-evenly;
-    
+    border-top: 1px solid var(--color-base-1);
 }
 footer h4 {
     font-size:1.45vMin;
