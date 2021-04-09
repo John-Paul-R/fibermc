@@ -4,11 +4,10 @@
     height:auto;
     display:flex;
     flex-direction:row;
-    justify-content:center;
+    justify-content: flex-start;
     align-items:center;
 }
 #search_container > a {
-    justify-self: right;
     text-decoration: none;
     border-radius: 4px;
     border: 1px solid var(--color-base-1);
@@ -19,6 +18,12 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+}
+#search_container {
+    margin-left: 89px;
+}
+#search_container > :last-child {
+    margin-left: auto;
 }
 #search_container > a:hover {
     background-color: var(--color-base-1);
