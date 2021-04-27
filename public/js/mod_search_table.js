@@ -147,7 +147,8 @@ function buildTableBatched(modsData) {
 var createBatch = (batchIdx, data_batches) => {
     for (const result_data of data_batches[batchIdx]) {
         // setHidden(result_data.elem, false);
-        resultsListElement.appendChild(result_data.elem);
+        if (result_data.elem)
+            resultsListElement.appendChild(result_data.elem);
     }
     lastLoadedBatchIdx = batchIdx;
     if (batchIdx == data_batches.length-1) {
@@ -203,7 +204,13 @@ loader.addCompletionFunc(()=>{
     loadbar_text = document.getElementById("loadbar_text");
     loadbar_content = document.getElementById("loadbar_content");
     for (const mod of mod_data) {
-        mod.elem = createListElement(mod);
+        try {
+            mod.elem = createListElement(mod);
+        } catch (err) {
+            console.warn(`Could not load elem for mod`)
+            console.warn(mod);
+            console.error(err);
+        }
     }
 });
 loader.addCompletionFunc(()=>setResultsListElement(document.getElementById("search_results_content")))
