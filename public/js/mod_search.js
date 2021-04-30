@@ -165,7 +165,7 @@ function search(queryText, selectBest=false) {
 
 var LIST_WIDTH = 682;
 var LIST_ITEM_WIDTH = 649;
-var LI_HEIGHT = 70;
+var LI_HEIGHT = 70+16;
 var BATCH_SIZE = 20;
 
 var resultsListElement;
@@ -237,13 +237,14 @@ function initSearch() {
 
     // Add Stylesheet 
     var sheet = createStyleSheet('mod-list-constructed');
-    sheet.insertRule(`ul#search_results_list {
+    sheet.insertRule(`#search_results_list {
         max-width: 900px;
         width: 900px;
-    }`, 0)
-    // sheet.insertRule(`.item_batch {
-    //     height: ${LI_HEIGHT*BATCH_SIZE}px;
-    // }`)
+    }`, 0);
+    sheet.insertRule(`.item_batch {
+        height: ${LI_HEIGHT*BATCH_SIZE}px;
+        min-height: ${LI_HEIGHT*BATCH_SIZE}px;
+    }`);
     console.log(sheet.cssRules);
     queryDisplayElement = document.getElementById("search_query_text");
     console.info("atlas_search.js initialization complete!");
@@ -288,8 +289,8 @@ function buildList(resultsArray) {
         const endIdx = startIdx + batchSize;
         const data_batch = [];
         const batch_container = document.createElement('div');
-        // batch_container.setAttribute('class', 'item_batch');
-        batch_container.style.height = LI_HEIGHT*batchSize+'px';
+        batch_container.classList.add('item_batch');
+        // batch_container.style.height = LI_HEIGHT*batchSize+'px';
         // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
 
         for (let i = startIdx; i < endIdx; i++) {
@@ -349,7 +350,15 @@ function buildList(resultsArray) {
 var listCreationFunc = createListElement;
 function createBatch(batchIdx) {
     for (const result_data of data_batches[batchIdx]) {
-        batch_containers[batchIdx].appendChild(listCreationFunc(result_data));
+        try {
+            batch_containers[batchIdx].appendChild(listCreationFunc(result_data));
+
+        } catch (err) {
+            batch_containers[batchIdx].appendChild(document.createElement('li')).setAttribute('class', 'item');
+            
+            console.warn(err)
+            console.warn(result_data)
+        }
     }
 }
 /**
@@ -448,46 +457,58 @@ function createListElement(modData, includeCategories=true) {
     author.setAttribute('class', 'author');
     categories.setAttribute('class', 'item_categories');
     desc.setAttribute('class', 'desc');
-    desc.setAttribute('data-text', modData.summary);
     cfButton.setAttribute('class', 'out_link');
+    try {
+        desc.setAttribute('data-text', modData.summary);
 
 
-    // Add DL Count Element
-    if (results_persist){
-        startContainer = document.createElement('div');
-        dlCount = document.createElement('p');
-
-        dlCount.setAttribute('class', 'dl_count');
-        startContainer.setAttribute('class', 'start_container');
-
-        dlCount.textContent = modData.downloadCount.toLocaleString();
-        startContainer.appendChild(dlCount);
-        li.appendChild(startContainer)
-    }
-
-    // Fill content of elements
-    name.textContent = modData.name;
-    author.textContent = modData.authors[0].name;
-    for (const category of modData.categories) {
-        // if not "Fabric"
-        if (category !== fabric_category_id) {
-            const catElem = document.createElement('li');
-            catElem.textContent = CATEGORIES[category].name;
-            categories.appendChild(catElem);    
-        }
-    }
-    desc.textContent = modData.summary;
-    cfButtonIcon.textContent = 'launch'
-    cfButtonIcon.setAttribute('class', 'material-icons');
-    let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
-    cfButton.setAttribute('href', cflink);
-    cfButton.setAttribute('target', '_blank');
+        // Add DL Count Element
+        if (results_persist){
+            startContainer = document.createElement('div');
+            dlCount = document.createElement('p');
     
-    cfButton.appendChild(cfButtonIcon);
-    name.setAttribute('href', cflink);
-    name.setAttribute('target', '_blank');
-    author.setAttribute('href', modData.authors[0].url);
-    author.setAttribute('target', '_blank');
+            dlCount.setAttribute('class', 'dl_count');
+            startContainer.setAttribute('class', 'start_container');
+    
+            dlCount.textContent = modData.downloadCount.toLocaleString();
+            startContainer.appendChild(dlCount);
+            li.appendChild(startContainer)
+        }
+    
+        // Fill content of elements
+        name.textContent = modData.name;
+        if (modData.authors[0])
+            author.textContent = modData.authors[0].name;
+        else 
+            author.textContent = "undefined";
+        for (const category of modData.categories) {
+            // if not "Fabric"
+            if (category !== fabric_category_id) {
+                const catElem = document.createElement('li');
+                catElem.textContent = CATEGORIES[category].name;
+                categories.appendChild(catElem);    
+            }
+        }
+        desc.textContent = modData.summary;
+        cfButtonIcon.textContent = 'launch'
+        cfButtonIcon.setAttribute('class', 'material-icons');
+        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
+        cfButton.setAttribute('href', cflink);
+        cfButton.setAttribute('target', '_blank');
+        
+        cfButton.appendChild(cfButtonIcon);
+        name.setAttribute('href', cflink);
+        name.setAttribute('target', '_blank');
+        author.setAttribute('href', modData.authors[0].url);
+        author.setAttribute('target', '_blank');
+    
+    } catch (err) {
+        console.group()
+        console.warn("Failed to fill mod info.");
+        console.warn(err);
+        console.warn(modData);
+        console.groupEnd();
+    }
 
     // Add elements as children where they belong and return root elem
     title_container.appendChild(name);
