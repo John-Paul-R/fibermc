@@ -43,8 +43,8 @@ loader.fetchResources();
 var searchHTMLElements;
 var results_persist = false;
 
-function updateTimestamp(mod_data) {
-    document.getElementById("last_updated_timestamp").textContent = mod_data.timestamp;
+function updateTimestamp(timestamp) {
+    document.getElementById("last_updated_timestamp").textContent = timestamp;
 }
 
 var search_objects;
