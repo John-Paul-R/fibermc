@@ -387,7 +387,7 @@ function initSearch(options) {
 
     // Add Stylesheet 
     var sheet = createStyleSheet('mod-list-constructed');
-    sheet.insertRule(`ul#search_results_list {
+    sheet.insertRule(`div#search_results_list {
         max-width: 900px;
         width: 900px;
     }`, 0)

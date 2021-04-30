@@ -84,12 +84,13 @@ class ColorPalette {
 }
 var colorPalettes = [//Name     , base     , element-1, accent-1 , accent-2 , text     , text-inverse
     //  new ColorPalette('Light'   , '#fafafa', '#e0e0e0', '#aaaaaa', '#888888', '#353535', '#d0d0d0')
-    new BasePalette('LYellow' , '#f6f4e6', '#a3d390', '#557836', '#41444b', '#000000', '#ffffff'),
+    // new BasePalette('LYellow' , '#f6f4e6', '#82878d', '#f5d232', '#41444b', '#000000', '#ffffff'),
+    new BasePalette('LYellow' , '#f6f4e6', '#f1eacb', '#f5d232', '#41444b', '#000000', '#ffffff'),
     new BasePalette('Dark'    , '#252525', '#353637', '#af0404', '#888888', '#f0f0f0', '#414141'),
     new BasePalette('Color1'  , '#000000', '#14213d', '#fca311', '#e5e5e5', '#ffffff', '#000000'),
     new BasePalette('Color2'  , '#1a1a2e', '#16213e', '#e94560', '#0f3460', '#ffffff', '#000000'),
     new BasePalette('Color3'  , '#321f28', '#734046', '#e79e4f', '#a05344', '#ffffff', '#000000'),
-    new BasePalette('Color4'  , '#eeeeee', '#686d76', '#19d3da', '#373a40', '#000000', '#ffffff'),
+    new BasePalette('Color4'  , '#eeeeee', '#d0e0e6', '#19d3da', '#373a40', '#000000', '#ffffff'),
     new BasePalette('Color6'  , '#382933', '#3b5249', '#e94560', '#0f3460', '#ffffff', '#000000'),
 
 ]; //todo load this from external file? or from online library of available palettes?
@@ -104,6 +105,7 @@ function bindPaletteSwapButtons(btnElements) {
         buttonElements[i].addEventListener('click', swapPalette);
     }
 }
+var changeFuncs = [];
 bindPaletteSwapButtons();
 loadStoredPalette();
 var currentPalette;
@@ -123,7 +125,6 @@ function loadStoredPalette() {
     }
     displayPalette(paletteIndex);
 }
-var changeFuncs = [];
 
 function swapPalette() {
     paletteIndex +=1;
@@ -132,9 +133,6 @@ function swapPalette() {
     }
     displayPalette(paletteIndex);
     window.localStorage.setItem(STORAGE_KEY, paletteIndex);
-    for (const func of changeFuncs) {
-        func(currentPalette);
-    }
 }
 function onPaletteChange(func) {
     changeFuncs.push(func);
@@ -164,5 +162,6 @@ function displayPalette(paletteID) {
     //     buttonElements[i].textContent = p.paletteName;
     // }
     currentPalette = p;
+    changeFuncs.forEach((fn)=>fn(p));
     return p;
 }
