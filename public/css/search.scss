@@ -530,13 +530,15 @@ footer .text_element {
     font-size:1.2vMin;
 }
 
-
-footer * {
-    /*color: var(--color-text-inverse);*/
-}
 footer h3 {
     text-align:center;
 }
 .scripts {
     display: none;
+}
+
+#last_updated_timestamp {
+    color: var(--color-text-1);
+    text-align: end;
+    margin-top: 0.5rem;
 }

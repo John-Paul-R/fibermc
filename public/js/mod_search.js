@@ -23,7 +23,7 @@ loader.addResource('../data/mod_list.min.json', [
     (jsonData) => { 
         mod_data = jsonData.mods;
         mod_data.sort(descending);
-        timestamp = mod_data.timestamp;
+        timestamp = jsonData.timestamp;
         console.log(mod_data);
 
         CATEGORIES = jsonData.categories;
@@ -43,8 +43,12 @@ loader.fetchResources();
 var searchHTMLElements;
 var results_persist = false;
 
+function formatDate(date) {
+    date = new Date(date);
+    return (`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
+  }
 function updateTimestamp(timestamp) {
-    document.getElementById("last_updated_timestamp").textContent = timestamp;
+    document.getElementById("last_updated_timestamp").textContent = `List updated: ${formatDate(timestamp)}`;
 }
 
 var search_objects;
