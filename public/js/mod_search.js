@@ -15,6 +15,7 @@ var mod_data;
  * @type {Array<Object>}
  */
 var CATEGORIES;
+var timestamp;
 var fabric_category_id;
 var categories_sidebar_elem;
 const descending = (a, b) => (b.downloadCount - a.downloadCount);
@@ -22,6 +23,7 @@ loader.addResource('../data/mod_list.min.json', [
     (jsonData) => { 
         mod_data = jsonData.mods;
         mod_data.sort(descending);
+        timestamp = mod_data.timestamp;
         console.log(mod_data);
 
         CATEGORIES = jsonData.categories;
@@ -35,10 +37,15 @@ loader.addCompletionFunc(()=>executeIfWhenDOMContentLoaded(
         console.log('mod_data loaded. Running empty search.');
     }
 ));
+loader.addCompletionFunc(() => updateTimestamp(timestamp));
 loader.fetchResources();
 
 var searchHTMLElements;
 var results_persist = false;
+
+function updateTimestamp(mod_data) {
+    document.getElementById("last_updated_timestamp").textContent = mod_data.timestamp;
+}
 
 var search_objects;
 function getSelectedCategoryIds() {

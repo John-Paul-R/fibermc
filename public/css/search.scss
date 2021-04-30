@@ -68,7 +68,7 @@ footer {
     #search_container {
         grid-row: searchbar-start / searchbar-end;  
     }
-    #categories {
+    .sidebar_left {
         grid-row: searchbar-end / categories-end;
     }
     #search_results_list {
@@ -90,9 +90,11 @@ footer {
         grid-row: searchbar-start / searchbar-end;
         grid-column: categories-end / content-end;    
     }
-    #categories {
+    .sidebar_left {
         grid-row: searchbar-end / list-end;
         grid-column: categories-start / categories-end;
+    }
+    #categories {
         margin-top: 32px;
         width: 256px;
         height: min-content;
