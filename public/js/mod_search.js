@@ -181,6 +181,7 @@ var BATCH_SIZE = 20;
 
 var resultsListElement;
 var queryDisplayElement;
+var initialNumBatches = 10;
 function initSearch() {
     // searchElements = document.getElementsByClassName("searchField");
     searchHTMLElements = [];//Array.from(searchElements);
@@ -205,9 +206,11 @@ function initSearch() {
     resultsListElement.addEventListener('scroll', (e)=> {
         // console.log(batch_containers)
         // console.log(last_contentful_container_idx)
+        if (batch_containers.length < initialNumBatches)
+            return;
         let numPxBelowBot, numPxAboveTop;
         // if (last_contentful_container_idx <= batch_containers.length)
-            numPxBelowBot= pxBelowBottom(batch_containers[last_contentful_container_idx]);
+            numPxBelowBot = pxBelowBottom(batch_containers[last_contentful_container_idx]);
         // if (first_contentful_container_idx <= batch_containers.length)
             numPxAboveTop = pxAboveTop(batch_containers[first_contentful_container_idx]);
         let added = 0;
@@ -361,7 +364,7 @@ function buildList(resultsArray) {
     batch_containers = [];
     storeBatches(resultsArray, 0, Math.min(BATCH_SIZE, resultsArray.length));
     // runBatches(resultsArray, idx, Math.min(BATCH_SIZE, resultsArray.length), -1, 10);//Math.floor(window.innerHeight/40)
-    runBatches(resultsArray, 0, -1, 10);//Math.floor(window.innerHeight/40)
+    runBatches(resultsArray, 0, -1, initialNumBatches);//Math.floor(window.innerHeight/40)
 
     listBuildTime = performance.now() - listBuildTime;
     listBuildTimeAvg = (listBuildTimeAvg * (searchCount - 1) + listBuildTime) / searchCount;
