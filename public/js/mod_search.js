@@ -203,8 +203,13 @@ function initSearch() {
         results_persist = true;
     }
     resultsListElement.addEventListener('scroll', (e)=> {
-        const numPxBelowBot = pxBelowBottom(batch_containers[last_contentful_container_idx]);
-        const numPxAboveTop = pxAboveTop(batch_containers[first_contentful_container_idx]);
+        // console.log(batch_containers)
+        // console.log(last_contentful_container_idx)
+        let numPxBelowBot, numPxAboveTop;
+        // if (last_contentful_container_idx <= batch_containers.length)
+            numPxBelowBot= pxBelowBottom(batch_containers[last_contentful_container_idx]);
+        // if (first_contentful_container_idx <= batch_containers.length)
+            numPxAboveTop = pxAboveTop(batch_containers[first_contentful_container_idx]);
         let added = 0;
         let addedLessThanDiff = true;
         
@@ -312,8 +317,12 @@ function buildList(resultsArray) {
         resultsListElement.appendChild(batch_container);
 
         const nextBatchSize = Math.min(batchSize, results.length - endIdx);
-        if (nextBatchSize > 0)
+        if (nextBatchSize > 0) {
             storeBatches(results, endIdx, nextBatchSize);
+        } else {
+            batch_container.style.height = data_batch.length * LI_HEIGHT + "px";
+            batch_container.style.minHeight = data_batch.length * LI_HEIGHT + "px";
+        }
     }
 
     let runBatches = (results, batchIdx, remainingBatches=0, waitForScrollAfter=0, callback=null) => {
