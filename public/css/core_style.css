@@ -223,7 +223,7 @@ header #navbar ul li.list_end {
 }
 
 header .swap_palette {
-    background-color: var(--color-element-1);
+    background-color: var(--color-element);
     color: var(--color-text);
     border: none;
 }

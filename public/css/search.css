@@ -210,7 +210,7 @@ footer {
 }
 
 #categories {
-  background-color: var(--color-element-1);
+  background-color: var(--color-element);
   border-radius: 8px;
   padding: 8px;
   margin-left: auto;
@@ -232,15 +232,19 @@ footer {
   border-radius: 12px;
   width: min-content;
   cursor: pointer;
-  border: 2px solid var(--color-element-1-1);
+  border: 2px solid var(--color-element-1);
 }
 
-#categories_list > li:hover {
+#categories_list > :hover {
   border: 2px solid var(--color-accent-2-1);
 }
 
+#categories_list > li.selected {
+  border: 2px solid var(--color-accent-1);
+}
+
 #categories_list > li > span {
-  background-color: var(--color-element-1);
+  background-color: var(--color-element);
   padding-left: 4px;
   padding-right: 4px;
   border-radius: 8px;
@@ -259,7 +263,7 @@ footer {
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 12px;
-  background-color: var(--color-element-1-1);
+  background-color: var(--color-element-1);
   /* border: 1px solid var(--color-accent-1); */
 }
 
@@ -282,11 +286,11 @@ footer {
 }
 
 .item:nth-child(even) > .container {
-  background-color: var(--color-element-1);
+  background-color: var(--color-element);
 }
 
 .item:nth-child(odd) > .container {
-  background-color: var(--color-element-1-2);
+  background-color: var(--color-element-2);
 }
 
 .container {
@@ -398,11 +402,11 @@ footer {
 }
 
 .item:nth-child(even) .material-icons {
-  color: var(--color-element-1);
+  color: var(--color-element);
 }
 
 .item:nth-child(odd) .material-icons {
-  color: var(--color-element-1-2);
+  color: var(--color-element-2);
 }
 
 li.item:hover .material-icons {
@@ -429,7 +433,7 @@ li.item:hover .material-icons {
 }
 
 #content_body #content_center .searchbar {
-  background-color: var(--color-element-1);
+  background-color: var(--color-element);
   margin: 8px;
   height: 42px;
   display: flex;

@@ -148,7 +148,7 @@ function initCategoriesSidebar() {
         if (cat_elem.selected) {
             cat_elem.style.border = '2px solid var(--color-accent-1)';
         } else {
-            cat_elem.style=null;//.border = '2px solid var(--color-element-1-1)';
+            cat_elem.style=null;//.border = '2px solid var(--color-element-1)';
         }
     }
 }
