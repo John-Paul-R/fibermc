@@ -540,8 +540,10 @@ footer h3 {
     display: none;
 }
 
-#last_updated_timestamp {
+.sidebar_left #last_updated_timestamp,
+.sidebar_left #gist_link {
     color: var(--color-text-1);
     text-align: end;
     margin-top: 0.5rem;
+    width: 100%
 }
