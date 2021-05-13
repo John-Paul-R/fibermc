@@ -35,8 +35,9 @@ function createListElement(modData) {
 
     const author = document.createElement('td');
     const author_link = document.createElement('a');
-    author_link.textContent = modData.authors[0].name;
-    author_link.setAttribute('href', modData.authors[0].url);
+    const a_link = `https://www.curseforge.com/members/${modData.authors[0]}/projects`;
+    author_link.textContent = modData.authors[0];
+    author_link.setAttribute('href', a_link);
     author_link.setAttribute('target', '_blank');
     author_link.setAttribute('rel', 'noreferrer');
     author.appendChild(author_link);
@@ -204,13 +205,19 @@ loader.addCompletionFunc(()=>{
     loadbar_container = document.getElementById('loadbar_container');
     loadbar_text = document.getElementById("loadbar_text");
     loadbar_content = document.getElementById("loadbar_content");
+    const MAX_FAILS = 100;
+    let failCount = 0;
     for (const mod of mod_data) {
         try {
             mod.elem = createListElement(mod);
         } catch (err) {
             console.warn(`Could not load elem for mod`)
-            console.warn(mod);
-            console.error(err);
+            // console.warn(mod);
+            // console.error(err);
+            failCount++;
+            if (failCount > MAX_FAILS) {
+                break;
+            }
         }
     }
 });

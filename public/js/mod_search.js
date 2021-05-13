@@ -19,9 +19,25 @@ var timestamp;
 var fabric_category_id;
 var categories_sidebar_elem;
 const descending = (a, b) => (b.downloadCount - a.downloadCount);
-loader.addResource('../data/mod_list.min.json', [
+loader.addResource('../data/mod_list.db.min.json', [
     (jsonData) => { 
-        mod_data = jsonData.mods;
+        const temp_mods = jsonData.mods;
+        console.log(temp_mods)
+        let new_mods = []  
+        for (let i = 0; i < temp_mods.length; i++) {
+            const temp_mod = temp_mods[i];
+            new_mods.push({
+                name: temp_mod[0],
+                slug: temp_mod[1],
+                summary: temp_mod[2],
+                categories: temp_mod[3],
+                authors: temp_mod[4],
+                downloadCount: temp_mod[5],
+                dateModified: temp_mod[6],
+                latestMCVersion: temp_mod[7],
+            });
+        }
+        mod_data = new_mods;
         mod_data.sort(descending);
         timestamp = jsonData.timestamp;
         console.log(mod_data);
@@ -63,8 +79,11 @@ function getSelectedCategoryIds() {
     return selected_cat_ids;
 }
 function updateModCounts() {
-    for (const CAT of CATEGORIES) {
-        CAT.modCount = 0;
+    for (let i = 0; i < CATEGORIES.length; i++) {
+        CATEGORIES[i] = {
+            name: CATEGORIES[i],
+            modCount: 0,
+        }
     }
     for (const mod of mod_data) {
         for(const cat_id of mod.categories) {
@@ -407,13 +426,13 @@ function initCategoriesSidebar() {
     //TODO Display "searching in these categories" under searchbar. With option to click them to remove.
 
     categories_sidebar_elem = document.getElementById('categories_list');
+    updateModCounts();
     for (let i=0; i<CATEGORIES.length; i++) {
         if (CATEGORIES[i].name.toUpperCase() === "FABRIC") {
             fabric_category_id = i;
             break;
         }
     }
-    updateModCounts();
     // TODO Restructure this, jfc
     for (let i=0; i<CATEGORIES.length; i++) {
         const cat_elem = document.createElement('li');
@@ -505,7 +524,7 @@ function createListElement(modData, includeCategories=true) {
         // Fill content of elements
         name.textContent = modData.name;
         if (modData.authors[0])
-            author.textContent = modData.authors[0].name;
+            author.textContent = modData.authors[0];
         else 
             author.textContent = "undefined";
         for (const category of modData.categories) {
@@ -526,7 +545,7 @@ function createListElement(modData, includeCategories=true) {
         cfButton.appendChild(cfButtonIcon);
         name.setAttribute('href', cflink);
         name.setAttribute('target', '_blank');
-        author.setAttribute('href', modData.authors[0].url);
+        author.setAttribute('href', `https://www.curseforge.com/members/${modData.authors[0]}/projects`);
         author.setAttribute('target', '_blank');
     
     } catch (err) {

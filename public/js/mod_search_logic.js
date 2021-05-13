@@ -23,9 +23,27 @@ export {
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true
-}).addResource('../data/mod_list.min.json', [
-        (jsonData) => { 
-            setModData(jsonData.mods);
+}).addResource('../data/mod_list.db.min.json', [
+        (jsonData) => {
+            const temp_mods = jsonData.mods;
+            console.log("TEMP")
+            console.log(temp_mods)
+            let new_mods = []  
+            for (let i = 0; i < temp_mods.length; i++) {
+                const temp_mod = temp_mods[i];
+                new_mods.push({
+                    name: temp_mod[0],
+                    slug: temp_mod[1],
+                    summary: temp_mod[2],
+                    categories: temp_mod[3],
+                    authors: temp_mod[4],
+                    downloadCount: temp_mod[5],
+                    dateModified: temp_mod[6],
+                    latestMCVersion: temp_mod[7],
+                });
+            }
+
+            setModData(new_mods);
             // Sort func
             const descending = (a, b) => (b.downloadCount - a.downloadCount);
             mod_data.sort(descending);
@@ -107,13 +125,14 @@ function initCategoriesSidebar() {
     //TODO Display "searching in these categories" under searchbar. With option to click them to remove.
 
     categories_sidebar_elem = document.getElementById('categories_list');
+
+    updateModCounts();
     for (let i=0; i<CATEGORIES.length; i++) {
         if (CATEGORIES[i].name.toUpperCase() === "FABRIC") {
             fabric_category_id = i;
             break;
         }
     }
-    updateModCounts();
     // TODO Restructure this, jfc
     for (let i=0; i<CATEGORIES.length; i++) {
         const cat_elem = document.createElement('li');
@@ -223,8 +242,11 @@ function searchTextChanged(queryEvent) {
 // Update the stored counts of mods per category
 // TODO (Move this to backend?)
 function updateModCounts() {
-    for (const CAT of CATEGORIES) {
-        CAT.modCount = 0;
+    for (let i = 0; i < CATEGORIES.length; i++) {
+        CATEGORIES[i] = {
+            name: CATEGORIES[i],
+            modCount: 0,
+        }
     }
     for (const mod of mod_data) {
         for(const cat_id of mod.categories) {
