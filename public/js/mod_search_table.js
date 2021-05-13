@@ -56,9 +56,10 @@ function createListElement(modData) {
     dlCount.textContent = modData.downloadCount.toLocaleString();
 
     const versions = document.createElement('td');
-    versions.textContent = "SoonTM"
+    versions.textContent = modData["latestMCVersion"]
     const last_upated = document.createElement('td');
-    last_upated.textContent = modData.dateModified;
+    const last_updated_date = new Date(modData.dateModified);
+    last_upated.textContent = `${last_updated_date.getDate()}/${last_updated_date.getMonth()+1}/${last_updated_date.getFullYear()}`;
 
     // Fill content of elements
     //cfButtonIcon.textContent = 'launch'
