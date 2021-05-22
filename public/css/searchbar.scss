@@ -19,11 +19,10 @@
     align-items: center;
     justify-content: center;
 }
-#search_container {
-    margin-left: 89px;
-}
+
 #search_container > :last-child {
-    margin-left: auto;
+    // margin-left: auto;
+    justify-self: flex-end;
 }
 #search_container > a:hover {
     background-color: var(--color-base-1);

@@ -275,10 +275,10 @@ function initSearch() {
 
     // Add Stylesheet 
     var sheet = createStyleSheet('mod-list-constructed');
-    sheet.insertRule(`#search_results_list {
-        max-width: 900px;
-        width: 900px;
-    }`, 0);
+    // sheet.insertRule(`#search_results_list {
+    //     max-width: 900px;
+    //     width: 900px;
+    // }`, 0);
     sheet.insertRule(`.item_batch {
         height: ${LI_HEIGHT*BATCH_SIZE}px;
         min-height: ${LI_HEIGHT*BATCH_SIZE}px;
