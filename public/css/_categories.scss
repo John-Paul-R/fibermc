@@ -1,0 +1,39 @@
+#categories {
+    background-color: var(--color-element);
+    border-radius: 8px;
+    
+    padding: 8px;
+    margin-left: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+}
+#categories_list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-height: 100%;
+    min-height:0;
+    max-height: inherit;
+
+}
+#categories_list > li {
+    border-radius: 12px;
+    width: min-content;
+    cursor: pointer;
+    border: 2px solid var(--color-element-1);
+}
+#categories_list > :hover {
+    border: 2px solid var(--color-accent-2-1);
+}
+#categories_list > li.selected {
+    border: 2px solid var(--color-accent-1);
+}
+#categories_list > li > span {
+    background-color: var(--color-element);
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 8px;
+    pointer-events: none;
+}
