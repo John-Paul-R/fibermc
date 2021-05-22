@@ -31,3 +31,5 @@ old
 (ign)*
 
 mod_list.min.json
+
+public/data/*
