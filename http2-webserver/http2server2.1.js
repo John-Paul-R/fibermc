@@ -6,6 +6,7 @@ const Path = require('path');
 const Mime = require('mime');
 const dir = require('node-dir');
 const log4js = require('log4js');
+const URL = require('url').URL;
 const FILENAME = Path.basename(__filename)
 
 //  Load ArgV
@@ -97,6 +98,8 @@ const {
 //  Create server
 const server = useSecure ? http2.createSecureServer(serverOpts) : http2.createServer(serverOpts);
 
+const URL_ROOT = "https://www.fibermc.com"
+
 // server.on("request", ()=>{
 //   console.info("Request Received");
 // })
@@ -107,7 +110,10 @@ server.on('error', (err) => logger.error(err));
 server.on('stream', (stream, headers) => {
     // stream is a Duplex
     const method = headers[HTTP2_HEADER_METHOD];
-    const path = headers[HTTP2_HEADER_PATH];
+    const reqUrl = new URL(headers[HTTP2_HEADER_PATH], URL_ROOT);
+
+    const path = reqUrl.pathname;
+    const query = reqUrl.search;
     const socket = stream.session.socket;
     const encodings = headers[HTTP2_HEADER_ACCEPT_ENCODING];
 
