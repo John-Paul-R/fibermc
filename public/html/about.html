@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height">
+    <link rel="stylesheet" type="text/css" href="css/core_style.css">
+    <script src="js/multi-palette.min.js"></script>
+    <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #content_main {
+            gap: 2rem;
+            width: clamp(256px, 900px, 100vw);
+        }
+        #about_grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: clamp(256px, 900px, 100%);
+        }
+        #about_grid > div {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+    </style>
+    <title>FiberMC - About</title>
+</head>
+
+<body>
+<div id="content_main" class="flex col aligncenter">
+    <h1>About FiberMC</h1>
+
+    <div id="site_desc">
+        <p>
+            FiberMC is a free, searchable list of all Fabric mods listed on CurseForge.
+            It does not host or redistribute any mod files.
+            All mod listings link back to the mod's CurseForge page.
+        </p><p>
+            The purpose of this website to help users more easily locate Fabric mods, regardless of where they are hosted.
+        </p>
+    </div>
+    <div id="about_grid">
+        <div>
+            <h2>Support Financially</h2>
+            <p>You can support me and this project financially via 
+                <a href="https://patreon.com/jpcode">Patreon</a> or
+                <a href="https://ko-fi.com/johnpaul">KoFi</a>!</p>
+        </div>
+        <div>
+            <a href="https://github.com/John-Paul-R/FabricMC-Mod-List-Website" target="_blank" rel="noopener noreferrer">
+                <h2>Github</h2>
+            </a>
+            <p>If you are interested in contributing bug reports or your own code, visit the project's 
+                <a href="https://github.com/John-Paul-R/FabricMC-Mod-List-Website" target="_blank" rel="noopener noreferrer">
+                page on GitHub</a>.
+            </p>
+        </div>
+        <div>
+            <h2>Discord</h2>
+            <p>Ask questions or get support in the 
+                <a href="https://discord.gg/dwh9y7D" target="_blank" rel="noopener noreferrer">
+                    FiberMC Discord server</a>.
+                </p>
+        </div>
+    </div>
+
+    <p class='text aligncenter'>
+        &#169; 2020-2021 <a href="https://github.com/John-Paul-R" target="_blank"> John Paul R.</a>
+         -
+        This website (<a href="https://www.fibermc.com">fibermc.com</a>) is fan-made. 
+        <br>
+        It is not endorsed by, directly affiliated with, maintained, authorized, or sponsored by
+        <a href="https://www.curseforge.com/">CurseForge</a>
+        or the 
+        <a href="https://fabricmc.net/">Fabric Project</a>.
+        <br>
+    </p>
+</div>
+</body>

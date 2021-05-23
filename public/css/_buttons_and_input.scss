@@ -1,0 +1,44 @@
+
+button > p {
+    margin-top: auto;
+    margin-bottom: auto;
+    line-height:24px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+button,
+.button,
+input[type=submit] {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    
+    text-decoration: none;
+    text-align: center;
+
+    cursor: pointer;
+
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: var(--color-accent-1);
+    border: 1px solid var(--color-accent-1);
+    font-weight: 600;
+}
+.button:hover,
+input[type=submit]:hover {
+    background-color: var(--color-accent-1-1);
+}
+.button.disabled,
+a.button:not([href]) {
+    background-color: var(--color-element-1);
+    cursor: default;
+    filter: contrast(0.5);
+    border: 1px solid var(--color-element-2);
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+}
