@@ -33,3 +33,5 @@ old
 mod_list.min.json
 
 public/data/*
+
+chromedriver*.exe
