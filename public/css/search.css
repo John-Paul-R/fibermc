@@ -312,7 +312,7 @@ footer {
 
 #content_center {
   /* grid-column: left-end / right-start; */
-  width: auto;
+  width: 100%;
   height: 100%;
   display: grid;
   /* height of #searchbar_container - 8px*2 + 42px*/
