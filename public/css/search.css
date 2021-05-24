@@ -239,21 +239,21 @@ li.item:hover .material-icons {
   z-index: 2;
 }
 
-*::-webkit-scrollbar-track {
-  background-color: var(--color-base-2);
+::-webkit-scrollbar-track {
+  background-color: var(--color-element-2);
 }
 
-*::-webkit-scrollbar-thumb {
-  background-color: var(--color-base-1);
-  /* border: 0.2rem solid var(--color-base-1); */
-  border-radius: 6px;
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-element-1);
+  border: 0.25rem solid var(--color-element-2);
+  border-radius: 0.5rem;
 }
 
-*::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 1rem;
 }
 
-*::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-accent-1);
 }
 
