@@ -16,11 +16,15 @@
         #content_main {
             gap: 2rem;
             width: clamp(256px, 900px, 100vw);
+            padding: 1rem 0.5rem;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
         #about_grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(32ch, 1fr));
             width: clamp(256px, 900px, 100%);
+            gap: 0.5rem;
         }
         #about_grid > div {
             display: flex;
