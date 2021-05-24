@@ -239,29 +239,6 @@ li.item:hover .material-icons {
   z-index: 2;
 }
 
-::-webkit-scrollbar-track {
-  background-color: var(--color-element-2);
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-element-1);
-  border: 0.25rem solid var(--color-element-2);
-  border-radius: 0.5rem;
-}
-
-::-webkit-scrollbar {
-  width: 1rem;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-accent-1);
-}
-
-* {
-  scrollbar-width: initial;
-  scrollbar-color: var(--color-base-1) var(--color-base-2);
-}
-
 :root {
   --spacing-amount: 16px;
   --shadow:0 0px 8px rgba(var(--color-text-rgb), 0.15);
