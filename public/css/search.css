@@ -348,6 +348,9 @@ footer {
     width: 100%;
     background-color: var(--color-element);
   }
+  #categories_wrapper > #categories #cat_head {
+    cursor: pointer;
+  }
   #categories_wrapper > #categories #cat_head #categories_list_toggle {
     display: block;
     margin-left: auto;
