@@ -20,8 +20,8 @@
   "css": {
     "core_style.css": {
       "headers": {
-        "content-length": 5849,
-        "last-modified": "Sun, 23 May 2021 05:16:29 GMT",
+        "content-length": 6287,
+        "last-modified": "Mon, 24 May 2021 23:28:49 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=31536000"
       }
@@ -44,8 +44,8 @@
     },
     "search.css": {
       "headers": {
-        "content-length": 10922,
-        "last-modified": "Sun, 23 May 2021 07:31:10 GMT",
+        "content-length": 11550,
+        "last-modified": "Tue, 25 May 2021 02:56:11 GMT",
         "content-type": "text/css",
         "cache-control": "max-age=31536000"
       }
@@ -76,16 +76,16 @@
     },
     "search.css.map": {
       "headers": {
-        "content-length": 2409,
-        "last-modified": "Sun, 23 May 2021 07:31:10 GMT",
+        "content-length": 2520,
+        "last-modified": "Tue, 25 May 2021 02:56:11 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=31536000"
       }
     },
     "search.scss": {
       "headers": {
-        "content-length": 7675,
-        "last-modified": "Sun, 23 May 2021 07:31:10 GMT",
+        "content-length": 7461,
+        "last-modified": "Tue, 25 May 2021 02:44:05 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=31536000"
       }
@@ -100,8 +100,8 @@
     },
     "searchbar.scss": {
       "headers": {
-        "content-length": 692,
-        "last-modified": "Sat, 22 May 2021 09:25:06 GMT",
+        "content-length": 710,
+        "last-modified": "Tue, 25 May 2021 02:51:27 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=31536000"
       }
@@ -124,16 +124,16 @@
     },
     "_scrollbars.scss": {
       "headers": {
-        "content-length": 452,
-        "last-modified": "Fri, 30 Apr 2021 13:07:18 GMT",
+        "content-length": 454,
+        "last-modified": "Mon, 24 May 2021 23:28:49 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=31536000"
       }
     },
     "_items.scss": {
       "headers": {
-        "content-length": 3213,
-        "last-modified": "Sat, 22 May 2021 09:46:52 GMT",
+        "content-length": 3212,
+        "last-modified": "Tue, 25 May 2021 02:41:01 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=31536000"
       }
@@ -148,8 +148,8 @@
     },
     "_categories.scss": {
       "headers": {
-        "content-length": 828,
-        "last-modified": "Sat, 22 May 2021 10:00:01 GMT",
+        "content-length": 2767,
+        "last-modified": "Tue, 25 May 2021 02:56:11 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=31536000"
       }
@@ -172,16 +172,16 @@
     },
     "core_style.css.map": {
       "headers": {
-        "content-length": 1418,
-        "last-modified": "Sun, 23 May 2021 05:16:29 GMT",
+        "content-length": 1513,
+        "last-modified": "Mon, 24 May 2021 23:28:49 GMT",
         "content-type": "application/json",
         "cache-control": "max-age=31536000"
       }
     },
     "core_style.scss": {
       "headers": {
-        "content-length": 4201,
-        "last-modified": "Sun, 23 May 2021 05:14:24 GMT",
+        "content-length": 4223,
+        "last-modified": "Mon, 24 May 2021 23:28:49 GMT",
         "content-type": "text/x-scss",
         "cache-control": "max-age=31536000"
       }
@@ -342,8 +342,8 @@
     },
     "search.html": {
       "headers": {
-        "content-length": 3179,
-        "last-modified": "Sun, 23 May 2021 07:34:47 GMT",
+        "content-length": 3722,
+        "last-modified": "Tue, 25 May 2021 01:47:55 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
@@ -382,8 +382,8 @@
     },
     "about.html": {
       "headers": {
-        "content-length": 3030,
-        "last-modified": "Sun, 23 May 2021 07:42:57 GMT",
+        "content-length": 3252,
+        "last-modified": "Mon, 24 May 2021 00:17:53 GMT",
         "content-type": "text/html",
         "cache-control": "max-age=0"
       }
@@ -677,6 +677,14 @@
       "headers": {
         "content-length": 4823,
         "last-modified": "Mon, 03 May 2021 23:52:35 GMT",
+        "content-type": "application/javascript",
+        "cache-control": "max-age=31536000"
+      }
+    },
+    "categories_collapse.js": {
+      "headers": {
+        "content-length": 260,
+        "last-modified": "Tue, 25 May 2021 02:14:15 GMT",
         "content-type": "application/javascript",
         "cache-control": "max-age=31536000"
       }

@@ -150,7 +150,7 @@ li.item:hover .material-icons {
 @mixin narrow_screen {
     .item {
         display: grid;
-        grid-template-columns: 0px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr);
         grid-gap: 6px;
         height: auto;
 
@@ -158,8 +158,8 @@ li.item:hover .material-icons {
             max-height: 100%;
         }
     }
-    
-    .item .dl_count {
+
+    .item .start_container {
         display: none;
     }
 

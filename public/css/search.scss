@@ -57,13 +57,16 @@ footer {
     /* height of #searchbar_container - 8px*2 + 42px*/
 }
 
+// MOBILE
 @media only screen and (max-width: 1162px) {
     #content_body {
-        padding: 0px;
+        min-height: 0;
     }    
     #content_center {
-        grid-template-rows: [searchbar-start]58px[searchbar-end] 256px[categories-end] 1fr[list-end];
-        grid-template-columns: 1fr;
+        width: calc(100% - 1rem);
+        max-height: 100%;
+        grid-template-rows: [searchbar-start]58px[searchbar-end] min-content[categories-end] auto[list-end];
+        grid-template-columns: 100%;
         justify-items: center;
         justify-content: center;
     }
@@ -72,23 +75,19 @@ footer {
     }
     .sidebar_left {
         grid-row: searchbar-end / categories-end;
+        min-height: 0;  /* NEW */
+        min-width: 0;   /* NEW; needed for Firefox */
+        width: 100%;
     }
-    #search_results_list {
+    div#search_results_list {
         grid-row: categories-end / list-end;
-        max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + 256px));
-    }
-    #categories {
-        
-        max-height: 256px;
-        max-width: 90vw;
-        overflow-x: scroll;
+        padding: 0;
 
-        & #categories_list {
-            flex-direction: row;
-            max-height: 256px;
-            width: 1000px;
-        }
+        // max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + 256px));
     }
+    
+    @include categories.mobile;
+
     #subtitle {
         display: none;
     }
@@ -117,14 +116,16 @@ footer {
     .sidebar_left {
         grid-row: searchbar-end / list-end;
         grid-column: categories-start / categories-end;
+
+        display: grid;
+        grid-template-rows: [cat-start]1fr[cat-end] min-content[info-end];
+        & > *:last-child {
+            grid-row: cat-end/info-end;
+        }
     }
-    #categories {
-        margin-top: 32px;
-        width: 256px;
-        height: min-content;
-        min-height:0;
-        max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));    
-    }
+
+    @include categories.fullsize;
+
     #search_results_list {
         grid-row: searchbar-end / list-end;
         grid-column: categories-end / content-end;
@@ -230,16 +231,12 @@ footer {
 
 #content_center .searchbar {
     background-color: var(--color-element);
-    margin:8px;
     height:42px;
     display:flex;
     flex-direction:row;
     justify-content:flex-start;
     align-items: center;
-    
-    /*Does not work in js retrieval for some reason*/
-    --default-scale:0.95;
-    scale:var(--default-scale);
+
 }
 .searchbar * {
     background-color:inherit;
@@ -252,8 +249,6 @@ footer {
     /*padding-bottom:2px; /*.75%;*/
 }
 .searchbar:first-child {
-    margin-left: 10px;
-    margin-right: 10px;
     display: block;
 }
 

@@ -1,4 +1,11 @@
+
+#categories_wrapper {
+    // max-width: 100%;
+}
+
 #categories {
+    box-sizing: border-box;
+
     background-color: var(--color-element);
     border-radius: 8px;
     
@@ -36,4 +43,82 @@
     padding-right: 4px;
     border-radius: 8px;
     pointer-events: none;
+}
+
+#categories_list_toggle {
+    display: none;
+}
+
+// MOBILE
+@mixin mobile {
+    #categories_wrapper {
+        
+        max-height: 256px;
+        width: 100%;
+        
+        & > #categories {
+            position: relative;
+            width: 100%;
+            height: min-content;
+            #categories_list_wrapper {
+                overflow-x: scroll;
+                width: 100%;
+                background-color: var(--color-element);
+            }
+            & #cat_head {
+
+                #categories_list_toggle {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: 0.5rem;
+                    cursor: pointer;
+                }
+            }
+
+            & hr,
+            & #categories_list_wrapper {
+                height: 0;
+                display: none;
+            }
+            &.open {
+                & hr {
+                    display: block;
+                }
+                & #categories_list_wrapper {
+                    top: 100%;
+                    left: 0;
+                    height: auto;
+                    width: 100%;
+                    display: block;
+                }
+            }
+        }
+
+        & #categories_list {
+            flex-direction: row;
+            max-height: 256px;
+            width: 1000px;
+            transition: height 0.5s;
+            will-change: height;
+        }
+    }
+
+}
+
+// PC
+@mixin fullsize {
+    #categories_wrapper {
+        & > #categories {
+            // margin-top: 32px;
+            width: clamp(256px, 36ch, 48ch);
+            height: auto;
+            max-height: 100%;
+            min-height:0;
+            // max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));    
+        }
+        height: auto;
+        min-height:0;
+        grid-row: cat-start / cat-end;
+    }
+
 }

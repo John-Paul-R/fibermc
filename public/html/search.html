@@ -40,10 +40,19 @@
                     <a href="https://www.fibermc.com/table">Advanced <i class=material-icons>launch</i></a>
                 </div>
                 <div class="sidebar_left">
-                    <div id="categories">
-                        <h2>Categories</h2>
-                        <hr>
-                        <ul id="categories_list"></ul>
+                    <div id="categories_wrapper">
+                        <div id="categories">
+                            <div id="cat_head" class="flex row">
+                                <h2>Categories</h2>
+                                <button id="categories_list_toggle" class="material-icons">
+                                    expand_more
+                                </button>
+                            </div>
+                            <hr>
+                            <div id="categories_list_wrapper">
+                                <ul id="categories_list"></ul>
+                            </div>
+                        </div>    
                     </div>
                     <div class="flex col" style="align-items:flex-end;">
                         <div id="last_updated_timestamp"></div>
@@ -65,6 +74,7 @@
     <script src="js/fuzzysort.js"></script>
     <script src="js/resource_loader.js" type="module"></script>
     <script src="js/mod_search.js?v=1.0.1" type="module"></script>
+    <script src="js/categories_collapse.js"></script>
 </div>
 </html>
 
