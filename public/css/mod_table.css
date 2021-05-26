@@ -8,12 +8,12 @@
   height: auto;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  padding: 8px 0;
 }
 
 #search_container > a {
-  justify-self: right;
   text-decoration: none;
   border-radius: 4px;
   border: 1px solid var(--color-base-1);
@@ -24,6 +24,11 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+#search_container > :last-child {
+  margin-left: auto;
+  justify-self: flex-end;
 }
 
 #search_container > a:hover {
@@ -62,11 +67,17 @@
 table#search_results_list {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
-  width: 100%;
+  width: 100vw;
+  overflow: auto;
   display: flex;
   flex-direction: column;
+  --grid-cols: minmax(16ch, 1fr) minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
   overflow-y: scroll;
   max-height: calc(100% - var(--searchbar-total-height));
+}
+table#search_results_list > thead, table#search_results_list > tbody {
+  width: -moz-fit-content;
+  min-width: 100%;
 }
 
 #search_results_list td, #search_results_list th {
@@ -88,6 +99,39 @@ table#search_results_list {
   text-align: left;
   background-color: var(--color-accent-1);
   color: white;
+  display: flex;
+  flex-direction: row;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+}
+#search_results_list th .tbl_sort {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+}
+#search_results_list th .tbl_sort.active {
+  background-color: var(--color-accent-1-1);
+}
+#search_results_list th .tbl_sort.active.ascending::after {
+  transform: rotateZ(180deg);
+}
+#search_results_list th .tbl_sort.active::after {
+  content: "south";
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -moz-font-feature-settings: "liga";
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #search_results_list thead {
@@ -100,10 +144,10 @@ table#search_results_list {
 
 #search_results_list tr {
   display: grid;
-  grid-template-columns: 1fr 2.75fr 1fr 1fr 0.75fr 0.75fr 0.75fr;
+  grid-template-columns: var(--grid-cols);
 }
 
-#search_results_list td, #search_results_list th {
+#search_results_list td {
   overflow-wrap: break-word;
   word-wrap: break-word;
   -ms-word-break: break-all;

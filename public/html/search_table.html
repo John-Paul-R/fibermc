@@ -19,11 +19,13 @@
     <header>
         <div id="navbar">
             <div id="navbar_front" class="flex row">
+                <!-- <button id="menu_button" class="h_button icon_only"><i class=material-icons>menu</i></button> -->
                 <a href="https://www.fibermc.com"><h1 id="title" class="header_element">FiberMC</h1></a>
                 <h2 id="subtitle" class="header_element">Minecraft Fabric Mod List</h2>
             </div>
             <div class="end flex row">
-                <button class="swap_palette"><p>Theme</p><i class="material-icons">style</i></button>
+                <a href="./about" class="button">About</a>
+                <button class="swap_palette">Theme<i class="material-icons">style</i></button>
             </div>
             <script src="js/multi-palette.min.js"></script>                    
         </div>
@@ -45,13 +47,23 @@
             <table id="search_results_list" class="persist filled">
                 <thead>
                     <tr>
-                        <th id="t_name">Name</th>
+                        <th id="t_name">Name
+                            <button class="tbl_sort material-icons">sort</button>
+                        </th>
                         <th id="t_desc">Description</th>
-                        <th id="t_auth">Author</th>
-                        <th id="t_cat">Categories <!--<button>Filter</button>--></th>
-                        <th id="t_dl">Downloads</th>
-                        <th id="t_vers">Latest Supported Version</th>
-                        <th id="t_date">Date Updated DD/MM/YYYY</th>
+                        <th id="t_auth">Author
+                            <button class="tbl_sort material-icons">sort</button>
+                        </th>
+                        <th id="t_cat"> Categories <!--<button>Filter</button>--></th>
+                        <th id="t_dl">  Downloads
+                            <button class="tbl_sort material-icons">sort</button>
+                        </th>
+                        <th id="t_vers">Latest Supported Version
+                            <button class="tbl_sort material-icons">sort</button>
+                        </th>
+                        <th id="t_date">Date Updated (DMY)
+                            <button class="tbl_sort material-icons">sort</button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="search_results_content" class="persist"></tbody>
@@ -71,6 +83,7 @@
     <script src="js/fuzzysort.js"></script>
     <script src="js/resource_loader.js" type="module"></script>
     <script src="js/mod_search_table.js" type="module"></script>
+    <script defer src="js/table_sort.js" type="module"></script>
 </div>
 </html>
 

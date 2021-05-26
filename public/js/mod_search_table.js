@@ -35,8 +35,8 @@ function createListElement(modData) {
 
     const author = document.createElement('td');
     const author_link = document.createElement('a');
-    const a_link = `https://www.curseforge.com/members/${modData.authors[0]}/projects`;
-    author_link.textContent = modData.authors[0];
+    const a_link = `https://www.curseforge.com/members/${modData.author}/projects`;
+    author_link.textContent = modData.author;
     author_link.setAttribute('href', a_link);
     author_link.setAttribute('target', '_blank');
     author_link.setAttribute('rel', 'noreferrer');

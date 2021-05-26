@@ -2,6 +2,7 @@ import {
     executeIfWhenDOMContentLoaded, setHidden
 } from './util.js';
 import { AsyncDataResourceLoader } from './resource_loader.js';
+import { getSortFunc, registerListener as registerSortListener, initSortCache } from './table_sort.js';
 
 export { 
     init, initSearch, initCategoriesSidebar,
@@ -36,7 +37,7 @@ var loader = new AsyncDataResourceLoader({
                     slug: temp_mod[1],
                     summary: temp_mod[2],
                     categories: temp_mod[3],
-                    authors: temp_mod[4],
+                    author: temp_mod[4][0],
                     downloadCount: temp_mod[5],
                     dateModified: temp_mod[6],
                     latestMCVersion: temp_mod[7],
@@ -52,6 +53,8 @@ var loader = new AsyncDataResourceLoader({
             setCategories(jsonData.categories);
             initCategoriesSidebar();
             console.log(CATEGORIES);
+
+            setTimeout( () =>initSortCache(mod_data), 0);
         }
     ])
 
@@ -214,6 +217,7 @@ function search(queryText, search_objects, selectBest=false) {
     return results;
 }
 
+registerSortListener(() => searchTextChanged());
 //================
 // Input Handling
 //================
@@ -232,6 +236,11 @@ function searchTextChanged(queryEvent) {
             results = search_objects;
         }
     }
+    // Sort results if sorting method selected.
+    const sortFunc = getSortFunc();
+    if (sortFunc) {
+        results = Array.from(results).sort(sortFunc);
+    } 
     updateSearchResultsListElement(results);
     // queryDisplayElement.innerText = query.target.value;
 }
