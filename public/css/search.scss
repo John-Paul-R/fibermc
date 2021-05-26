@@ -88,10 +88,6 @@ footer {
     
     @include categories.mobile;
 
-    #subtitle {
-        display: none;
-    }
-
     @include items.narrow_screen;
 }
 

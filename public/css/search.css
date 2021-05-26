@@ -379,10 +379,6 @@ footer {
     will-change: height;
   }
 
-  #subtitle {
-    display: none;
-  }
-
   .item {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
