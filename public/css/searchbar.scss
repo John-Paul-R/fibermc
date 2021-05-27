@@ -4,34 +4,92 @@
     height:auto;
     display:flex;
     flex-direction:row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items:center;
+    gap: 8px;
 
     padding: 8px 0;
-}
-#search_container > a {
-    text-decoration: none;
-    border-radius: 4px;
-    border: 1px solid var(--color-base-1);
-    padding-left: 6px;
-    padding-right: 4px;
-    background-color: var(--color-base-2);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
 
-#search_container > :last-child {
-    margin-left: auto;
-    justify-self: flex-end;
-}
-#search_container > a:hover {
-    background-color: var(--color-base-1);
-}
+    & > a {
+        text-decoration: none;
+        border-radius: 4px;
+        border: 1px solid var(--color-base-1);
+        padding-left: 6px;
+        padding-right: 4px;
+        background-color: var(--color-base-2);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
 
+        &:hover {
+            background-color: var(--color-base-1);
+        }
+    }
+    & > :last-child {
+        // margin-left: auto;
+        // justify-self: flex-end;
+    }
 
-#search_container {
     position: relative;
     z-index: 2;
+    grid-row: searchbar-start / searchbar-end;
+}
+
+.searchbar {
+    width: clamp(128px, 600px, 100%);
+}
+
+@mixin mobile {
+    #search_container {
+        width: 100%;
+    }
+}
+
+@mixin fullsize {
+    #search_container {
+        grid-column: categories-end / content-end;
+    }
+    #content_center .searchbar {
+        margin-left: calc(89px + 8px);
+    }
+}
+
+label.searchbar {
+    background-color: var(--color-element);
+    height:42px;
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items: center;
+    height:42px;
+}
+.searchbar * {
+    background-color:inherit;
+    border:none;
+    border-radius:4px;
+    outline:none;
+    
+    font-size:1.2em;
+}
+
+.searchbar .dropdown {
+    justify-self:flex-end;
+}
+.searchbar .element {
+    margin-right:4px;
+}
+
+.searchField {
+    padding-left:0px;
+    width:100%
+}
+input.searchField::placeholder {
+    color:var(--color-text);
+    opacity:0.6;
+}
+
+#search_container {
+    max-width: var(--list-width);
 }

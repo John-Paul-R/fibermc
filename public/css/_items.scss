@@ -157,6 +157,13 @@ li.item:hover .material-icons {
         & .desc {
             max-height: 100%;
         }
+
+        & .end_container {
+            display: block;
+            & > a {
+                display: none;
+            }
+        }
     }
 
     .item .start_container {
