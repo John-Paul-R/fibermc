@@ -15,7 +15,11 @@ export {
     runBatches,
     resetBatches,
     pxAboveTop, pxBelowBottom,
-    data_batches
+    data_batches,
+    batch_containers,
+    last_contentful_container_idx,
+    first_contentful_container_idx,
+    LI_HEIGHT, BATCH_SIZE,
 };
 
 //==============
@@ -49,6 +53,8 @@ var loader = new AsyncDataResourceLoader({
             const descending = (a, b) => (b.downloadCount - a.downloadCount);
             mod_data.sort(descending);
             console.log(mod_data);
+            
+            timestamp = jsonData.timestamp;
 
             setCategories(jsonData.categories);
             initCategoriesSidebar();
@@ -57,7 +63,7 @@ var loader = new AsyncDataResourceLoader({
             initSortCache(mod_data);
         }
     ])
-
+var timestamp;
 function init() {
 
     loader
@@ -67,9 +73,16 @@ function init() {
                 console.log('mod_data loaded. Running empty search.');
             }
         )
+        .addCompletionFunc(() => updateTimestamp(timestamp))
         .fetchResources();
 }
-
+function formatDate(date) {
+    date = new Date(date);
+    return (`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
+  }
+function updateTimestamp(timestamp) {
+    document.getElementById("last_updated_timestamp").textContent = `List updated: ${formatDate(timestamp)}`;
+}
 // Data loaded from resource loader
 /**
  * @type {Array<Object>}
@@ -265,7 +278,7 @@ function updateModCounts() {
 }
 
 function updateSearchResultsListElement(resultsArray) {
-    while (resultsListElement.children.length > 0) {
+    while (resultsListElement.firstChild) {
         resultsListElement.removeChild(resultsListElement.lastChild);
     }
     const elems = resultsListElement.children;
@@ -350,14 +363,27 @@ function initSearch(options) {
             buildList = options.listCreationFunc;
         } else {
             buildList = buildListBatches;
-            console.warn("No list creation function supplied. Falling back to default.")
+            console.info("No list creation function supplied. Falling back to default.")
         }
         
+        // Add Stylesheet 
+        var sheet = createStyleSheet('mod-list-constructed');
+        sheet.insertRule(`.item_batch {
+            height: ${LI_HEIGHT*BATCH_SIZE}px;
+            min-height: ${LI_HEIGHT*BATCH_SIZE}px;
+        }`);
+        console.log(sheet.cssRules);
+        queryDisplayElement = document.getElementById("search_query_text");
+
         if (options.lazyLoadBatches) {
             if (options.lazyLoadBatches === true) {
                 resultsListElement.addEventListener('scroll', (e)=> {
-                    const numPxBelowBot = pxBelowBottom(batch_containers[last_contentful_container_idx]);
-                    const numPxAboveTop = pxAboveTop(batch_containers[first_contentful_container_idx]);
+                    let numPxBelowBot = Number.MAX_VALUE;
+                    let numPxAboveTop = Number.MAX_VALUE;
+                    if (last_contentful_container_idx < batch_containers.length)
+                        numPxBelowBot = pxBelowBottom(batch_containers[last_contentful_container_idx]);
+                    if (first_contentful_container_idx < batch_containers.length)
+                        numPxAboveTop = pxAboveTop(batch_containers[first_contentful_container_idx]);
                     let added = 0;
                     let addedLessThanDiff = true;
                     
@@ -427,7 +453,7 @@ function initSearch(options) {
     // }`)
     console.log(sheet.cssRules);
     queryDisplayElement = document.getElementById("search_query_text");
-    console.info("atlas_search.js initialization complete!");
+    console.info("mod_search_logic.js initialization complete!");
 }
 
 //======
@@ -442,24 +468,29 @@ var last_contentful_container_idx;
 const storeBatches = (results, startIdx, batchSize, useContainers=true) => {
     const endIdx = startIdx + batchSize;
     const data_batch = [];
+    const nextBatchSize = Math.min(batchSize, results.length - endIdx);
     if (useContainers) {
         const batch_container = document.createElement('div');
-        // batch_container.setAttribute('class', 'item_batch');
-        batch_container.style.height = LI_HEIGHT*batchSize+'px';
+        batch_container.setAttribute('class', 'item_batch');
+        // batch_container.style.height = LI_HEIGHT*batchSize+'px';
         // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
     
         batch_containers.push(batch_container);
         resultsListElement.appendChild(batch_container);
+        if (nextBatchSize <= 0) {
+            batch_container.style.height = data_batch.length * LI_HEIGHT + "px";
+            batch_container.style.minHeight = data_batch.length * LI_HEIGHT + "px";
+        }
     }
 
     for (let i = startIdx; i < endIdx; i++) {
         data_batch.push(results[i]);
     }
     data_batches.push(data_batch);
-
-    const nextBatchSize = Math.min(batchSize, results.length - endIdx);
+    
     if (nextBatchSize > 0)
         storeBatches(results, endIdx, nextBatchSize, useContainers);
+    
 }
 
 let runBatches = (results, batchIdx, remainingBatches=0, waitForScrollAfter=0, callback=null) => {
@@ -467,7 +498,7 @@ let runBatches = (results, batchIdx, remainingBatches=0, waitForScrollAfter=0, c
         nextBatchFunc = ()=>{};
         return;
     } else if (batchIdx == 0) {
-        first_contentful_container_idx = batchIdx;
+        // first_contentful_container_idx = batchIdx;
     }
     // const batch_elem = document.createElement('div');
     createBatch(batchIdx, data_batches);
@@ -498,14 +529,20 @@ function resetBatches() {
     data_batches = [];
     batch_containers = [];
 }
+const WINDOW_SIZE = 10;
 function buildListBatches(resultsArray) {
     let listBuildTime = performance.now();
-    
+    resultsListElement.scrollTop = 0;
     resetBatches();
     storeBatches(resultsArray, 0, Math.min(BATCH_SIZE, resultsArray.length));
     // runBatches(resultsArray, idx, Math.min(BATCH_SIZE, resultsArray.length), -1, 10);//Math.floor(window.innerHeight/40)
-    runBatches(resultsArray, 0, -1, 10);//Math.floor(window.innerHeight/40)
+    runBatches(resultsArray, 0, -1, WINDOW_SIZE);//Math.floor(window.innerHeight/40)
 
+    // This is cursed. I have no idea why, but this fixes a bug with batch generation.
+    // Do not Remove w/o extensive testing of scrolling (with multiple search queries).
+    // vvv
+    first_contentful_container_idx = 0;
+    
     listBuildTime = performance.now() - listBuildTime;
     listBuildTimeAvg = (listBuildTimeAvg * (searchCount - 1) + listBuildTime) / searchCount;
     console.log(`List Build - A:${listBuildTimeAvg.toFixed(3)} ms, I:${(listBuildTime).toFixed(3)} ms, numMatches: ${resultsArray.length}`)
