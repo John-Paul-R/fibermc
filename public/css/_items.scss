@@ -78,23 +78,20 @@
     font-size: 1.5em;
     font-weight: 300;
 }
-.item .out_link {
+.out_link {
     width: 32px;
     height: 32px;
     max-height: 32px;
     line-height: 32px;    
     margin-top: auto;
     margin-bottom: auto;
-}
-.item:nth-child(even) .material-icons {
-    color: var(--color-element);
-}
-.item:nth-child(odd) .material-icons {
-    color: var(--color-element-2);
+    visibility: hidden;
 }
 
-li.item:hover .material-icons {
-    color: var(--color-text);
+.item:hover {
+    & .out_link {
+        visibility: visible;
+    }
 }
 
 .start_container {
