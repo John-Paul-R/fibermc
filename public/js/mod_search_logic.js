@@ -54,7 +54,7 @@ var loader = new AsyncDataResourceLoader({
             initCategoriesSidebar();
             console.log(CATEGORIES);
 
-            setTimeout( () =>initSortCache(mod_data), 0);
+            initSortCache(mod_data);
         }
     ])
 
@@ -196,7 +196,7 @@ function search(queryText, search_objects, selectBest=false) {
     var fuzzysortStart = performance.now();
 
     let results = fuzzysort.go(queryText.trim(), search_objects, {
-        keys: ['name', 'slug'],
+        keys: ['name', 'author'],
         allowTypo: true,
         threshold: -500,
         // Create a custom combined score to sort by. -100 to the desc score makes it a worse match

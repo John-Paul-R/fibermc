@@ -1,6 +1,4 @@
 
-
-
 var sortable_cols = {
     "t_name": "name",
     "t_auth": "author",
@@ -9,16 +7,18 @@ var sortable_cols = {
     "t_date": "dateModified",
 };
 /**
- * 
  * @param {string} name 
  */
 function formatName(name) {
-    return name.toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .replace(/^\W*\[fabric\]/g, '');
+    return name.trim().replace(/[\[\(\{].*?fabric.*?[\]\)\}]/ig, '').trim();
 }
 /**
- * 
+ * @param {string} name 
+ */
+function sortableName(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+/**
  * @param {string} vers 
  */
 function versionOrd(vers) {
@@ -30,23 +30,31 @@ function versionOrd(vers) {
         out += parseFloat(strNum) * weight;
         weight /= 100;
     }
-
+    if (nums[nums.length-1].endsWith('-Snapshot')) {
+        out -= 1
+    }
     if (Number.isNaN(out)) {
         out = -1;
     }
     return out;
 }
+/**
+ * 
+ * @param {string} date 
+ */
+function dateOrd(date) {
+    return new Date(date).valueOf();
+}
 
 export function initSortCache(mods) {
     for (const mod of mods) {
-        
-        mod["s_name"] = formatName(mod["name"]);
+        mod["name"] = formatName(mod["name"])  
+        mod["s_name"] = sortableName(mod["name"]);
         // mod["s_author"] = 
         // mod["s_downloadCount"] = 
         mod["s_latestMCVersion"] = versionOrd(mod["latestMCVersion"]);
-        // mod["s_dateModified"] = 
+        mod["s_dateModified"] = dateOrd(mod["dateModified"])
     }
-
 }
 
 var sort_funcs = {
@@ -55,7 +63,6 @@ var sort_funcs = {
         
     },
     "author": (a, b) => {
-        // console.log(a)
         if (!(a["author"] && b["author"])) {
             return 1;
         }
@@ -68,20 +75,10 @@ var sort_funcs = {
         return (a["s_latestMCVersion"] < b["s_latestMCVersion"]) ? 1: -1
     },
     "dateModified": (a, b) => {
-        return (a["dateModified"] < b["dateModified"]) ? 1: -1
+        return (a["s_dateModified"] < b["s_dateModified"]) ? 1: -1
     },
 
 }
-// def versionOrd(vers):
-//     nums = vers.split('.')
-//     weight = 100000
-//     out = 0
-//     for x in nums:
-//         strNum = ''.join(list(filter(str.isdigit, x)))
-//         out += toNum(strNum)*weight
-//         weight /= 100
-//     return out
-
 
 var default_order = {
     "name": 'ascending',
@@ -141,7 +138,6 @@ function updateSortIndicator() {
     }
 
 }
-console.log("TEST");
 
 export function getSortFunc() {
     return finalizeSortFunc(sort_funcs[sortMode]) || null;
