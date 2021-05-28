@@ -2,6 +2,7 @@
 @import 'header';
 @import 'buttons_and_input';
 @import 'scrollbars';
+@import 'swap_palette';
 
 :root {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,6 +45,9 @@
 
         margin:4px;
 } */
+.material-icons {
+    color: inherit;
+}
 
 body {
     width: 100%;

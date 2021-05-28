@@ -368,9 +368,11 @@ function initSearch(options) {
         
         // Add Stylesheet 
         var sheet = createStyleSheet('mod-list-constructed');
+        const gap = 4;
+        const height = LI_HEIGHT*BATCH_SIZE + gap*(BATCH_SIZE-1);
         sheet.insertRule(`.item_batch {
-            height: ${LI_HEIGHT*BATCH_SIZE}px;
-            min-height: ${LI_HEIGHT*BATCH_SIZE}px;
+            height: ${height}px;
+            min-height: ${height}px;
         }`);
         console.log(sheet.cssRules);
         queryDisplayElement = document.getElementById("search_query_text");
@@ -444,13 +446,6 @@ function initSearch(options) {
 
     // Add Stylesheet 
     var sheet = createStyleSheet('mod-list-constructed');
-    sheet.insertRule(`div#search_results_list {
-        max-width: 900px;
-        width: 900px;
-    }`, 0)
-    // sheet.insertRule(`.item_batch {
-    //     height: ${LI_HEIGHT*BATCH_SIZE}px;
-    // }`)
     console.log(sheet.cssRules);
     queryDisplayElement = document.getElementById("search_query_text");
     console.info("mod_search_logic.js initialization complete!");

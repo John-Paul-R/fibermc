@@ -46,6 +46,7 @@
 .name {
     font-weight: 700;
     text-decoration: none;
+    color: var(--color-accent-1);
 }
 .name:hover {
     text-decoration: underline;
@@ -114,12 +115,13 @@
 .container {
     display: flex;
     align-items: center;
-    height: 80px;
+    height: var(--item-height);
     background-color: inherit;
     padding-left: 8px;
     padding-right: 8px;
     border: 1px solid var(--color-base);
     max-width: 100%;
+    border-radius: 6px;
     /* width: 100%; */
 }
 .front_container {

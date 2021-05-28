@@ -313,14 +313,27 @@ loader.addCompletionFunc(()=>{
     }
 });
 loader.addCompletionFunc(()=>setResultsListElement(document.getElementById("search_results_list")))
-loader.addCompletionFunc(()=>initSearch({
+function getLiHeight() {
+    const fmt = (val) => val.slice(0,val.length-2);
+    const style = getComputedStyle(resultsListElement);
+    const pseudoPadding = parseInt(fmt(style.getPropertyValue('--pseudo-padding')));
+    const titleFontSize = parseInt(fmt(style.getPropertyValue('--title-font-size')));
+    const descFontSize  = parseInt(fmt(style.getPropertyValue('--desc-font-size')));
+    const descLineCount = parseInt(style.getPropertyValue('--desc-line-count'));
+    const borderThickness = parseInt(style.getPropertyValue('--border-thickness'));
+    return 2*pseudoPadding + 2*borderThickness + titleFontSize + descFontSize * descLineCount;
+}
+loader.addCompletionFunc(()=>{
+    
+    initSearch({
         results_persist: true,
         listElemCreationFunc: createListElement,
         batchCreationFunc: createBatch,
         // listCreationFunc: buildList,
         lazyLoadBatches: true,
         batch_size: 20,
-        li_height: 70+16,
-    }))
-
+        li_height: getLiHeight(),
+    })}
+);
+loader.addCompletionFunc(()=>console.log(getLiHeight()));
 init();

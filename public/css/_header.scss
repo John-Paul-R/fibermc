@@ -1,4 +1,9 @@
 
+#title {
+    // TODO Use --color-accent-2 for title once all palettes have a suitable color in this slot.
+    color: var(--color-accent-1);
+}
+
 #navbar_front {
     gap: 12px;
 
@@ -32,16 +37,12 @@ header .end .button {
     * {
         margin-right:2px;
         margin-left:2px;
-        color: var(--color-text-1);
+        color: inherit;
     }
 
     &:hover {
         background-color: var(--color-base-1);
         color: var(--color-text);
-
-        * {
-            color: var(--color-text);
-        }
     }
 
 }

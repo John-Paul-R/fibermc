@@ -14,6 +14,11 @@
     overflow-y: auto;
     overflow-x: hidden;
 
+    & > hr {
+        color: var(--color-accent-1);
+        border-color: var(--color-accent-1);
+    }
+
 }
 #categories_list {
     list-style-type: none;
@@ -32,7 +37,7 @@
     border: 2px solid var(--color-element-1);
 }
 #categories_list > :hover {
-    border: 2px solid var(--color-accent-2-1);
+    border: 2px solid var(--color-accent-2);
 }
 #categories_list > li.selected {
     border: 2px solid var(--color-accent-1);
