@@ -102,25 +102,30 @@ const sortBtns = document.getElementsByClassName('tbl_sort');
 for (const btn of sortBtns) {
     btn.col_field = sortable_cols[btn.parentElement.id];
     btn.addEventListener('click', (e) => {
+        
+        /**
+         * @type {HTMLElement}
+         */
+        const elem = e.target;
         // if already selected, rotate order, or deselect.
-        if (sortMode === e.target.col_field) {  
+        if (sortMode === elem.col_field) {  
             if (reverseNum === -1) {
                 reverseNum = 1;
                 sortMode = null;
             } else {
                 reverseNum = -1;
-            }
-            e.target.classList.toggle('ascending');
+            }1
+            elem.classList.toggle('ascending');
         } else {
-            sortMode = e.target.col_field;
+            sortMode = elem.col_field;
             reverseNum = 1;
             if (default_order[sortMode] === 'ascending') {
-                e.target.classList.add('ascending');
+                elem.classList.add('ascending');
             }
         }
-        
-        
         updateSortIndicator();
+        
+        
         for (const func of onModeChangeFuncs) {
             func(sortMode);
         }
@@ -135,8 +140,16 @@ function updateSortIndicator() {
         } else {
             btn.classList.remove('active');
         }
+        if (btn.classList.contains("active")) {
+            if (btn.classList.contains("ascending")) {
+                btn.innerText = "north";
+            } else {
+                btn.innerText = "south";
+            }
+        } else {
+            btn.innerText = "sort";
+        }
     }
-
 }
 
 export function getSortFunc() {

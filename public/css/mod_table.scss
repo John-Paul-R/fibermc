@@ -71,31 +71,12 @@
         margin-left: auto;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         &.active {
           background-color: var(--color-accent-1-1);
-          &.ascending::after {
-            transform: rotateZ(180deg)
-          }
-          &::after {
-            content: "south";
-            font-family: 'Material Icons';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
-            display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            -moz-font-feature-settings: 'liga';
-            -moz-osx-font-smoothing: grayscale;
-          }
         }
 
       }
-
 
       overflow-wrap: break-word;
       word-wrap: break-word;
