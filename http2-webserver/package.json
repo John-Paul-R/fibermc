@@ -9,7 +9,8 @@
   },
   "main": "http2server2.1.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --inspect --watch ../public --watch ./ ./http2server2.1.js -c server.crt -k server.key -p 8082 --debug --pubpath ../public"
   },
   "author": {
     "name": "John Paul Rutigliano",
