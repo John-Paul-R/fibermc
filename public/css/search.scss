@@ -160,8 +160,7 @@ footer {
     --item-height: calc(2 * var(--pseudo-padding) + var(--title-font-size) + var(--desc-font-size) * var(--desc-line-count));
 }
 
-.item_categories > li,
-#categories_list > li {
+.item_categories > li {
     /* display: inline; */
     height: auto;
     margin-right: 4px;

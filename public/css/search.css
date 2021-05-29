@@ -37,8 +37,7 @@
 #search_results_list .container b,
 .container a,
 .container > ul,
-.container > button,
-#categories_list > li {
+.container > button {
   overflow: visible;
   white-space: nowrap;
   min-width: min-content;
@@ -176,7 +175,7 @@
   max-height: inherit;
 }
 
-#categories_list > li {
+#categories_list > button {
   border-radius: 12px;
   width: min-content;
   cursor: pointer;
@@ -187,16 +186,38 @@
   border: 2px solid var(--color-accent-2);
 }
 
-#categories_list > li.selected {
+#categories_list > button.selected {
   border: 2px solid var(--color-accent-1);
 }
 
-#categories_list > li > span {
+#categories_list > button > span {
   background-color: var(--color-element);
+  margin-left: 4px;
   padding-left: 4px;
   padding-right: 4px;
   border-radius: 8px;
   pointer-events: none;
+}
+
+#categories_list > button {
+  /* display: inline; */
+  height: auto;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  margin-top: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 12px;
+  background-color: var(--color-element-1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* border: 1px solid var(--color-accent-1); */
+  overflow: visible;
+  white-space: nowrap;
+  min-width: min-content;
 }
 
 #categories_list_toggle {
@@ -519,8 +540,7 @@ footer {
   --item-height: calc(2 * var(--pseudo-padding) + var(--title-font-size) + var(--desc-font-size) * var(--desc-line-count));
 }
 
-.item_categories > li,
-#categories_list > li {
+.item_categories > li {
   /* display: inline; */
   height: auto;
   margin-right: 4px;

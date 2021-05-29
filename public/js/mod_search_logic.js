@@ -151,7 +151,8 @@ function initCategoriesSidebar() {
     }
     // TODO Restructure this, jfc
     for (let i=0; i<CATEGORIES.length; i++) {
-        const cat_elem = document.createElement('li');
+        const cat_elem = document.createElement('button');
+        cat_elem.classList.add('reset_button');
         CATEGORIES[i].htmlElement = cat_elem;
         cat_elem.cat_id = i;//category.categoryId;
     }

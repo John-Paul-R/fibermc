@@ -130,6 +130,40 @@ select {
   color: var(--color-accent-1);
 }
 
+a.logo {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 0.25rem;
+}
+a.logo img {
+  width: 1em;
+}
+
+.reset_button {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  /* inherit font & color from ancestor */
+  color: inherit;
+  font: inherit;
+  /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+  line-height: normal;
+  /* Corrects font smoothing for webkit */
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  /* Corrects inability to style clickable `input` types in iOS */
+  -webkit-appearance: none;
+  /* Remove excess padding and border in Firefox 4+ */
+}
+.reset_button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
 :root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--color-background);

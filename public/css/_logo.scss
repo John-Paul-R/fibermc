@@ -1,0 +1,10 @@
+
+a.logo {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    & img {
+        width: 1em;
+    }
+    padding: 0 0.25rem;
+}
