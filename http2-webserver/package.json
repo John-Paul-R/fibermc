@@ -2,10 +2,10 @@
   "name": "fibermc-webserver",
   "version": "1.2.0",
   "description": "The http/2 server for the FiberMC website by John Paul Rutigliano.",
-  "homepage": "https://github.com/John-Paul-R/FabricMC-Mod-List-Website",
-  "repository": "github:John-Paul-R/FabricMC-Mod-List-Website",
+  "homepage": "https://github.com/John-Paul-R/fibermc",
+  "repository": "github:John-Paul-R/fibermc",
   "bugs": {
-    "url": "https://github.com/John-Paul-R/FabricMC-Mod-List-Website/issues"
+    "url": "https://github.com/John-Paul-R/fibermc/issues"
   },
   "main": "http2server2.1.js",
   "scripts": {
