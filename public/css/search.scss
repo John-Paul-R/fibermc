@@ -4,6 +4,7 @@
 @use 'searchbar';
 @import 'mod_categories';
 @import 'search_list';
+@import 'motd';
 // @import 'items';
 
 :root {
@@ -102,6 +103,7 @@ footer {
         grid-template-rows: [searchbar-start]58px[searchbar-end] var(--list-height)[list-end];
         /* grid-template-columns: [categories-start]384px[categories-end] min-content[content-end]; */
         grid-template-columns: [categories-start]1fr[categories-end] 3fr[content-end];
+        --categories-width: clamp(256px, 36ch, 48ch);
     }
 
     @include searchbar.fullsize;
@@ -123,6 +125,11 @@ footer {
         grid-row: searchbar-end / list-end;
         grid-column: categories-end / content-end;
         max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px)));
+    }
+
+    #motd {
+        grid-row: 1 / 2;
+        grid-column: 1 / 2
     }
 }
 

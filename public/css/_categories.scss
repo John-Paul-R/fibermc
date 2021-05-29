@@ -12,7 +12,6 @@
     border-radius: 8px;
     
     padding: 8px;
-    margin-left: auto;
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -140,9 +139,11 @@
 // PC
 @mixin fullsize {
     #categories_wrapper {
+        justify-self: right;
+        
         & > #categories {
             // margin-top: 32px;
-            width: clamp(256px, 36ch, 48ch);
+            width: var(--categories-width);
             height: auto;
             max-height: 100%;
             min-height:0;
