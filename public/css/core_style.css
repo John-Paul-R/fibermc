@@ -134,10 +134,12 @@ a.logo {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  height: 100%;
   padding: 0 0.25rem;
 }
 a.logo img {
-  width: 1em;
+  height: min(1.2em, 100%);
+  max-width: 3em;
 }
 
 .reset_button {

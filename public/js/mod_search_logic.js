@@ -182,9 +182,9 @@ function initCategoriesSidebar() {
     }
     function applySelected(cat_elem) {
         if (cat_elem.selected) {
-            cat_elem.style.border = '2px solid var(--color-accent-1)';
+            cat_elem.classList.add('selected');
         } else {
-            cat_elem.style=null;//.border = '2px solid var(--color-element-1)';
+            cat_elem.classList.remove('selected');//.border = '2px solid var(--color-element-1)';
         }
     }
 }

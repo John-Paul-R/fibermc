@@ -224,6 +224,10 @@
   display: none;
 }
 
+#categories_list > .selected {
+  border: 2px solid var(--color-accent-1);
+}
+
 #search_container {
   width: auto;
   height: auto;
@@ -506,6 +510,66 @@ footer {
     height: auto;
     max-height: 100%;
     min-height: 0;
+  }
+  #categories_wrapper > #categories #cat_layout_btn {
+    margin-left: auto;
+  }
+  #categories_wrapper > #categories #cat_layout_btn:hover {
+    background-color: var(--color-element-1);
+  }
+  #categories_wrapper > #categories #cat_layout_btn:active {
+    background-color: var(--color-element-2);
+  }
+  #categories_wrapper > #categories #cat_layout_btn::after {
+    font-family: "Material Icons";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    margin: 4px;
+    content: "view_list";
+  }
+  #categories_wrapper > #categories.view_list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+  }
+  #categories_wrapper > #categories.view_list #cat_layout_btn::after {
+    content: "view_quilt";
+  }
+  #categories_wrapper > #categories.view_list #categories_list_wrapper {
+    flex-shrink: 1;
+    overflow-y: auto;
+  }
+  #categories_wrapper > #categories.view_list #categories_list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 2px;
+  }
+  #categories_wrapper > #categories.view_list #categories_list button {
+    white-space: nowrap;
+    width: auto;
+    justify-content: space-between;
+    background-color: var(--color-element-2);
+    border-radius: 4px;
+    border-width: 1px;
+    margin: 1px;
+  }
+  #categories_wrapper > #categories.view_list #categories_list button:hover {
+    border-color: var(--color-accent-2);
+  }
+  #categories_wrapper > #categories.view_list #categories_list button.selected {
+    border: 2px solid var(--color-accent-1);
+    margin: 0;
   }
 
   #search_results_list {

@@ -1,5 +1,5 @@
 
-.reset_button {
+@mixin reset_button {
     border: none;
     margin: 0;
     padding: 0;
@@ -22,10 +22,14 @@
     /* Corrects inability to style clickable `input` types in iOS */
     -webkit-appearance: none;
   
-  
     /* Remove excess padding and border in Firefox 4+ */
     &::-moz-focus-inner {
         border: 0;
         padding: 0;
     }
+}
+
+
+.reset_button {
+    @include reset_button;
 }

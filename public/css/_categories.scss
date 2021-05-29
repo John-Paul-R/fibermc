@@ -1,4 +1,6 @@
 
+@use 'material_mixin';
+
 #categories_wrapper {
     // max-width: 100%;
 }
@@ -131,6 +133,9 @@
     }
 
 }
+#categories_list > .selected {
+    border: 2px solid var(--color-accent-1);
+}
 
 // PC
 @mixin fullsize {
@@ -141,7 +146,61 @@
             height: auto;
             max-height: 100%;
             min-height:0;
-            // max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));    
+            // max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + (8px + 10% + 8px)));
+            #cat_layout_btn {
+                margin-left: auto;
+                // border: 1px solid var(--color-element-1);
+                &:hover {
+                    // color: var(--color-accent-1);
+                    background-color: var(--color-element-1);
+                }
+                &:active {
+                    // color: var(--color-accent-1);
+                    background-color: var(--color-element-2);
+                }
+                &::after {
+                    @include material_mixin.icon;
+                    content: "view_list";
+                }
+            }
+            &.view_list {
+                #cat_layout_btn::after {
+                    content: "view_quilt";
+                }
+
+                display: flex;
+                flex-direction: column;
+                overflow-y: hidden;
+                & #categories_list_wrapper {
+                    flex-shrink: 1;
+                    overflow-y: auto;
+                }
+                & #categories_list {
+                    flex-direction: column;
+                    flex-wrap: nowrap;
+                    align-items: stretch;
+                    gap: 2px;
+                    & button {
+                        white-space: nowrap;
+                        width: auto;
+                        justify-content: space-between;
+                        background-color: var(--color-element-2);
+                        border-radius: 4px;
+                        border-width: 1px;
+                        margin: 1px;
+                        &:hover {
+                            border-color: var(--color-accent-2);
+                        }
+                        &.selected {
+                            border: 2px solid var(--color-accent-1);
+                            margin: 0;
+                        }
+                        // border-color: var(--color-element-2);
+                        // border-bottom: 2px solid var(--color-element-1);
+
+                    }
+                }
+            }
         }
         height: auto;
         min-height:0;
