@@ -495,6 +495,7 @@ footer {
     /* grid-template-columns: [categories-start]384px[categories-end] min-content[content-end]; */
     grid-template-columns: [categories-start] 1fr [categories-end] 3fr [content-end];
     --categories-width: clamp(256px, 36ch, 48ch);
+    width: min(calc(var(--gap) + var(--categories-width) + 900px), 100%);
   }
 
   #search_container {
@@ -510,6 +511,7 @@ footer {
     grid-column: categories-start/categories-end;
     display: grid;
     grid-template-rows: [cat-start] 1fr [cat-end] min-content [info-end];
+    width: -moz-fit-content;
   }
   .sidebar_left > *:last-child {
     grid-row: cat-end/info-end;
@@ -526,6 +528,9 @@ footer {
     height: auto;
     max-height: 100%;
     min-height: 0;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
   }
   #categories_wrapper > #categories #cat_layout_btn {
     margin-left: auto;
@@ -553,17 +558,12 @@ footer {
     margin: 4px;
     content: "view_list";
   }
-  #categories_wrapper > #categories.view_list {
-    display: flex;
-    flex-direction: column;
-    overflow-y: hidden;
+  #categories_wrapper > #categories #categories_list_wrapper {
+    flex-shrink: 1;
+    overflow-y: auto;
   }
   #categories_wrapper > #categories.view_list #cat_layout_btn::after {
     content: "view_quilt";
-  }
-  #categories_wrapper > #categories.view_list #categories_list_wrapper {
-    flex-shrink: 1;
-    overflow-y: auto;
   }
   #categories_wrapper > #categories.view_list #categories_list {
     flex-direction: column;

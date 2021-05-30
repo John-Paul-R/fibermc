@@ -164,18 +164,19 @@
                     content: "view_list";
                 }
             }
+
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            & #categories_list_wrapper {
+                flex-shrink: 1;
+                overflow-y: auto;
+            }
             &.view_list {
                 #cat_layout_btn::after {
                     content: "view_quilt";
                 }
 
-                display: flex;
-                flex-direction: column;
-                overflow-y: hidden;
-                & #categories_list_wrapper {
-                    flex-shrink: 1;
-                    overflow-y: auto;
-                }
                 & #categories_list {
                     flex-direction: column;
                     flex-wrap: nowrap;
@@ -191,6 +192,7 @@
                         margin: 1px;
                         &:hover {
                             border-color: var(--color-accent-2);
+                            // background-color: var(--color-element-1);
                         }
                         &.selected {
                             border: 2px solid var(--color-accent-1);

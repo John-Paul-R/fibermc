@@ -104,6 +104,7 @@ footer {
         /* grid-template-columns: [categories-start]384px[categories-end] min-content[content-end]; */
         grid-template-columns: [categories-start]1fr[categories-end] 3fr[content-end];
         --categories-width: clamp(256px, 36ch, 48ch);
+        width: min(calc(var(--gap) + var(--categories-width) + 900px), 100%);
     }
 
     @include searchbar.fullsize;
@@ -117,6 +118,7 @@ footer {
         & > *:last-child {
             grid-row: cat-end/info-end;
         }
+        width: -moz-fit-content;
     }
 
     @include categories.fullsize;
