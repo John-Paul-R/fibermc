@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="keywords" content="fibermc,minecraft,mods,mod list,minecraft mod,fabric mods,fabric,list">
-    <meta name="Description" content="A searchable list of (almost) all mods for Minecraft Fabric.">
+    <meta name="Description" content="A searchable list of (almost) all Minecraft Fabric mods.">
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" type="text/css" href="css/core_style.css?v=1.0.1">
@@ -68,6 +68,11 @@
                 </div>
                 <div id="motd">
                     Message of the Day!
+                    <script>
+                        fetch('https://static.jpcode.dev/fibermc/motd.json')
+                            .then(response => response.json())
+                            .then(data => document.getElementById("motd").textContent = data.motd);
+                    </script>
                     <!-- TODO: Dancing text (bounce + mini rotate back and forth, possibly some bounce deforms. Think like JSaB.) -->
                 </div>
             </div>
