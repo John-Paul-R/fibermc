@@ -417,6 +417,9 @@ footer {
   #categories_wrapper {
     max-height: 256px;
     width: 100%;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
   }
   #categories_wrapper > #categories {
     position: relative;

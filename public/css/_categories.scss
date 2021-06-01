@@ -83,7 +83,9 @@
         
         max-height: 256px;
         width: 100%;
-        
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
         & > #categories {
             position: relative;
             width: 100%;

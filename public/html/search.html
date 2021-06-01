@@ -27,8 +27,8 @@
                 <a href="https://patreon.com/jpcode" class="logo button" target="_blank" rel="noopener noreferrer"><img src="https://static.jpcode.dev/img/icon/patreon.svg" alt="Patreon" class="invert icon_after"></a>
                 <a href="https://github.com/John-Paul-R/fibermc" class="logo button" target="_blank" rel="noopener noreferrer"><img src="https://static.jpcode.dev/img/icon/github.svg" alt="GitHub" class="invert icon_after"></a>
                 <a href="https://discord.gg/dwh9y7D" class="logo button" target="_blank" rel="noopener noreferrer"><img src="https://static.jpcode.dev/img/icon/discord.svg" alt="Discord" class="invert icon_after"></a>
-                <a href="./about" class="button">About</a>
-                <button class="swap_palette">Theme<i class="material-icons">style</i></button>
+                <a id="about" href="./about" class="button"><span class="text">About</span></a>
+                <button class="swap_palette"><span class="text">Theme</span><i class="material-icons">style</i></button>
             </div>
             <script src="https://static.jpcode.dev/js/multi-palette.min.js"></script>                    
         </div>
@@ -70,9 +70,36 @@
                 <div id="motd">
                     Message of the Day!
                     <script>
-                        fetch('https://static.jpcode.dev/fibermc/motd.json')
-                            .then(response => response.json())
-                            .then(data => document.getElementById("motd").textContent = data.motd);
+                        (function(){
+                            function typeText(targetElem, text, typeDelay) {
+                                if (text.length <= 0) {
+                                    motdGo = false;
+                                    return;
+                                }
+                                console.log("typeText");
+                                targetElem.textContent = targetElem.textContent + text.slice(0,1);
+                                setTimeout(()=>typeText(targetElem, text.slice(1), typeDelay), typeDelay);
+                            }
+                            var motdGo = true;
+                            const motd = document.getElementById("motd");
+                            motd.textContent = "";
+                            const motdSpan = motd.appendChild(document.createElement('span'));
+                            const blinkSpan = (p, delay)=>{
+                                if (p) {
+                                    motdSpan.style.borderRight = '1px solid var(--color-accent-1)'
+                                } else {
+                                    motdSpan.style.borderRight = '1px solid transparent';
+                                }
+                                if (motdGo)
+                                    setTimeout(()=>blinkSpan(!p, delay), delay);
+                                else
+                                    motdSpan.style.borderRight = null;
+                            }
+                            blinkSpan(true, 500);
+                            fetch('https://static.jpcode.dev/fibermc/motd.json')
+                                .then(response => response.json())
+                                .then(data => typeText(motdSpan, data.motd, 250));    
+                        })();
                     </script>
                     <!-- TODO: Dancing text (bounce + mini rotate back and forth, possibly some bounce deforms. Think like JSaB.) -->
                 </div>
