@@ -238,9 +238,14 @@ registerSortListener(() => searchTextChanged());
 function searchTextChanged(queryEvent) {
     let results = null;
     const search_objects = getFilteredList();
+    const runSearch = (query) => {
+        results = search(query, search_objects).map((el) => el.obj);
+        console.log(query);
+    };
     if (queryEvent && queryEvent.target.value){
-        results = search(queryEvent.target.value, search_objects).map((el) => el.obj);
-        console.log(queryEvent.target.value);
+        runSearch(queryEvent.target.value);
+    } else if (defaultSearchInput.value) {
+        runSearch(defaultSearchInput.value);
     } else {
         console.log("No query data was found.")
         // If ALL mods should be shown in the even the search query was empty
@@ -315,6 +320,7 @@ function setResultsListElement(elem) {
 var queryDisplayElement;
 var results_persist = false;
 var LI_HEIGHT, BATCH_SIZE;
+var defaultSearchInput;
 /**
  * 
  * @param {Object}      options 
@@ -440,6 +446,7 @@ function initSearch(options) {
         });
         // console.info(searchElements[i], " will now listen for input events and trigger searchAtlas.");
     }
+    defaultSearchInput = searchHTMLElements[0];
     resultsListElement = resultsListElement || document.getElementById("search_results_list");
     if (resultsListElement.className.includes('persist')) {
         results_persist = true;
