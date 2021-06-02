@@ -83,22 +83,35 @@
                             var motdGo = true;
                             const motd = document.getElementById("motd");
                             motd.textContent = "";
-                            const motdSpan = motd.appendChild(document.createElement('span'));
-                            const blinkSpan = (p, delay)=>{
-                                if (p) {
-                                    motdSpan.style.borderRight = '1px solid var(--color-accent-1)'
-                                } else {
-                                    motdSpan.style.borderRight = '1px solid transparent';
-                                }
-                                if (motdGo)
-                                    setTimeout(()=>blinkSpan(!p, delay), delay);
-                                else
-                                    motdSpan.style.borderRight = null;
-                            }
-                            blinkSpan(true, 500);
+                            let motdTextElem;
+                            
                             fetch('https://static.jpcode.dev/fibermc/motd.json')
                                 .then(response => response.json())
-                                .then(data => typeText(motdSpan, data.motd, 250));    
+                                .then(data => {
+                                    const motdData = data.motd;
+                                    console.log(data);
+                                    
+                                    if (motdData.link) {
+                                        motdTextElem = motd.appendChild(document.createElement('a'));
+                                        motdTextElem.href = motdData.link;
+                                    } else {
+                                        motdTextElem = motd.appendChild(document.createElement('span'));
+                                    }
+                                    const blinkSpan = (p, delay)=>{
+                                        if (p) {
+                                            motdTextElem.style.borderRight = '1px solid var(--color-accent-1)'
+                                        } else {
+                                            motdTextElem.style.borderRight = '1px solid transparent';
+                                        }
+                                        if (motdGo)
+                                            setTimeout(()=>blinkSpan(!p, delay), delay);
+                                        else
+                                        motdTextElem.style.borderRight = null;
+                                    }
+                                    blinkSpan(true, 500);
+        
+                                    typeText(motdTextElem, motdData.text, 250);
+                                });    
                         })();
                     </script>
                     <!-- TODO: Dancing text (bounce + mini rotate back and forth, possibly some bounce deforms. Think like JSaB.) -->
