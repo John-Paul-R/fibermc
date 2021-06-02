@@ -55,7 +55,7 @@ header .h_button.icon_only {
   border-right: 1px solid var(--color-base-1);
 }
 
-@media only screen and (max-width: 1162px) {
+@media only screen and (max-width: 1000px) {
   #subtitle {
     display: none;
   }

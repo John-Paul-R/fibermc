@@ -60,8 +60,9 @@ footer {
     margin-top: var(--gap);
 }
 
+$mobile-breakpoint: 1000px;
 // MOBILE
-@media only screen and (max-width: 1162px) {
+@media only screen and (max-width: $mobile-breakpoint) {
     #content_body {
         min-height: 0;
     }    
@@ -94,7 +95,7 @@ footer {
     @include items.narrow_screen;
 }
 
-@media only screen and (min-width: 1162px) {
+@media only screen and (min-width: $mobile-breakpoint) {
     #content_body {
         /* padding: var(--spacing-amount); */
     }    
