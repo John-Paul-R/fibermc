@@ -145,7 +145,7 @@ table#search_results_list > thead, table#search_results_list > tbody {
   padding-bottom: 12px;
   text-align: left;
   background-color: var(--color-accent-1);
-  color: white;
+  color: var(--color-text-accent-1);
   display: flex;
   flex-direction: row;
   overflow-wrap: break-word;
