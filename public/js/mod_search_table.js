@@ -58,10 +58,9 @@ function createListElement(modData) {
 
     const versions = document.createElement('td');
     versions.textContent = modData["latestMCVersion"]
-    const last_upated = document.createElement('td');
+    const last_updated = document.createElement('td');
     const last_updated_date = new Date(modData.dateModified);
-    last_upated.textContent = `${last_updated_date.getDate()}/${last_updated_date.getMonth()+1}/${last_updated_date.getFullYear()}`;
-
+    last_updated.textContent = last_updated_date.toLocaleDateString();
     // Fill content of elements
     //cfButtonIcon.textContent = 'launch'
     //cfButtonIcon.setAttribute('class', 'material-icons');
@@ -77,7 +76,7 @@ function createListElement(modData) {
     tr.appendChild(categories);
     tr.appendChild(dlCount);
     tr.appendChild(versions);
-    tr.appendChild(last_upated);
+    tr.appendChild(last_updated);
 
     return tr;
 }
