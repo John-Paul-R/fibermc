@@ -3,7 +3,7 @@ import {
 } from './util.js';
 import { AsyncDataResourceLoader } from './resource_loader.js';
 import { getSortFunc, registerListener as registerSortListener, initSortCache } from './table_sort.js';
-
+import { Mod } from './mod_types.js';
 export { 
     init, initSearch, initCategoriesSidebar,
     fabric_category_id,
@@ -19,7 +19,7 @@ export {
     batch_containers,
     last_contentful_container_idx,
     first_contentful_container_idx,
-    LI_HEIGHT, BATCH_SIZE,
+    LI_HEIGHT, BATCH_SIZE, setLiHeight
 };
 
 //==============
@@ -35,17 +35,7 @@ var loader = new AsyncDataResourceLoader({
             console.log(temp_mods)
             let new_mods = []  
             for (let i = 0; i < temp_mods.length; i++) {
-                const temp_mod = temp_mods[i];
-                new_mods.push({
-                    name: temp_mod[0],
-                    slug: temp_mod[1],
-                    summary: temp_mod[2],
-                    categories: temp_mod[3],
-                    author: temp_mod[4][0],
-                    downloadCount: temp_mod[5],
-                    dateModified: temp_mod[6],
-                    latestMCVersion: temp_mod[7],
-                });
+                new_mods.push(new Mod(temp_mods[i]));
             }
 
             setModData(new_mods);
@@ -257,7 +247,9 @@ function searchTextChanged(queryEvent) {
     }
     // Sort results if sorting method selected.
     const sortFunc = getSortFunc();
+    console.log("PREP_SORT")
     if (sortFunc) {
+        console.log("SORTING")
         results = Array.from(results).sort(sortFunc);
     } 
     updateSearchResultsListElement(results);
@@ -320,6 +312,21 @@ function setResultsListElement(elem) {
 var queryDisplayElement;
 var results_persist = false;
 var LI_HEIGHT, BATCH_SIZE;
+// Add Stylesheet 
+var sheet = createStyleSheet('mod-list-constructed')
+function setLiHeight(liHeight) {
+    LI_HEIGHT = liHeight;
+    const gap = 4;
+    const height = LI_HEIGHT*BATCH_SIZE + gap*(BATCH_SIZE-1);
+    if (sheet.cssRules.length > 0)
+        sheet.removeRule();
+    sheet.insertRule(`.item_batch {
+        height: ${height}px;
+        min-height: ${height}px;
+    }`);
+    // console.log(sheet.cssRules);
+    searchTextChanged();
+}
 var defaultSearchInput;
 /**
  * 
@@ -349,7 +356,7 @@ function initSearch(options) {
                 lazyLoadBatches: true,
             }
         //}
-
+            console.log(options)
         if (options.listElemCreationFunc) {
             createListElement = options.listElemCreationFunc;
         } else {
@@ -373,15 +380,6 @@ function initSearch(options) {
             console.info("No list creation function supplied. Falling back to default.")
         }
         
-        // Add Stylesheet 
-        var sheet = createStyleSheet('mod-list-constructed');
-        const gap = 4;
-        const height = LI_HEIGHT*BATCH_SIZE + gap*(BATCH_SIZE-1);
-        sheet.insertRule(`.item_batch {
-            height: ${height}px;
-            min-height: ${height}px;
-        }`);
-        console.log(sheet.cssRules);
         queryDisplayElement = document.getElementById("search_query_text");
 
         if (options.lazyLoadBatches) {

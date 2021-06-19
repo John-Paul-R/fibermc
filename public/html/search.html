@@ -37,6 +37,27 @@
         <div id="content_body">
             <div id="content_center" class="filled">
                 <div id="search_container">
+                    <button id="list_view_cycle_button">Cycle View</button>
+                    <div class="hover_dropdown">
+                        Sort By
+                        <div class="hover_dropdown-content">
+                            <button id="t_name">Name
+                                <span class="tbl_sort material-icons">sort</span>
+                            </button>
+                            <button id="t_auth">Author
+                                <span class="tbl_sort material-icons">sort</span>
+                            </button>
+                            <button id="t_dl">  Downloads
+                                <span class="tbl_sort material-icons">sort</span>
+                            </button>
+                            <button id="t_vers">Latest Supported Version
+                                <span class="tbl_sort material-icons">sort</span>
+                            </button>
+                            <button id="t_date">Date Updated
+                                <span class="tbl_sort material-icons">sort</span>
+                            </button>
+                        </div>
+                    </div>
                     <label for="search_input" class="searchbar filled">
                         <i class="material-icons"><label for="search_input">search</label></i>
                         <input id="search_input" type="text" class="searchField" placeholder="Search by mod name or author..." autofocus>

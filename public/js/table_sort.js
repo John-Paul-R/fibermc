@@ -46,14 +46,18 @@ function dateOrd(date) {
     return new Date(date).valueOf();
 }
 
+/**
+ * 
+ * @param {Array<import("./mod_types.js").Mod>} mods 
+ */
 export function initSortCache(mods) {
     for (const mod of mods) {
-        mod["name"] = formatName(mod["name"])  
-        mod["s_name"] = sortableName(mod["name"]);
+        mod["name"] = formatName(mod.name)  
+        mod["s_name"] = sortableName(mod.name);
         // mod["s_author"] = 
         // mod["s_downloadCount"] = 
-        mod["s_latestMCVersion"] = versionOrd(mod["latestMCVersion"]);
-        mod["s_dateModified"] = dateOrd(mod["dateModified"])
+        mod["s_latestMCVersion"] = versionOrd(mod.latestMCVersion);
+        mod["s_dateModified"] = dateOrd(mod.dateModified);
     }
 }
 
@@ -101,12 +105,12 @@ const sortBtns = document.getElementsByClassName('tbl_sort');
 
 for (const btn of sortBtns) {
     btn.col_field = sortable_cols[btn.parentElement.id];
-    btn.addEventListener('click', (e) => {
+    btn.parentElement.addEventListener('click', (e) => {
         
         /**
          * @type {HTMLElement}
          */
-        const elem = e.target;
+        const elem = btn;
         // if already selected, rotate order, or deselect.
         if (sortMode === elem.col_field) {  
             if (reverseNum === -1) {

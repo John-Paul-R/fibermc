@@ -12,7 +12,7 @@ var loader = new AsyncDataResourceLoader();
  */
 var mod_data;
 /**
- * @type {Array<Object>}
+ * @type {Array<Mod>}
  */
 var CATEGORIES;
 var timestamp;
@@ -26,16 +26,7 @@ loader.addResource('../data/mod_list.db.min.json', [
         let new_mods = []  
         for (let i = 0; i < temp_mods.length; i++) {
             const temp_mod = temp_mods[i];
-            new_mods.push({
-                name: temp_mod[0],
-                slug: temp_mod[1],
-                summary: temp_mod[2],
-                categories: temp_mod[3],
-                authors: temp_mod[4],
-                downloadCount: temp_mod[5],
-                dateModified: temp_mod[6],
-                latestMCVersion: temp_mod[7],
-            });
+            new_mods.push(new Mod(temp_mod));
         }
         mod_data = new_mods;
         mod_data.sort(descending);
@@ -396,7 +387,7 @@ function createBatch(batchIdx) {
             batch_containers[batchIdx].appendChild(listCreationFunc(result_data));
 
         } catch (err) {
-            batch_containers[batchIdx].appendChild(document.createElement('li')).setAttribute('class', 'item');
+            batch_containers[batchIdx].appendChild(document.createElement('li')).classList.add('item');
             
             console.warn(err)
             console.warn(result_data)
@@ -495,15 +486,15 @@ function createListElement(modData, includeCategories=true) {
     let startContainer;
     let dlCount;
 
-    li.setAttribute('class', 'item');
-    container.setAttribute('class', 'container');
-    front_container.setAttribute('class', 'front_container');
-    end_container.setAttribute('class', 'end_container');
-    name.setAttribute('class', 'name');
-    author.setAttribute('class', 'author');
-    categories.setAttribute('class', 'item_categories');
-    desc.setAttribute('class', 'desc');
-    cfButton.setAttribute('class', 'out_link');
+    li.classList.add('item');
+    container.classList.add('container');
+    front_container.classList.add('front_container');
+    end_container.classList.add('end_container');
+    name.classList.add('name');
+    author.classList.add('author');
+    categories.classList.add('item_categories');
+    desc.classList.add('desc');
+    cfButton.classList.add('out_link');
     try {
         desc.setAttribute('data-text', modData.summary);
 
@@ -513,8 +504,8 @@ function createListElement(modData, includeCategories=true) {
             startContainer = document.createElement('div');
             dlCount = document.createElement('p');
     
-            dlCount.setAttribute('class', 'dl_count');
-            startContainer.setAttribute('class', 'start_container');
+            dlCount.classList.add('dl_count');
+            startContainer.classList.add('start_container');
     
             dlCount.textContent = modData.downloadCount.toLocaleString();
             startContainer.appendChild(dlCount);
@@ -537,7 +528,7 @@ function createListElement(modData, includeCategories=true) {
         }
         desc.textContent = modData.summary;
         cfButtonIcon.textContent = 'launch'
-        cfButtonIcon.setAttribute('class', 'material-icons');
+        cfButtonIcon.classList.add('material-icons');
         let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
         cfButton.setAttribute('href', cflink);
         cfButton.setAttribute('target', '_blank');

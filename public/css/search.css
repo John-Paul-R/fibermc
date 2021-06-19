@@ -9,11 +9,13 @@
   height: auto;
 }
 
-.item:nth-child(even) > .container {
+.item:nth-child(even) > .container,
+.item.detailed:nth-child(even) {
   background-color: var(--color-element);
 }
 
-.item:nth-child(odd) > .container {
+.item:nth-child(odd) > .container,
+.item.detailed:nth-child(odd) {
   background-color: var(--color-element-2);
 }
 
@@ -149,6 +151,46 @@
 
 .container:hover {
   border: 1px solid var(--color-accent-1);
+}
+
+.item.detailed {
+  display: grid;
+  grid-template-columns: minmax(256px, 1fr) 1fr;
+  grid-template-rows: var(--item-height) 32px;
+  grid-gap: 4px;
+  padding-top: 8px;
+  align-items: stretch;
+  height: calc(var(--item-height) + 32px+ 4px + 8px);
+}
+.item.detailed .front_container,
+.item.detailed .end_container {
+  grid-row: 1/2;
+}
+.item.detailed .bot_container {
+  grid-column: 1/-1;
+  grid-row: 2/3;
+  width: 100%;
+  justify-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.item.detailed .bot_container .dl_count::before {
+  content: "Downloads: ";
+}
+.item.detailed .bot_container .date_updated::before {
+  content: "Date Updated: ";
+}
+.item.detailed .bot_container .latest_version::before {
+  content: "Latest Version: ";
+}
+.item.detailed .bot_container > * {
+  width: -moz-fit-content;
+  width: fit-content;
+  grid-column: auto;
+  text-align: center;
+}
+.item.detailed .bot_container > *::before {
+  color: var(--color-text-1);
 }
 
 #categories {
@@ -323,6 +365,35 @@ input.searchField::placeholder {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.hover_dropdown {
+  position: relative;
+  background-color: var(--color-base-2);
+  border-color: var(--color-base-1);
+}
+.hover_dropdown .hover_dropdown-content {
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  gap: 6px;
+  padding: 6px;
+  background-color: var(--color-base-2);
+  border: 1px solid var(--color-base-1);
+  border-radius: 4px;
+}
+.hover_dropdown .hover_dropdown-content > * {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hover_dropdown:hover .hover_dropdown-content,
+.hover_dropdown-content:hover {
+  display: flex;
 }
 
 :root {

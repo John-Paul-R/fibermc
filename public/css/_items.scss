@@ -9,10 +9,12 @@
     grid-gap: 6px;
     height: auto;
 }
-.item:nth-child(even) > .container {
+.item:nth-child(even) > .container,
+.item.detailed:nth-child(even) {
     background-color: var(--color-element);
 }
-.item:nth-child(odd) > .container {
+.item:nth-child(odd) > .container,
+.item.detailed:nth-child(odd) {
     background-color: var(--color-element-2);
 }
 
@@ -174,3 +176,54 @@
     }
 }
 
+.item.detailed {
+    display: grid;
+    grid-template-columns: minmax(256px, 1fr) 1fr;
+    grid-template-rows: var(--item-height) 32px; 
+    grid-gap: 4px;
+    padding-top: 8px;
+    align-items: stretch;
+    height: calc(var(--item-height) + 32px+ 4px + 8px);
+
+    .front_container,
+    .end_container {
+        grid-row: 1 / 2;
+    }
+    & .bot_container {
+        grid-column: 1 / -1;
+        grid-row: 2 / 3;
+        width: 100%;
+        justify-items: center;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        
+        .dl_count {
+            &::before {
+                content: "Downloads: "
+            }
+        }
+        .date_updated {
+            &::before {
+                content: "Date Updated: "
+            }
+        }
+        .latest_version {
+            &::before {
+                content: "Latest Version: "
+            }
+        }
+
+        & > * {
+            width: -moz-fit-content;
+            width: fit-content;
+            grid-column: auto;
+            text-align: center;
+            &::before {
+                color: var(--color-text-1);
+            }
+
+            // border-radius: 4px;
+        }
+        
+    }
+}

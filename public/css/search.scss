@@ -5,6 +5,7 @@
 @import 'mod_categories';
 @import 'search_list';
 @import 'motd';
+@import 'hover_dropdown';
 // @import 'items';
 
 :root {
@@ -94,7 +95,7 @@ $mobile-breakpoint: 1000px;
 
     @include items.narrow_screen;
 }
-
+//  TODO: see if changing border-color (instead of border) causes chrome's performance to improve when the list is not batched.
 @media only screen and (min-width: $mobile-breakpoint) {
     #content_body {
         /* padding: var(--spacing-amount); */

@@ -16,6 +16,7 @@ import {
     first_contentful_container_idx,
     LI_HEIGHT,
     BATCH_SIZE,
+    setLiHeight
 } from './mod_search_logic.js';
 import {
     executeIfWhenDOMContentLoaded, setHidden
@@ -116,6 +117,109 @@ function createListElement(modData, includeCategories=true) {
     return li;
 }
 
+/**
+ * 
+ * @param {import('./mod_types').Mod} modData 
+ * @returns 
+ */
+ function createListElementDetailed(modData) {
+    const li = document.createElement('li');
+    
+    const front_container = document.createElement('div');
+    const end_container = document.createElement('div');
+
+    const title_container = document.createElement('div');
+    const name = document.createElement('a');
+    const author = document.createElement('a');
+
+    const categories = document.createElement('ul');
+    const desc = document.createElement('p');
+    const cfButton = document.createElement('a');
+    const cfButtonIcon = document.createElement('i');
+    
+    let botContainer;
+    
+
+    li.classList.add('item');
+    li.classList.add('detailed');
+    li.classList.add('container');
+    front_container.classList.add('front_container');
+    end_container.classList.add('end_container');
+    name.classList.add('name');
+    author.classList.add('author');
+    categories.classList.add('item_categories');
+    desc.classList.add('desc');
+    cfButton.classList.add('out_link');
+
+    try {
+        botContainer = document.createElement('div');
+        let dlCount = document.createElement('div');
+        let dateUpdated = document.createElement('div');
+        let latestSupportedVers = document.createElement('div');
+
+        dlCount.classList.add('dl_count');
+        dateUpdated.classList.add('date_updated');
+        latestSupportedVers.classList.add('latest_version');
+        botContainer.classList.add('bot_container');
+        
+        dlCount.textContent = modData.downloadCount.toLocaleString();
+        dateUpdated.textContent = modData.dateModified.toLocaleDateString();
+        latestSupportedVers.textContent = modData.latestMCVersion;
+
+        botContainer.appendChild(dlCount);
+        botContainer.appendChild(dateUpdated);
+        botContainer.appendChild(latestSupportedVers);
+        
+    
+        // Fill content of elements
+        name.textContent = modData.name;
+        if (modData.author)
+            author.textContent = modData.author;
+        else 
+            author.textContent = "undefined";
+        for (const category of modData.categories) {
+            // if not "Fabric"
+            if (category !== fabric_category_id) {
+                const catElem = document.createElement('li');
+                catElem.textContent = CATEGORIES[category].name;
+                categories.appendChild(catElem);    
+            }
+        }
+        desc.textContent = modData.summary;
+        cfButtonIcon.textContent = 'launch'
+        cfButtonIcon.classList.add('material-icons');
+        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
+        cfButton.setAttribute('href', cflink);
+        cfButton.setAttribute('target', '_blank');
+        
+        cfButton.appendChild(cfButtonIcon);
+        name.setAttribute('href', cflink);
+        name.setAttribute('target', '_blank');
+        author.setAttribute('href', `https://www.curseforge.com/members/${modData.author}/projects`);
+        author.setAttribute('target', '_blank');
+    
+    } catch (err) {
+        console.group()
+        console.warn("Failed to fill mod info.");
+        console.warn(err);
+        console.warn(modData);
+        console.groupEnd();
+    }
+
+    // Add elements as children where they belong and return root elem
+    title_container.appendChild(name);
+    title_container.insertAdjacentText("beforeend", " by ");
+    title_container.appendChild(author);
+    front_container.appendChild(title_container);
+    front_container.appendChild(desc);
+    li.appendChild(front_container);
+    end_container.appendChild(categories);
+    end_container.appendChild(cfButton);
+    li.appendChild(end_container);
+
+    li.appendChild(botContainer);
+    return li;
+}
 
 // var BATCH_SIZE = 25;
 var numElemsBuilt;
@@ -202,7 +306,7 @@ var searchCount = 0;
 var createBatch = (batchIdx, data_batches) => {
     for (const result_data of data_batches[batchIdx]) {
         try {
-            batch_containers[batchIdx].appendChild(createListElement(result_data));
+            batch_containers[batchIdx].appendChild(currentListCreationFunc(result_data));
 
         } catch (err) {
             batch_containers[batchIdx].appendChild(document.createElement('li')).setAttribute('class', 'item');
@@ -323,17 +427,50 @@ function getLiHeight() {
     const borderThickness = parseInt(style.getPropertyValue('--border-thickness'));
     return 2*pseudoPadding + 2*borderThickness + titleFontSize + descFontSize * descLineCount;
 }
+function getLiHeightDetailed() {
+    const fmt = (val) => val.slice(0,val.length-2);
+    const style = getComputedStyle(resultsListElement);
+    const pseudoPadding = parseInt(fmt(style.getPropertyValue('--pseudo-padding')));
+    const titleFontSize = parseInt(fmt(style.getPropertyValue('--title-font-size')));
+    const descFontSize  = parseInt(fmt(style.getPropertyValue('--desc-font-size')));
+    const descLineCount = parseInt(style.getPropertyValue('--desc-line-count'));
+    const borderThickness = parseInt(style.getPropertyValue('--border-thickness'));
+    return 2*pseudoPadding + 2*borderThickness + titleFontSize + descFontSize * descLineCount + 36 + 8;
+}
+
+var viewModes = [
+    createListElement,
+    createListElementDetailed
+]
+var modeLiHeights = [
+    getLiHeight,
+    getLiHeightDetailed
+]
+var currentViewIdx = 0;
+var currentListCreationFunc = viewModes[0];
+function cycleListViewModes() {
+    currentViewIdx++;
+    if (currentViewIdx >= viewModes.length) {
+        currentViewIdx = 0;
+    }
+    currentListCreationFunc = viewModes[currentViewIdx];
+    setLiHeight(modeLiHeights[currentViewIdx]());
+}
+executeIfWhenDOMContentLoaded(() => {
+    document.getElementById("list_view_cycle_button").addEventListener('click', cycleListViewModes);
+})
+
 loader.addCompletionFunc(()=>{
     
     initSearch({
         results_persist: true,
-        listElemCreationFunc: createListElement,
+        // listElemCreationFunc: createListElement,
         batchCreationFunc: createBatch,
         // listCreationFunc: buildList,
         lazyLoadBatches: true,
         batch_size: 20,
-        li_height: getLiHeight(),
+        li_height: getLiHeightDetailed(),
     })}
 );
-loader.addCompletionFunc(()=>console.log(getLiHeight()));
+loader.addCompletionFunc(()=>console.log(getLiHeightDetailed()));
 init();
