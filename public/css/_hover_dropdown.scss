@@ -3,8 +3,9 @@
     
     position: relative;
     background-color: var(--color-base-2);
-    border-color: var(--color-base-1);
-
+    border: 1px solid var(--color-base-1);
+    
+    padding: 6px 8px;
     .hover_dropdown-content {
         position: absolute;
         display: none;
@@ -23,6 +24,16 @@
         background-color: var(--color-base-2);
         border: 1px solid var(--color-base-1);
         border-radius: 4px;
+        
+        & > * {
+            background-color: var(--color-element);
+            border: 1px solid var(--color-element-1);
+            &:hover {
+                background-color: var(--color-element-1);
+                border: 1px solid var(--color-accent-1);
+            }
+        }
+        
     }
 }
 
