@@ -448,13 +448,16 @@ var modeLiHeights = [
 ]
 var currentViewIdx = 0;
 var currentListCreationFunc = viewModes[0];
+function updateViewModes() {
+    currentListCreationFunc = viewModes[currentViewIdx];
+    setLiHeight(modeLiHeights[currentViewIdx]());
+}
 function cycleListViewModes() {
     currentViewIdx++;
     if (currentViewIdx >= viewModes.length) {
         currentViewIdx = 0;
     }
-    currentListCreationFunc = viewModes[currentViewIdx];
-    setLiHeight(modeLiHeights[currentViewIdx]());
+    updateViewModes();
 }
 executeIfWhenDOMContentLoaded(() => {
     document.getElementById("list_view_cycle_button").addEventListener('click', cycleListViewModes);
@@ -470,7 +473,8 @@ loader.addCompletionFunc(()=>{
         lazyLoadBatches: true,
         batch_size: 20,
         li_height: getLiHeightDetailed(),
-    })}
-);
+    })
+    updateViewModes();
+});
 loader.addCompletionFunc(()=>console.log(getLiHeightDetailed()));
 init();
