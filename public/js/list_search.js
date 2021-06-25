@@ -85,12 +85,12 @@ function createListElement(modData, includeCategories=true) {
         desc.textContent = modData.summary;
         cfButtonIcon.textContent = 'launch'
         cfButtonIcon.setAttribute('class', 'material-icons');
-        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
-        cfButton.setAttribute('href', cflink);
+        let link = modData.getLink();
+        cfButton.setAttribute('href', link);
         cfButton.setAttribute('target', '_blank');
         
         cfButton.appendChild(cfButtonIcon);
-        name.setAttribute('href', cflink);
+        name.setAttribute('href', link);
         name.setAttribute('target', '_blank');
         author.setAttribute('href', `https://www.curseforge.com/members/${modData.author}/projects`);
         author.setAttribute('target', '_blank');
@@ -188,14 +188,14 @@ function createListElement(modData, includeCategories=true) {
         desc.textContent = modData.summary;
         cfButtonIcon.textContent = 'launch'
         cfButtonIcon.classList.add('material-icons');
-        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
-        cfButton.setAttribute('href', cflink);
+        let link = modData.getLink();
+        cfButton.setAttribute('href', link);
         cfButton.setAttribute('target', '_blank');
         
         cfButton.appendChild(cfButtonIcon);
-        name.setAttribute('href', cflink);
+        name.setAttribute('href', link);
         name.setAttribute('target', '_blank');
-        author.setAttribute('href', `https://www.curseforge.com/members/${modData.author}/projects`);
+        author.setAttribute('href', modData.getAuthorLink());
         author.setAttribute('target', '_blank');
     
     } catch (err) {

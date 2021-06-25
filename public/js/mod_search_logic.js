@@ -28,7 +28,7 @@ export {
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true
-}).addResource('../data/mod_list.db.min.json', [
+}).addResource('../data/combined.json', [
         (jsonData) => {
             const temp_mods = jsonData.mods;
             console.log("TEMP")

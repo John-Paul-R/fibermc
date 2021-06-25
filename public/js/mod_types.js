@@ -1,7 +1,7 @@
 
 export { Mod };
 
-class Mod {
+class ModOld {
     constructor(mod_arr) {
         /**
          * @type {string}
@@ -35,5 +35,75 @@ class Mod {
          * @type {string}
          */
         this.latestMCVersion = mod_arr[7];
+    }
+}
+class Mod {
+    constructor(mod) {
+        /**
+         * @type {string}
+         */
+        this.name = mod.name;
+        /**
+         * @type {string}
+         */
+        this.curse_slug = mod.curse_slug;
+        /**
+         * @type {string}
+         */
+        this.modrinth_slug = mod.modrinth_slug;
+        /**
+         * @type {string}
+         */
+        this.summary = mod.summary;
+        /**
+         * @type {Array<number>}
+         */
+        this.categories = mod.categories;
+        /**
+         * @type {Array}
+         */
+        this.author = mod.author;
+        /**
+         * @type {number}
+         */
+        this.downloadCount = mod.download_count;
+        /**
+         * @type {Date}
+         */
+        this.dateModified = new Date(mod.date_modified);
+        /**
+         * @type {string}
+         */
+        this.versions = mod.versions;
+    }
+
+    getLink() {
+        if (this.modrinth_slug) {
+            return this.getModrinthLink();
+        } else {
+            return this.getCurseLink();
+        }
+    }
+    getModrinthLink() {
+        return `https://modrinth.com/mod/${this.modrinth_slug}`;
+    }
+
+    getCurseLink() {
+        return `https://www.curseforge.com/minecraft/mc-mods/${this.curse_slug}`;
+    }
+
+    getAuthorLink() {
+        if (this.modrinth_slug) {
+            return this.getModrinthAuthorLink();
+        } else {
+            return this.getCurseAuthorLink();
+        }
+        
+    }
+    getModrinthAuthorLink() {
+        return `https://modrinth.com/user/${this.author}`
+    }
+    getCurseAuthorLink() {
+        return `https://www.curseforge.com/members/${this.author}/projects`
     }
 }
