@@ -10,7 +10,7 @@ var sortable_cols = {
  * @param {string} name 
  */
 function formatName(name) {
-    return name.trim().replace(/[\[\(\{].*?fabric.*?[\]\)\}]/ig, '').trim();
+    return name.trim().replace(/\[.*?fabric.*?\]|\(.*?fabric.*?\)|\{.*?fabric.*?\}/ig, '').trim();
 }
 /**
  * @param {string} name 
