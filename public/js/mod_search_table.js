@@ -24,8 +24,8 @@ function createListElement(modData) {
     const name = document.createElement('td');
     const name_link = document.createElement('a');
     name_link.textContent = modData.name;
-    let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
-    name_link.setAttribute('href', cflink);
+    let link = modData.getLink();
+    name_link.setAttribute('href', link);
     name_link.setAttribute('target', '_blank');
     name_link.setAttribute('rel', 'noreferrer');
     name.appendChild(name_link);
@@ -35,7 +35,7 @@ function createListElement(modData) {
 
     const author = document.createElement('td');
     const author_link = document.createElement('a');
-    const a_link = `https://www.curseforge.com/members/${modData.author}/projects`;
+    const a_link = modData.getAuthorLink();
     author_link.textContent = modData.author;
     author_link.setAttribute('href', a_link);
     author_link.setAttribute('target', '_blank');
