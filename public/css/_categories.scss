@@ -40,8 +40,24 @@
 #categories_list > :hover {
     border: 2px solid var(--color-accent-2);
 }
-#categories_list > button.selected {
-    border: 2px solid var(--color-accent-1);
+#categories_list > button {
+    &.and,
+    &.not {
+        border: 2px solid var(--color-accent-1);
+    }
+}
+
+#categories_list > button.and {
+    &::before {
+        content: "AND";
+    }
+    // border: 2px solid var(--color-accent-1);
+}
+#categories_list > button.not {
+    &::before {
+        content: "NOT";
+    }
+    // border: 2px solid crimson;
 }
 #categories_list > button > span {
     background-color: var(--color-element);
@@ -134,9 +150,6 @@
     }
 
 }
-#categories_list > .selected {
-    border: 2px solid var(--color-accent-1);
-}
 
 // PC
 @mixin fullsize {
@@ -196,8 +209,12 @@
                             border-color: var(--color-accent-2);
                             // background-color: var(--color-element-1);
                         }
-                        &.selected {
+                        &.and {
                             border: 2px solid var(--color-accent-1);
+                            margin: 0;
+                        }
+                        &.not {
+                            border: 2px solid crimson;
                             margin: 0;
                         }
                         // border-color: var(--color-element-2);

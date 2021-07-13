@@ -93,11 +93,17 @@ function setCategories(n_categories) {
 // Filter Search Data
 //====================
 function getSelectedCategoryIds() {
-    let selected_cat_ids = []
+    let selected_cat_ids = {
+        and: [],
+        not: [],
+    }
+
     for (const category of CATEGORIES) {
         const cat_elem = category.htmlElement;
-        if (cat_elem.selected) {
-            selected_cat_ids.push(cat_elem.cat_id);
+        if (cat_elem.bool_mode == 1) {
+            selected_cat_ids.and.push(cat_elem.cat_id);
+        } else if (cat_elem.bool_mode == 2) {
+            selected_cat_ids.not.push(cat_elem.cat_id)
         }
     }
     return selected_cat_ids;
@@ -107,17 +113,20 @@ function getFilteredList() {
     const selected_cat_ids = getSelectedCategoryIds();
 
     let search_objs = mod_data;
-    if (selected_cat_ids.length === 0) {
-        
-    } else {
+    if (selected_cat_ids.and.length > 0 || selected_cat_ids.not.length > 0) {
         // Include only mods from selected categories
         search_objs = mod_data.filter(el => {
-            for (const cat_id of selected_cat_ids) {
-                if (el.categories.includes(cat_id)) {
-                    return true;
+            for (const cat_id of selected_cat_ids.and) {
+                if (!el.categories.includes(cat_id)) {
+                    return false;
                 }
             }
-            return false;
+            for (const cat_id of selected_cat_ids.not) {
+                if (el.categories.includes(cat_id)) {
+                    return false;
+                }
+            }
+            return true;
         });
     }
     return search_objs;
@@ -162,19 +171,26 @@ function initCategoriesSidebar() {
         categories_sidebar_elem.appendChild(cat_elem);
     }
 
-
+    // 0=none, 1=AND, 2=NOT | OR??
+    const NUM_BOOL_OPS = 2;
     function onClick(e) {
         const cat_elem = e.target;
-        cat_elem.selected = !cat_elem.selected;
+        const bool_mode = cat_elem.bool_mode || 0;
+        cat_elem.bool_mode = bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : 0;
         applySelected(cat_elem);
         searchTextChanged();
-        
     }
     function applySelected(cat_elem) {
-        if (cat_elem.selected) {
-            cat_elem.classList.add('selected');
+        
+        if (cat_elem.bool_mode == 1) {
+            cat_elem.classList.add('and');
         } else {
-            cat_elem.classList.remove('selected');//.border = '2px solid var(--color-element-1)';
+            cat_elem.classList.remove('and');//.border = '2px solid var(--color-element-1)';
+        }
+        if (cat_elem.bool_mode == 2) {
+            cat_elem.classList.add('not');
+        } else {
+            cat_elem.classList.remove('not');//.border = '2px solid var(--color-element-1)';
         }
     }
 }

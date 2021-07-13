@@ -227,8 +227,16 @@
   border: 2px solid var(--color-accent-2);
 }
 
-#categories_list > button.selected {
+#categories_list > button.and, #categories_list > button.not {
   border: 2px solid var(--color-accent-1);
+}
+
+#categories_list > button.and::before {
+  content: "AND";
+}
+
+#categories_list > button.not::before {
+  content: "NOT";
 }
 
 #categories_list > button > span {
@@ -263,10 +271,6 @@
 
 #categories_list_toggle {
   display: none;
-}
-
-#categories_list > .selected {
-  border: 2px solid var(--color-accent-1);
 }
 
 #search_container {
@@ -667,8 +671,12 @@ footer {
   #categories_wrapper > #categories.view_list #categories_list button:hover {
     border-color: var(--color-accent-2);
   }
-  #categories_wrapper > #categories.view_list #categories_list button.selected {
+  #categories_wrapper > #categories.view_list #categories_list button.and {
     border: 2px solid var(--color-accent-1);
+    margin: 0;
+  }
+  #categories_wrapper > #categories.view_list #categories_list button.not {
+    border: 2px solid crimson;
     margin: 0;
   }
 
