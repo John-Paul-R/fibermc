@@ -4,7 +4,7 @@ import {
 import { AsyncDataResourceLoader } from './resource_loader.js';
 import { getSortFunc, registerListener as registerSortListener, initSortCache } from './table_sort.js';
 import { Mod } from './mod_types.js';
-export { 
+export {
     init, initSearch, initCategoriesSidebar,
     fabric_category_id,
     loader,
@@ -29,37 +29,37 @@ export {
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true
 }).addResource('../data/mod_list.db.min.json', [
-        (jsonData) => {
-            const temp_mods = jsonData.mods;
-            console.log("TEMP")
-            console.log(temp_mods)
-            let new_mods = []  
-            for (let i = 0; i < temp_mods.length; i++) {
-                new_mods.push(new Mod(temp_mods[i]));
-            }
-
-            setModData(new_mods);
-            // Sort func
-            const descending = (a, b) => (b.downloadCount - a.downloadCount);
-            mod_data.sort(descending);
-            console.log(mod_data);
-            
-            timestamp = jsonData.timestamp;
-
-            setCategories(jsonData.categories);
-            initCategoriesSidebar();
-            console.log(CATEGORIES);
-
-            initSortCache(mod_data);
+    (jsonData) => {
+        const temp_mods = jsonData.mods;
+        console.log("TEMP")
+        console.log(temp_mods)
+        let new_mods = []
+        for (let i = 0; i < temp_mods.length; i++) {
+            new_mods.push(new Mod(temp_mods[i]));
         }
-    ])
+
+        setModData(new_mods);
+        // Sort func
+        const descending = (a, b) => (b.downloadCount - a.downloadCount);
+        mod_data.sort(descending);
+        console.log(mod_data);
+
+        timestamp = jsonData.timestamp;
+
+        setCategories(jsonData.categories);
+        initCategoriesSidebar();
+        console.log(CATEGORIES);
+
+        initSortCache(mod_data);
+    }
+])
 var timestamp;
 function init() {
 
     loader
         .addCompletionFunc(
-            ()=>{
-                searchTextChanged({target: {value: false} });
+            () => {
+                searchTextChanged({ target: { value: false } });
                 console.log('mod_data loaded. Running empty search.');
             }
         )
@@ -68,8 +68,8 @@ function init() {
 }
 function formatDate(date) {
     date = new Date(date);
-    return (`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
-  }
+    return (`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+}
 function updateTimestamp(timestamp) {
     document.getElementById("last_updated_timestamp").textContent = `List updated: ${formatDate(timestamp)}`;
 }
@@ -142,28 +142,28 @@ function initCategoriesSidebar() {
     categories_sidebar_elem = document.getElementById('categories_list');
 
     updateModCounts();
-    for (let i=0; i<CATEGORIES.length; i++) {
+    for (let i = 0; i < CATEGORIES.length; i++) {
         if (CATEGORIES[i].name.toUpperCase() === "FABRIC") {
             fabric_category_id = i;
             break;
         }
     }
     // TODO Restructure this, jfc
-    for (let i=0; i<CATEGORIES.length; i++) {
+    for (let i = 0; i < CATEGORIES.length; i++) {
         const cat_elem = document.createElement('button');
         cat_elem.classList.add('reset_button');
         CATEGORIES[i].htmlElement = cat_elem;
         cat_elem.cat_id = i;//category.categoryId;
     }
     const sorted_CATEGORIES = CATEGORIES.slice().sort(function (a, b) {
-        return b.modCount-a.modCount;
-      });
-    for (let i=0; i<sorted_CATEGORIES.length; i++) {
+        return b.modCount - a.modCount;
+    });
+    for (let i = 0; i < sorted_CATEGORIES.length; i++) {
         const category = sorted_CATEGORIES[i];
         const cat_elem = category.htmlElement;
         const cat_count = document.createElement('span');
         cat_elem.selected = false;
-        cat_elem.textContent = category.name+' '
+        cat_elem.textContent = category.name + ' '
         cat_elem.appendChild(cat_count);
         cat_count.textContent = category.modCount;
         applySelected(cat_elem);
@@ -181,7 +181,7 @@ function initCategoriesSidebar() {
         searchTextChanged();
     }
     function applySelected(cat_elem) {
-        
+
         if (cat_elem.bool_mode == 1) {
             cat_elem.classList.add('and');
         } else {
@@ -207,7 +207,7 @@ var searchCount = 0;
  * 
  * @returns {Array<Object>} 
  */
-function search(queryText, search_objects, selectBest=false) {
+function search(queryText, search_objects, selectBest = false) {
     console.info("Search Query: " + queryText)
     // let objects = mod_data.map(el => { return {
     //     name: el.name,
@@ -221,8 +221,8 @@ function search(queryText, search_objects, selectBest=false) {
         threshold: -500,
         // Create a custom combined score to sort by. -100 to the desc score makes it a worse match
         scoreFn: (a) => Math.max(
-            a[0]?a[0].score:-1000,
-            a[1]?a[1].score-50:-1000,
+            a[0] ? a[0].score : -1000,
+            a[1] ? a[1].score - 50 : -1000,
         )
     });
 
@@ -248,7 +248,7 @@ function searchTextChanged(queryEvent) {
         results = search(query, search_objects).map((el) => el.obj);
         console.log(query);
     };
-    if (queryEvent && queryEvent.target.value){
+    if (queryEvent && queryEvent.target.value) {
         runSearch(queryEvent.target.value);
     } else if (defaultSearchInput.value) {
         runSearch(defaultSearchInput.value);
@@ -267,7 +267,7 @@ function searchTextChanged(queryEvent) {
     if (sortFunc) {
         console.log("SORTING")
         results = Array.from(results).sort(sortFunc);
-    } 
+    }
     updateSearchResultsListElement(results);
     // queryDisplayElement.innerText = query.target.value;
 }
@@ -285,7 +285,7 @@ function updateModCounts() {
         }
     }
     for (const mod of mod_data) {
-        for(const cat_id of mod.categories) {
+        for (const cat_id of mod.categories) {
             CATEGORIES[cat_id].modCount += 1;
         }
     }
@@ -301,7 +301,7 @@ function updateSearchResultsListElement(resultsArray) {
     // }
     if (resultsArray) {
         setHidden(resultsListElement, false);
-    
+
         buildList(resultsArray);
     } else {
         setHidden(resultsListElement, true);
@@ -333,7 +333,7 @@ var sheet = createStyleSheet('mod-list-constructed')
 function setLiHeight(liHeight) {
     LI_HEIGHT = liHeight;
     const gap = 4;
-    const height = LI_HEIGHT*BATCH_SIZE + gap*(BATCH_SIZE-1);
+    const height = LI_HEIGHT * BATCH_SIZE + gap * (BATCH_SIZE - 1);
     if (sheet.cssRules.length > 0)
         sheet.removeRule();
     sheet.insertRule(`.item_batch {
@@ -356,23 +356,23 @@ var defaultSearchInput;
  * @param {boolean}     options.lazyLoadBatches
  */
 function initSearch(options) {
-    results_persist=options.results_persist;
+    results_persist = options.results_persist;
     LI_HEIGHT = options.li_height;
     BATCH_SIZE = options.batch_size;
     function resultsViewBuilder(options) {
         var defaultOptions;
         //if (!options) {
-            defaultOptions = {
-                results_persist: false,
-                li_height: 64,
-                batch_size: 20,
-                listElemCreationFunc: null,
-                batchCreationFunc: null,
-                listCreationFunc: null,
-                lazyLoadBatches: true,
-            }
+        defaultOptions = {
+            results_persist: false,
+            li_height: 64,
+            batch_size: 20,
+            listElemCreationFunc: null,
+            batchCreationFunc: null,
+            listCreationFunc: null,
+            lazyLoadBatches: true,
+        }
         //}
-            console.log(options)
+        console.log(options)
         if (options.listElemCreationFunc) {
             createListElement = options.listElemCreationFunc;
         } else {
@@ -395,12 +395,12 @@ function initSearch(options) {
             buildList = buildListBatches;
             console.info("No list creation function supplied. Falling back to default.")
         }
-        
+
         queryDisplayElement = document.getElementById("search_query_text");
 
         if (options.lazyLoadBatches) {
             if (options.lazyLoadBatches === true) {
-                resultsListElement.addEventListener('scroll', (e)=> {
+                resultsListElement.addEventListener('scroll', (e) => {
                     let numPxBelowBot = Number.MAX_VALUE;
                     let numPxAboveTop = Number.MAX_VALUE;
                     if (last_contentful_container_idx < batch_containers.length)
@@ -409,51 +409,51 @@ function initSearch(options) {
                         numPxAboveTop = pxAboveTop(batch_containers[first_contentful_container_idx]);
                     let added = 0;
                     let addedLessThanDiff = true;
-                    
+
                     if (numPxBelowBot < 64) {
-                        while (addedLessThanDiff){
-                            if (last_contentful_container_idx+1 < batch_containers.length) {
-                                createBatch(last_contentful_container_idx+1, data_batches);
+                        while (addedLessThanDiff) {
+                            if (last_contentful_container_idx + 1 < batch_containers.length) {
+                                createBatch(last_contentful_container_idx + 1, data_batches);
                                 clearInner(batch_containers[first_contentful_container_idx]);
-                                first_contentful_container_idx+=1;
-                                last_contentful_container_idx+=1
+                                first_contentful_container_idx += 1;
+                                last_contentful_container_idx += 1
                             }
                             if (added < numPxBelowBot) {
                                 addedLessThanDiff = false;
                             }
-                            added -= LI_HEIGHT*BATCH_SIZE;
+                            added -= LI_HEIGHT * BATCH_SIZE;
                         }
                     } else if (numPxAboveTop < 64) {
-                        while (addedLessThanDiff){
-                            if (first_contentful_container_idx > 0){
-                                createBatch(first_contentful_container_idx-1, data_batches);
+                        while (addedLessThanDiff) {
+                            if (first_contentful_container_idx > 0) {
+                                createBatch(first_contentful_container_idx - 1, data_batches);
                                 clearInner(batch_containers[last_contentful_container_idx]);
-                
-                                first_contentful_container_idx-=1;
-                                last_contentful_container_idx-=1
+
+                                first_contentful_container_idx -= 1;
+                                last_contentful_container_idx -= 1
                             }
                             if (added < numPxAboveTop) {
                                 addedLessThanDiff = false;
                             }
-                            added -= LI_HEIGHT*BATCH_SIZE;
+                            added -= LI_HEIGHT * BATCH_SIZE;
                         }
                     }
-                }, {passive: true})    
+                }, { passive: true })
             } else {
                 options.lazyLoadBatches();
             }
         }
-    
+
     }
     resultsViewBuilder(options);
     // searchElements = document.getElementsByClassName("searchField");
     searchHTMLElements = [];//Array.from(searchElements);
     searchHTMLElements.push(document.getElementById("search_input"));
-    
-    for (let i=0; i<searchHTMLElements.length; i++) {
-        searchHTMLElements[i].addEventListener('input', (e)=>setTimeout(searchTextChanged, 0, e, ));
+
+    for (let i = 0; i < searchHTMLElements.length; i++) {
+        searchHTMLElements[i].addEventListener('input', (e) => setTimeout(searchTextChanged, 0, e,));
         searchHTMLElements[i].addEventListener('keydown', (e) => {
-            
+
             if (e.key === "Enter") {
                 search(e.target.value, true);
             }
@@ -482,7 +482,7 @@ var data_batches;
 var batch_containers;
 var first_contentful_container_idx;
 var last_contentful_container_idx;
-const storeBatches = (results, startIdx, batchSize, useContainers=true) => {
+const storeBatches = (results, startIdx, batchSize, useContainers = true) => {
     const endIdx = startIdx + batchSize;
     const data_batch = [];
     const nextBatchSize = Math.min(batchSize, results.length - endIdx);
@@ -491,7 +491,7 @@ const storeBatches = (results, startIdx, batchSize, useContainers=true) => {
         batch_container.setAttribute('class', 'item_batch');
         // batch_container.style.height = LI_HEIGHT*batchSize+'px';
         // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
-    
+
         batch_containers.push(batch_container);
         resultsListElement.appendChild(batch_container);
         if (nextBatchSize <= 0) {
@@ -504,15 +504,15 @@ const storeBatches = (results, startIdx, batchSize, useContainers=true) => {
         data_batch.push(results[i]);
     }
     data_batches.push(data_batch);
-    
+
     if (nextBatchSize > 0)
         storeBatches(results, endIdx, nextBatchSize, useContainers);
-    
+
 }
 
-let runBatches = (results, batchIdx, remainingBatches=0, waitForScrollAfter=0, callback=null) => {
+let runBatches = (results, batchIdx, remainingBatches = 0, waitForScrollAfter = 0, callback = null) => {
     if (batchIdx >= data_batches.length) {
-        nextBatchFunc = ()=>{};
+        nextBatchFunc = () => { };
         return;
     } else if (batchIdx == 0) {
         // first_contentful_container_idx = batchIdx;
@@ -523,9 +523,9 @@ let runBatches = (results, batchIdx, remainingBatches=0, waitForScrollAfter=0, c
     if (remainingBatches > 0 || remainingBatches === -1) {
         // const nextBatchSize = Math.min(batchSize, results.length - endIdx);
         const waitScroll = waitForScrollAfter > 1 || waitForScrollAfter == -1;
-        const nextBatchFn = ()=>runBatches(results, batchIdx+1, 
-            (remainingBatches===-1 ? -1 : remainingBatches-1), 
-            (waitForScrollAfter===-1 ? -1 : waitForScrollAfter>1 ? waitForScrollAfter-1 : 1),
+        const nextBatchFn = () => runBatches(results, batchIdx + 1,
+            (remainingBatches === -1 ? -1 : remainingBatches - 1),
+            (waitForScrollAfter === -1 ? -1 : waitForScrollAfter > 1 ? waitForScrollAfter - 1 : 1),
             callback
         );
 
@@ -559,19 +559,19 @@ function buildListBatches(resultsArray) {
     // Do not Remove w/o extensive testing of scrolling (with multiple search queries).
     // vvv
     first_contentful_container_idx = 0;
-    
+
     listBuildTime = performance.now() - listBuildTime;
     listBuildTimeAvg = (listBuildTimeAvg * (searchCount - 1) + listBuildTime) / searchCount;
     console.log(`List Build - A:${listBuildTimeAvg.toFixed(3)} ms, I:${(listBuildTime).toFixed(3)} ms, numMatches: ${resultsArray.length}`)
 }
 function createStyleSheet(id, media) {
-    var el   = document.createElement('style');
+    var el = document.createElement('style');
     // WebKit hack
     el.appendChild(document.createTextNode(''));
     // el.type  = 'text/css';
-    el.rel   = 'stylesheet';
+    el.rel = 'stylesheet';
     el.media = media || 'screen';
-    el.id    = id;
+    el.id = id;
     document.head.appendChild(el);
     return el.sheet;
 }
@@ -593,16 +593,16 @@ function clear(node) {
 /** 
  * @param {HTMLElement} el 
  */
-function pxBelowBottom(el, scrollable=null) {
+function pxBelowBottom(el, scrollable = null) {
     // var rect = el.getBoundingClientRect();
     let parent = scrollable || el.parentElement;
-    let out = el.offsetTop - (parent.scrollTop+parent.clientHeight);
+    let out = el.offsetTop - (parent.scrollTop + parent.clientHeight);
     return out;
 }
 /** 
  * @param {HTMLElement} el 
  */
-function pxAboveTop(el, scrollable=null) {
+function pxAboveTop(el, scrollable = null) {
     let parent = scrollable || el.parentElement;
     let out = (parent.scrollTop) - el.offsetTop;
     return out;
