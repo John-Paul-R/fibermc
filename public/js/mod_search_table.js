@@ -24,7 +24,7 @@ function createListElement(modData) {
     const name = document.createElement('td');
     const name_link = document.createElement('a');
     name_link.textContent = modData.name;
-    let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
+    let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.cf_slug;
     name_link.setAttribute('href', cflink);
     name_link.setAttribute('target', '_blank');
     name_link.setAttribute('rel', 'noreferrer');
@@ -33,14 +33,19 @@ function createListElement(modData) {
     const desc = document.createElement('td');
     desc.textContent = modData.summary;
 
-    const author = document.createElement('td');
-    const author_link = document.createElement('a');
-    const a_link = `https://www.curseforge.com/members/${modData.author}/projects`;
-    author_link.textContent = modData.author;
-    author_link.setAttribute('href', a_link);
-    author_link.setAttribute('target', '_blank');
-    author_link.setAttribute('rel', 'noreferrer');
-    author.appendChild(author_link);
+    const authorCell = document.createElement('td');
+    try {
+        const authorAnchor = document.createElement('a');
+        const mod_author = modData.authors[0];
+        const link_value = `https://www.curseforge.com/members/${mod_author.cf_slug}/projects`;
+        authorAnchor.textContent = mod_author.name;
+        authorAnchor.setAttribute('href', link_value);
+        authorAnchor.setAttribute('target', '_blank');
+        authorAnchor.setAttribute('rel', 'noreferrer');
+        authorCell.appendChild(authorAnchor);
+    } catch {
+        authorCell.innerText = "undefined";
+    }
 
     const categories = document.createElement('td');
     categories.setAttribute('class', 'item_categories');
@@ -49,7 +54,7 @@ function createListElement(modData) {
         if (category !== fabric_category_id) {
             const catElem = document.createElement('li');
             catElem.textContent = CATEGORIES[category].name;
-            categories.appendChild(catElem);    
+            categories.appendChild(catElem);
         }
     }
 
@@ -66,13 +71,13 @@ function createListElement(modData) {
     //cfButtonIcon.setAttribute('class', 'material-icons');
     //cfButton.setAttribute('href', cflink);
     //cfButton.setAttribute('target', '_blank');
-    
+
     //cfButton.appendChild(cfButtonIcon);
 
     // Add elements as children where they belong and return root elem
     tr.appendChild(name);
     tr.appendChild(desc);
-    tr.appendChild(author);
+    tr.appendChild(authorCell);
     tr.appendChild(categories);
     tr.appendChild(dlCount);
     tr.appendChild(versions);
@@ -86,44 +91,44 @@ function buildTable(modsData) {
     for (const mod of modsData) {
         resultsListElement.appendChild(createListElement(mod));
     }
-    console.log(performance.now()-start);
+    console.log(performance.now() - start);
 }
 
 var BATCH_SIZE = 25;
 var numElemsBuilt;
 var numResults;
-var updateLoadbar = ()=>{
+var updateLoadbar = () => {
     numElemsBuilt = resultsListElement.children.length;
-    const percentComplete = numElemsBuilt/numResults*100;
+    const percentComplete = numElemsBuilt / numResults * 100;
     loadbar_content.style.width = `calc(${percentComplete}% - 4px`;
-    loadbar_text.textContent = `Showing ${numElemsBuilt}/${numResults} mods (${percentComplete.toFixed(0)}%)`;    
+    loadbar_text.textContent = `Showing ${numElemsBuilt}/${numResults} mods (${percentComplete.toFixed(0)}%)`;
 
     if (numElemsBuilt === numResults) {
-        setTimeout(()=>{
+        setTimeout(() => {
             loadbar_text.textContent = "All mods loaded!";
             hideLoadbar(1000);
         }, 100);
         batchesRemain = false;
     } else {
     }
-    
+
     console.log("callback!");
 }
 function hideLoadbar(delay) {
-    setTimeout(()=>{
+    setTimeout(() => {
         gsap.to(loadbar_container, {
             duration: 1,
             opacity: 0
         })
-        setTimeout(()=>{
+        setTimeout(() => {
             setHidden(loadbar_container);
         }, 1000)
     }, delay);
 }
 function showLoadbar(delay) {
-    setTimeout(()=>{
+    setTimeout(() => {
         setHidden(loadbar_container);
-        setTimeout(()=>{
+        setTimeout(() => {
             gsap.to(loadbar_container, {
                 duration: 1,
                 opacity: 1
@@ -142,7 +147,7 @@ function buildTableBatched(modsData) {
     storeBatches(modsData, 0, Math.min(BATCH_SIZE, modsData.length), false);
     runBatches(modsData, 0, -1, 10, updateLoadbar);
 
-    console.log(performance.now()-start);
+    console.log(performance.now() - start);
 }
 
 var createBatch = (batchIdx, data_batches) => {
@@ -152,7 +157,7 @@ var createBatch = (batchIdx, data_batches) => {
             resultsListElement.appendChild(result_data.elem);
     }
     lastLoadedBatchIdx = batchIdx;
-    if (batchIdx == data_batches.length-1) {
+    if (batchIdx == data_batches.length - 1) {
         batchesRemain = false;
     }
 }
@@ -165,13 +170,13 @@ var table;
 function lazyLoadBatches() {
     table = document.getElementById("search_results_list");
     firstElem = table.firstChild;
-    table.addEventListener('scroll', (e)=> {
+    table.addEventListener('scroll', (e) => {
         let numPxBelowBot = pxBelowBottom(resultsListElement.lastChild, table);
         // const numPxAboveTop = pxAboveTop(firstElem);
         if (numPxBelowBot < 1024) {
-            while (numPxBelowBot < 4096 && batchesRemain){
-                
-                createBatch(lastLoadedBatchIdx+1, dataBatches);
+            while (numPxBelowBot < 4096 && batchesRemain) {
+
+                createBatch(lastLoadedBatchIdx + 1, dataBatches);
                 // clearInner(batch_containers[first_contentful_container_idx]);
                 numPxBelowBot = pxBelowBottom(resultsListElement.lastChild, table);
                 updateLoadbar();
@@ -181,7 +186,7 @@ function lazyLoadBatches() {
         //         if (first_contentful_container_idx > 0){
         //             createBatch(first_contentful_container_idx-1, data_batches);
         //             clearInner(batch_containers[last_contentful_container_idx]);
-    
+
         //             first_contentful_container_idx-=1;
         //             last_contentful_container_idx-=1
         //         }
@@ -191,7 +196,7 @@ function lazyLoadBatches() {
         //         added -= LI_HEIGHT*BATCH_SIZE;
         //     }
         // }
-    }, {passive: true})    
+    }, { passive: true })
 }
 
 
@@ -200,7 +205,7 @@ var loadbar_container;
 var loadbar_text;
 var loadbar_content;
 
-loader.addCompletionFunc(()=>{
+loader.addCompletionFunc(() => {
     loadbar_container = document.getElementById('loadbar_container');
     loadbar_text = document.getElementById("loadbar_text");
     loadbar_content = document.getElementById("loadbar_content");
@@ -220,13 +225,13 @@ loader.addCompletionFunc(()=>{
         }
     }
 });
-loader.addCompletionFunc(()=>setResultsListElement(document.getElementById("search_results_content")))
-loader.addCompletionFunc(()=>initSearch({
-        results_persist: true,
-        listElemCreationFunc: createListElement,
-        batchCreationFunc: createBatch,
-        listCreationFunc: buildTableBatched,
-        lazyLoadBatches: lazyLoadBatches,
-    }))
+loader.addCompletionFunc(() => setResultsListElement(document.getElementById("search_results_content")))
+loader.addCompletionFunc(() => initSearch({
+    results_persist: true,
+    listElemCreationFunc: createListElement,
+    batchCreationFunc: createBatch,
+    listCreationFunc: buildTableBatched,
+    lazyLoadBatches: lazyLoadBatches,
+}))
 
 init();

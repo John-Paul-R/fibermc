@@ -28,17 +28,11 @@ export {
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true
-}).addResource('../data/mod_list.db.min.json', [
+}).addResource('https://localhost:5001/api/v1.0/Mods', [
     (jsonData) => {
-        const temp_mods = jsonData.mods;
-        console.log("TEMP")
-        console.log(temp_mods)
-        let new_mods = []
-        for (let i = 0; i < temp_mods.length; i++) {
-            new_mods.push(new Mod(temp_mods[i]));
-        }
-
-        setModData(new_mods);
+        // const temp_mods = jsonData.mods;
+        console.log("TEMP", jsonData)
+        setModData(jsonData);
         // Sort func
         const descending = (a, b) => (b.downloadCount - a.downloadCount);
         mod_data.sort(descending);
@@ -46,13 +40,15 @@ var loader = new AsyncDataResourceLoader({
 
         timestamp = jsonData.timestamp;
 
-        setCategories(jsonData.categories);
-        initCategoriesSidebar();
-        console.log(CATEGORIES);
-
         initSortCache(mod_data);
     }
-])
+]).addResource('https://localhost:5001/api/v1.0/Categories', [
+    (jsonData) => {
+        setCategories(jsonData);
+
+        console.log(CATEGORIES);
+    }
+]).addCompletionFunc(initCategoriesSidebar)
 var timestamp;
 function init() {
 

@@ -2,7 +2,7 @@
 var sortable_cols = {
     "t_name": "name",
     "t_auth": "author",
-    "t_dl":   "downloadCount",
+    "t_dl": "downloadCount",
     "t_vers": "latestMCVersion",
     "t_date": "dateModified",
 };
@@ -22,6 +22,9 @@ function sortableName(name) {
  * @param {string} vers 
  */
 function versionOrd(vers) {
+    if (!vers) {
+        return -1;
+    }
     const nums = vers.split('.');
     let weight = 100000;
     let out = 0;
@@ -30,7 +33,7 @@ function versionOrd(vers) {
         out += parseFloat(strNum) * weight;
         weight /= 100;
     }
-    if (nums[nums.length-1].endsWith('-Snapshot')) {
+    if (nums[nums.length - 1].endsWith('-Snapshot')) {
         out -= 1
     }
     if (Number.isNaN(out)) {
@@ -52,7 +55,7 @@ function dateOrd(date) {
  */
 export function initSortCache(mods) {
     for (const mod of mods) {
-        mod["name"] = formatName(mod.name)  
+        mod["name"] = formatName(mod.name)
         mod["s_name"] = sortableName(mod.name);
         // mod["s_author"] = 
         // mod["s_downloadCount"] = 
@@ -63,23 +66,23 @@ export function initSortCache(mods) {
 
 var sort_funcs = {
     "name": (a, b) => {
-        return (a["s_name"] > b["s_name"]) ? 1: -1
-        
+        return (a["s_name"] > b["s_name"]) ? 1 : -1
+
     },
     "author": (a, b) => {
         if (!(a["author"] && b["author"])) {
             return 1;
         }
-        return (a["author"].toLowerCase() > b["author"].toLowerCase()) ? 1: -1
+        return (a["author"].toLowerCase() > b["author"].toLowerCase()) ? 1 : -1
     },
     "downloadCount": (a, b) => {
-        return (a["downloadCount"] < b["downloadCount"]) ? 1: -1
+        return (a["downloadCount"] < b["downloadCount"]) ? 1 : -1
     },
-    "latestMCVersion": (a, b) => { 
-        return (a["s_latestMCVersion"] < b["s_latestMCVersion"]) ? 1: -1
+    "latestMCVersion": (a, b) => {
+        return (a["s_latestMCVersion"] < b["s_latestMCVersion"]) ? 1 : -1
     },
     "dateModified": (a, b) => {
-        return (a["s_dateModified"] < b["s_dateModified"]) ? 1: -1
+        return (a["s_dateModified"] < b["s_dateModified"]) ? 1 : -1
     },
 
 }
@@ -106,19 +109,19 @@ const sortBtns = document.getElementsByClassName('tbl_sort');
 for (const btn of sortBtns) {
     btn.col_field = sortable_cols[btn.parentElement.id];
     btn.parentElement.addEventListener('click', (e) => {
-        
+
         /**
          * @type {HTMLElement}
          */
         const elem = btn;
         // if already selected, rotate order, or deselect.
-        if (sortMode === elem.col_field) {  
+        if (sortMode === elem.col_field) {
             if (reverseNum === -1) {
                 reverseNum = 1;
                 sortMode = null;
             } else {
                 reverseNum = -1;
-            }1
+            } 1
             elem.classList.toggle('ascending');
         } else {
             sortMode = elem.col_field;
@@ -128,8 +131,8 @@ for (const btn of sortBtns) {
             }
         }
         updateSortIndicator();
-        
-        
+
+
         for (const func of onModeChangeFuncs) {
             func(sortMode);
         }
@@ -140,7 +143,7 @@ for (const btn of sortBtns) {
 function updateSortIndicator() {
     for (const btn of sortBtns) {
         if (btn.col_field == sortMode) {
-            btn.classList.add('active'); 
+            btn.classList.add('active');
         } else {
             btn.classList.remove('active');
         }
