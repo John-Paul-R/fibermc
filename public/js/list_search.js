@@ -461,7 +461,8 @@ var modeLiHeights = [
     getLiHeight,
     getLiHeightDetailed
 ]
-var currentViewIdx = 0;
+const CURRENT_LIST_VIEW_IDX_STORAGE_KEY = "currentListViewIdx";
+var currentViewIdx = Number(window.localStorage.getItem(CURRENT_LIST_VIEW_IDX_STORAGE_KEY)) ?? 0;
 var currentListCreationFunc = viewModes[0];
 function updateViewModes() {
     currentListCreationFunc = viewModes[currentViewIdx];
@@ -472,6 +473,7 @@ function cycleListViewModes() {
     if (currentViewIdx >= viewModes.length) {
         currentViewIdx = 0;
     }
+    window.localStorage.setItem(CURRENT_LIST_VIEW_IDX_STORAGE_KEY, currentViewIdx.toString());
     updateViewModes();
 }
 executeIfWhenDOMContentLoaded(() => {
