@@ -28,7 +28,7 @@ export {
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true
-}).addResource('https://localhost:5001/api/v1.0/Mods', [
+}).addResource('https:/dev.fibermc.com/api/v1.0/Mods', [
     (jsonData) => {
         // const temp_mods = jsonData.mods;
         console.log("TEMP", jsonData)
