@@ -138,7 +138,7 @@ function createListElementDetailed(modData) {
 
     const title_container = document.createElement('div');
     const name = document.createElement('a');
-    const author = document.createElement('a');
+    const authorAnchor = document.createElement('a');
 
     const categories = document.createElement('ul');
     const desc = document.createElement('p');
@@ -154,7 +154,7 @@ function createListElementDetailed(modData) {
     front_container.classList.add('front_container');
     end_container.classList.add('end_container');
     name.classList.add('name');
-    author.classList.add('author');
+    authorAnchor.classList.add('author');
     categories.classList.add('item_categories');
     desc.classList.add('desc');
     cfButton.classList.add('out_link');
@@ -171,7 +171,7 @@ function createListElementDetailed(modData) {
         botContainer.classList.add('bot_container');
 
         dlCount.textContent = modData.downloadCount.toLocaleString();
-        dateUpdated.textContent = modData.dateModified.toLocaleDateString();
+        dateUpdated.textContent = new Date(modData.dateModified).toLocaleDateString();
         latestSupportedVers.textContent = modData.latestMCVersion;
 
         botContainer.appendChild(dlCount);
@@ -181,10 +181,17 @@ function createListElementDetailed(modData) {
 
         // Fill content of elements
         name.textContent = modData.name;
-        if (modData.author)
-            author.textContent = modData.author;
-        else
-            author.textContent = "undefined";
+        try {
+            const mod_author = modData.authors[0];
+            const link_value = `https://www.curseforge.com/members/${mod_author.cf_slug}/projects`;
+            authorAnchor.textContent = mod_author.name;
+            authorAnchor.setAttribute('href', link_value);
+            authorAnchor.setAttribute('target', '_blank');
+            authorAnchor.setAttribute('rel', 'noreferrer');
+        } catch {
+            authorAnchor.innerText = "undefined";
+        }
+
         for (const category of modData.categories) {
             // if not "Fabric"
             if (category !== fabric_category_id) {
@@ -196,15 +203,15 @@ function createListElementDetailed(modData) {
         desc.textContent = modData.summary;
         cfButtonIcon.textContent = 'launch'
         cfButtonIcon.classList.add('material-icons');
-        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.slug;
+        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.cf_slug;
         cfButton.setAttribute('href', cflink);
         cfButton.setAttribute('target', '_blank');
 
         cfButton.appendChild(cfButtonIcon);
         name.setAttribute('href', cflink);
         name.setAttribute('target', '_blank');
-        author.setAttribute('href', `https://www.curseforge.com/members/${modData.author}/projects`);
-        author.setAttribute('target', '_blank');
+        authorAnchor.setAttribute('href', `https://www.curseforge.com/members/${modData.author}/projects`);
+        authorAnchor.setAttribute('target', '_blank');
 
     } catch (err) {
         console.group()
@@ -217,7 +224,7 @@ function createListElementDetailed(modData) {
     // Add elements as children where they belong and return root elem
     title_container.appendChild(name);
     title_container.insertAdjacentText("beforeend", " by ");
-    title_container.appendChild(author);
+    title_container.appendChild(authorAnchor);
     front_container.appendChild(title_container);
     front_container.appendChild(desc);
     li.appendChild(front_container);
