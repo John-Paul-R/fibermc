@@ -107,7 +107,7 @@ function createListElement(modData, includeCategories = true) {
         const mrAnchor = document.createElement('a');
         const mrAnchorIcon = document.createElement('div');
         if (modData.mr_slug) {
-            const mrLink = "https://modrinth.com/mod/sodium/" + modData.mr_slug;
+            const mrLink = "https://modrinth.com/mod/" + modData.mr_slug;
             mrAnchor.setAttribute('href', mrLink);
             mrAnchor.setAttribute('target', '_blank');
         } else {
