@@ -11,7 +11,7 @@ const isCategoryElement = (el) => el.cat_id !== undefined;
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
-    .addResource("https://localhost:5001/api/v1.0/Mods", [
+    .addResource("/api/v1.0/Mods", [
     (jsonData) => {
         console.log("TEMP", jsonData);
         setModData(jsonData.map(baseModToMod));
@@ -21,7 +21,7 @@ var loader = new AsyncDataResourceLoader({
         // timestamp = jsonData.timestamp;
     },
 ])
-    .addResource("https://localhost:5001/api/v1.0/Categories", [
+    .addResource("/api/v1.0/Categories", [
     (jsonData) => {
         categoryNames = jsonData;
         console.log(categoryNames);

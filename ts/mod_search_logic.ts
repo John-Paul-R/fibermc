@@ -54,7 +54,7 @@ type Category = {
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
-    .addResource<BaseMod[]>("https://localhost:5001/api/v1.0/Mods", [
+    .addResource<BaseMod[]>("/api/v1.0/Mods", [
         (jsonData) => {
             console.log("TEMP", jsonData);
 
@@ -66,7 +66,7 @@ var loader = new AsyncDataResourceLoader({
             // timestamp = jsonData.timestamp;
         },
     ])
-    .addResource<string[]>("https://localhost:5001/api/v1.0/Categories", [
+    .addResource<string[]>("/api/v1.0/Categories", [
         (jsonData) => {
             categoryNames = jsonData;
 
