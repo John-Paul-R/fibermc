@@ -28,8 +28,8 @@ var sort_funcs: Record<string, ModSortFunc> = {
         if (!(a["authors"] && b["authors"])) {
             return 1;
         }
-        return a["authors"][0].name.toLowerCase() >
-            b["authors"][0].name.toLowerCase()
+        return a["authors"][0]?.name.toLowerCase() >
+            b["authors"][0]?.name.toLowerCase()
             ? 1
             : -1;
     },

@@ -232,7 +232,7 @@ function initCategoriesSidebar() {
         const bool_mode = cat_elem.bool_mode ?? 0;
         cat_elem.bool_mode = bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : 0;
         applySelected(cat_elem);
-        searchTextChanged();
+        searchTextChanged("", true);
     }
     function applySelected(cat_elem: CategoryElement) {
         if (cat_elem.bool_mode == 1) {
@@ -290,11 +290,11 @@ function search(
     return results;
 }
 
-registerSortListener(() => searchTextChanged());
+registerSortListener(() => searchTextChanged("", true));
 //================
 // Input Handling
 //================
-function searchTextChanged(value?: string) {
+function searchTextChanged(value?: string, resultsPersist?: boolean) {
     const search_objects = getFilteredList();
     const searchValue = value ?? defaultSearchInput.value;
 
@@ -309,7 +309,7 @@ function searchTextChanged(value?: string) {
             // If ALL mods should be shown in the even the search query was empty
             // (Ex: if the page, by default, is a mod list, not a separate page w/ a
             // search overlay)
-            if (results_persist) {
+            if (resultsPersist ?? results_persist) {
                 return search_objects;
             }
             return;
