@@ -232,7 +232,7 @@ function initCategoriesSidebar() {
         const bool_mode = cat_elem.bool_mode ?? 0;
         cat_elem.bool_mode = bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : 0;
         applySelected(cat_elem);
-        searchTextChanged("", true);
+        searchTextChanged(undefined, true);
     }
     function applySelected(cat_elem: CategoryElement) {
         if (cat_elem.bool_mode == 1) {
@@ -290,7 +290,7 @@ function search(
     return results;
 }
 
-registerSortListener(() => searchTextChanged("", true));
+registerSortListener(() => searchTextChanged(undefined, true));
 //================
 // Input Handling
 //================
