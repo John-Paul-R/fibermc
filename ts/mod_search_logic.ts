@@ -171,6 +171,23 @@ function initCategoriesSidebar() {
     };
     categories_sidebar_elem = getCategoriesSidebarElem();
 
+    const createAllModsElement = () => {
+        const elem = document.createElement("button") as CategoryElement;
+        elem.classList.add("reset_button");
+        elem.cat_id = -1;
+        const title = "All mods (reset)";
+
+        elem.textContent = title + " ";
+        const mod_count = document.createElement("span");
+        mod_count.textContent = mod_data.length.toString();
+        elem.appendChild(mod_count);
+        elem.addEventListener("click", clearFilters);
+        categories_sidebar_elem.appendChild(elem);
+
+        elem.classList.add("reset_categories_button");
+    };
+    createAllModsElement();
+
     const createCategoryElement = (categoryId: number): CategoryElement => {
         const cat_elem = document.createElement("button") as CategoryElement;
         cat_elem.classList.add("reset_button");
@@ -245,6 +262,15 @@ function initCategoriesSidebar() {
         } else {
             cat_elem.classList.remove("not"); //.border = '2px solid var(--color-element-1)';
         }
+    }
+    function clearFilters() {
+        for (const cat of CATEGORIES) {
+            const cat_elem = cat.htmlElement;
+            cat_elem.classList.remove("and");
+            cat_elem.classList.remove("not");
+            cat_elem.bool_mode = 0;
+        }
+        searchTextChanged(undefined, true);
     }
 }
 //==============
