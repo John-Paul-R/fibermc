@@ -21,7 +21,10 @@ import {
 import {
     executeIfWhenDOMContentLoaded, setHidden
 } from './util.js';
-
+import {
+    createCurseLinkIcon,
+    createModrinthLinkIcon,
+} from './platform_links.js'
 
 function createListElement(modData, includeCategories = true) {
     const li = document.createElement('li');
@@ -90,39 +93,9 @@ function createListElement(modData, includeCategories = true) {
         }
         desc.textContent = modData.summary;
 
-        const cfAnchor = document.createElement('a');
-        const cfAnchorIcon = document.createElement('div');
-        if (modData.cf_slug) {
-            const cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.cf_slug;
-            cfAnchor.setAttribute('href', cflink);
-            cfAnchor.setAttribute('target', '_blank');
-        } else {
-            cfAnchor.classList.add('filter-grey');
-            cfAnchor.title = `No CurseForge link found for ${modData.name}.`;
-        }
-        cfAnchor.classList.add('icon_button')
-        cfAnchorIcon.classList.add('cf_icon');
-        cfAnchorIcon.classList.add('icon_dark'); // for multi-pallete-js
-        cfAnchor.appendChild(cfAnchorIcon);
-        end_container.appendChild(cfAnchor);
+        end_container.appendChild(createCurseLinkIcon(modData));
+        end_container.appendChild(createModrinthLinkIcon(modData));
 
-        const mrAnchor = document.createElement('a');
-        const mrAnchorIcon = document.createElement('div');
-        if (modData.mr_slug) {
-            const mrLink = "https://modrinth.com/mod/" + modData.mr_slug;
-            mrAnchor.setAttribute('href', mrLink);
-            mrAnchor.setAttribute('target', '_blank');
-        } else {
-            mrAnchor.classList.add('filter-grey');
-            mrAnchor.title = `No Modrinth link found for ${modData.name}.`;
-        }
-        mrAnchor.classList.add('icon_button')
-        mrAnchorIcon.classList.add('mr_icon')
-        mrAnchor.appendChild(mrAnchorIcon);
-        end_container.appendChild(mrAnchor);
-
-        // name.setAttribute('href', cflink);
-        // name.setAttribute('target', '_blank');
         authorAnchor.setAttribute('rel', 'noreferrer');
 
     } catch (err) {
@@ -163,11 +136,8 @@ function createListElementDetailed(modData) {
 
     const categories = document.createElement('ul');
     const desc = document.createElement('p');
-    const cfButton = document.createElement('a');
-    const cfButtonIcon = document.createElement('i');
 
     let botContainer;
-
 
     li.classList.add('item');
     li.classList.add('detailed');
@@ -178,7 +148,6 @@ function createListElementDetailed(modData) {
     authorAnchor.classList.add('author');
     categories.classList.add('item_categories');
     desc.classList.add('desc');
-    cfButton.classList.add('out_link');
 
     try {
         botContainer = document.createElement('div');
@@ -222,15 +191,10 @@ function createListElementDetailed(modData) {
             }
         }
         desc.textContent = modData.summary;
-        cfButtonIcon.textContent = 'launch'
-        cfButtonIcon.classList.add('material-icons');
-        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.cf_slug;
-        cfButton.setAttribute('href', cflink);
-        cfButton.setAttribute('target', '_blank');
 
-        cfButton.appendChild(cfButtonIcon);
-        name.setAttribute('href', cflink);
-        name.setAttribute('target', '_blank');
+        end_container.appendChild(createCurseLinkIcon(modData));
+        end_container.appendChild(createModrinthLinkIcon(modData));
+
         authorAnchor.setAttribute('href', `https://www.curseforge.com/members/${modData.author}/projects`);
         authorAnchor.setAttribute('target', '_blank');
 
@@ -250,9 +214,7 @@ function createListElementDetailed(modData) {
     front_container.appendChild(desc);
     li.appendChild(front_container);
     end_container.appendChild(categories);
-    end_container.appendChild(cfButton);
     li.appendChild(end_container);
-
     li.appendChild(botContainer);
     return li;
 }
