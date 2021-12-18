@@ -36,8 +36,6 @@ function createListElement(modData, includeCategories = true) {
 
     const categories = document.createElement('ul');
     const desc = document.createElement('p');
-    const cfButton = document.createElement('a');
-    const cfButtonIcon = document.createElement('i');
 
     let startContainer;
     let dlCount;
@@ -50,7 +48,6 @@ function createListElement(modData, includeCategories = true) {
     authorAnchor.setAttribute('class', 'author');
     categories.setAttribute('class', 'item_categories');
     desc.setAttribute('class', 'desc');
-    cfButton.setAttribute('class', 'out_link');
     try {
         desc.setAttribute('data-text', modData.summary);
 
@@ -92,16 +89,38 @@ function createListElement(modData, includeCategories = true) {
             }
         }
         desc.textContent = modData.summary;
-        cfButtonIcon.textContent = 'launch'
-        cfButtonIcon.setAttribute('class', 'material-icons');
-        let cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.cf_slug;
-        cfButton.setAttribute('href', cflink);
-        cfButton.setAttribute('target', '_blank');
-        name.setAttribute('href', cflink);
-        name.setAttribute('target', '_blank');
-        authorAnchor.setAttribute('rel', 'noreferrer');
 
-        cfButton.appendChild(cfButtonIcon);
+        const cfAnchor = document.createElement('a');
+        const cfAnchorIcon = document.createElement('div');
+        if (modData.cf_slug) {
+            const cflink = 'https://www.curseforge.com/minecraft/mc-mods/' + modData.cf_slug;
+            cfAnchor.setAttribute('href', cflink);
+            cfAnchor.setAttribute('target', '_blank');
+        } else {
+            cfAnchor.classList.add('filter-grey');
+        }
+        cfAnchor.classList.add('icon_button')
+        cfAnchorIcon.classList.add('cf_icon');
+        cfAnchor.appendChild(cfAnchorIcon);
+        end_container.appendChild(cfAnchor);
+
+        const mrAnchor = document.createElement('a');
+        const mrAnchorIcon = document.createElement('div');
+        if (modData.mr_slug) {
+            const mrLink = "https://modrinth.com/mod/sodium/" + modData.mr_slug;
+            mrAnchor.setAttribute('href', mrLink);
+            mrAnchor.setAttribute('target', '_blank');
+        } else {
+            mrAnchor.classList.add('filter-grey');
+        }
+        mrAnchor.classList.add('icon_button')
+        mrAnchorIcon.classList.add('mr_icon')
+        mrAnchor.appendChild(mrAnchorIcon);
+        end_container.appendChild(mrAnchor);
+
+        // name.setAttribute('href', cflink);
+        // name.setAttribute('target', '_blank');
+        authorAnchor.setAttribute('rel', 'noreferrer');
 
     } catch (err) {
         console.group()
@@ -119,7 +138,6 @@ function createListElement(modData, includeCategories = true) {
     front_container.appendChild(desc);
     container.appendChild(front_container);
     end_container.appendChild(categories);
-    end_container.appendChild(cfButton);
     container.appendChild(end_container);
     li.appendChild(container);
     return li;

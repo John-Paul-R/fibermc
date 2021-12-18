@@ -198,6 +198,33 @@ a.logo img {
   padding: 0;
 }
 
+.mr_icon {
+  background-image: url("/img/modrinth.svg");
+  height: clamp(8px, 24px, 100%);
+  width: clamp(8px, 24px, 100%);
+  background-size: clamp(8px, 24px, 100%);
+}
+
+.cf_icon {
+  background-image: url("/img/curse.svg");
+  height: clamp(8px, 24px, 100%);
+  width: clamp(8px, 24px, 100%);
+  background-size: clamp(8px, 24px, 100%);
+}
+
+.filter-grey {
+  filter: grayscale(100%) opacity(85%);
+}
+
+.icon_button {
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon_button[href]:hover {
+  background-color: var(--color-base);
+}
 :root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--color-background);

@@ -1,0 +1,34 @@
+$iconSize: clamp(8px, 24px, 100%);
+.mr_icon {
+    background-image: url('/img/modrinth.svg');
+    height: $iconSize;
+    width: $iconSize;
+    background-size: $iconSize;
+}
+
+.cf_icon {
+    background-image: url('/img/curse.svg');
+    height: $iconSize;
+    width: $iconSize;
+    background-size: $iconSize;
+}
+
+.filter-grey {
+    filter: grayscale(100%) opacity(85%);
+}
+
+.icon_button {
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &[href] {
+        &:hover {
+            background-color: var(--color-base);
+        }
+    }
+
+    &:not([href]) {
+
+    }
+}
