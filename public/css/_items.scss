@@ -50,7 +50,7 @@
     color: var(--color-accent-1);
 }
 .name:hover {
-    text-decoration: underline;
+    // text-decoration: underline;
 }
 .desc {
     margin: 0;
@@ -137,10 +137,15 @@
     flex: 1;
     display: grid;
     grid-template-columns: auto 32px;
+    grid-template-rows: 1fr 1fr;
     flex-wrap: nowrap;
     /* width: 33%; */
     height: 100%;
     align-content: center;
+    
+    & .item_categories {
+        grid-row: 1 / 3;
+    }
 }
 
 .container:hover {

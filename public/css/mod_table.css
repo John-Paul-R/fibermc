@@ -17,19 +17,24 @@
   grid-row: searchbar-start/searchbar-end;
 }
 #search_container > a {
-  text-decoration: none;
-  border-radius: 4px;
-  border: 1px solid var(--color-base-1);
-  padding-left: 6px;
-  padding-right: 4px;
-  background-color: var(--color-base-2);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  padding-left: 6px;
+  padding-right: 4px;
 }
-#search_container > a:hover {
+#search_container > a, #search_container > button, #search_container > .hover_dropdown {
+  box-sizing: border-box;
+  vertical-align: center;
+  height: 42px;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid var(--color-base-1);
+  background-color: var(--color-base-2);
+  font-weight: 650;
+}
+#search_container > a:hover, #search_container > button:hover, #search_container > .hover_dropdown:hover {
   background-color: var(--color-base-1);
 }
 .searchbar {
@@ -81,6 +86,38 @@ input.searchField::placeholder {
   max-width: var(--list-width);
 }
 
+/* Loadbar */
+.loadbar_container {
+  width: 256px;
+  height: 16px;
+  background-color: var(--color-base-1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.loadbar_content {
+  height: 12px;
+  margin-left: 2px;
+  background-color: var(--color-accent-1);
+  width: 0;
+  will-change: width;
+  transition: width 250ms linear 0ms;
+}
+
+.loadbar_text {
+  text-align: center;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  font-size: 12px;
+}
+
 /* Page structure */
 #page_container {
   /* position:relative; */
@@ -118,7 +155,7 @@ table#search_results_list {
   overflow: auto;
   display: flex;
   flex-direction: column;
-  --grid-cols: minmax(16ch, 1fr) minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
+  --grid-cols: minmax(16ch, 1fr) 48px minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
   overflow-y: scroll;
   grid-row: 2/3;
 }
@@ -221,38 +258,6 @@ table#search_results_list > thead, table#search_results_list > tbody {
   width: auto;
 }
 
-/* Loadbar */
-#loadbar_container {
-  width: 256px;
-  height: 16px;
-  background-color: var(--color-base-1);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-}
-
-#loadbar_content {
-  height: 12px;
-  margin-left: 2px;
-  background-color: var(--color-accent-1);
-  width: 0;
-  will-change: width;
-  transition: width 250ms linear 0ms;
-}
-
-#loadbar_text {
-  text-align: center;
-  position: absolute;
-  top: 2px;
-  left: 0;
-  width: 100%;
-  font-size: 12px;
-}
-
 .material-icons {
   margin: 4px;
 }
@@ -271,6 +276,15 @@ table#search_results_list > thead, table#search_results_list > tbody {
   border-radius: 12px;
   background-color: var(--color-element);
   /* border: 1px solid var(--color-accent-1); */
+}
+
+#search_results_list td.table_mod_links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
 }
 
 /*# sourceMappingURL=mod_table.css.map */

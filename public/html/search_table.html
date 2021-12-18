@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <script defer src="js/gsap.min.js"></script>
-    <script src="https://static.jpcode.dev/js/multi-palette.min.js"></script>
+    <!-- <script src="https://static.jpcode.dev/js/multi-palette.min.js"></script> -->
+    <script src="/js/multi-palette.min.js"></script>
 
     <title class="header_element">FiberMC - Minecraft Fabric Mod List</title>
 </head>
@@ -54,6 +55,7 @@
                         <th id="t_name">Name
                             <button class="tbl_sort material-icons">sort</button>
                         </th>
+                        <th id="t_links">Links</th>
                         <th id="t_desc">Description</th>
                         <th id="t_auth">Author
                             <button class="tbl_sort material-icons">sort</button>
@@ -72,10 +74,6 @@
                 </thead>
                 <tbody id="search_results_content" class="persist"></tbody>
             </table>
-        </div>
-        <div id="loadbar_container">
-            <div id="loadbar_text">0%</div>
-            <div id="loadbar_content"></div>
         </div>
     </body>
     </div>

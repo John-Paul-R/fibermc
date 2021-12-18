@@ -1,0 +1,43 @@
+$iconSize: 24px;
+.mr_icon {
+    background-image: url('/img/modrinth.svg');
+    height: $iconSize;
+    width: $iconSize;
+    background-size: $iconSize;
+}
+
+// $cfIconWidth: clamp($iconMinDim, $iconBaseDim, 100%);
+// $cfIconHeight: clamp($iconMinDim * $cfAspectRatioInv, $iconBaseDim * $cfAspectRatioInv, 100%);
+.cf_icon {
+    --cf-aspect-inv: 0.53446694;
+    background-image: url('/img/curse.svg');
+    height: calc(24px * var(--cf-aspect-inv));
+    width: $iconSize;
+    background-size: $iconSize;
+    background-repeat:  no-repeat;
+}
+
+.filter-grey {
+    filter: grayscale(100%) opacity(50%);
+}
+
+.icon_button {
+    border-radius: 6px;
+    height: $iconSize;
+    width: $iconSize;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    padding: 4px;
+    border: 1px solid transparent;
+    &[href] {
+        &:hover {
+            background-color: var(--color-base-1);
+            border: 1px solid var(--color-accent-1);
+        }
+    }
+
+    &:not([href]) {
+
+    }
+}

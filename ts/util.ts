@@ -1,4 +1,13 @@
-export { throttle, debounce, executeOrWait, executeIfWhenDOMContentLoaded, FunctionBatch, toggleHidden, setHidden, };
+export {
+    throttle,
+    debounce,
+    executeOrWait,
+    executeIfWhenDOMContentLoaded,
+    FunctionBatch,
+    toggleHidden,
+    setHidden,
+};
+
 /**
  *
  * @param {function} func The function to be throttled.
@@ -6,19 +15,19 @@ export { throttle, debounce, executeOrWait, executeIfWhenDOMContentLoaded, Funct
  *
  * @returns {function} The throttled function.
  */
-function throttle(func, timeInterval) {
+function throttle(func: () => void, timeInterval: number): () => void {
     var lastTime = 0;
     return function () {
         var now = Date.now();
         if (now - lastTime >= timeInterval) {
             func();
             lastTime = now;
-        }
-        else {
+        } else {
             setTimeout(func, lastTime + timeInterval);
         }
     };
 }
+
 /**
  *
  * @param {function} func The function to be debounced.
@@ -26,14 +35,17 @@ function throttle(func, timeInterval) {
  *
  * @returns {function} The debounced function.
  */
-function debounce(func, delay) {
-    let debounceTimer;
+function debounce(func: (...funcArgs: any) => void, delay: number): () => void {
+    let debounceTimer: number | undefined;
     return function () {
         // @ts-ignore
         const context = this;
         const args = arguments;
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => func.apply(context, Array.from(args)), delay);
+        debounceTimer = setTimeout(
+            () => func.apply(context, Array.from(args)),
+            delay
+        );
     };
 }
 /**
@@ -43,11 +55,14 @@ function debounce(func, delay) {
  * @param {boolean} condition
  * @param {function} waitFunc
  */
-function executeOrWait(execFunc, condition, waitFunc) {
+function executeOrWait(
+    execFunc: () => void,
+    condition: boolean,
+    waitFunc: (execFunc: () => void) => void
+) {
     if (condition) {
         execFunc();
-    }
-    else {
+    } else {
         waitFunc(execFunc);
     }
 }
@@ -58,64 +73,77 @@ function executeOrWait(execFunc, condition, waitFunc) {
  *
  * @param {function} func
  */
-function executeIfWhenDOMContentLoaded(func) {
-    executeOrWait(func, document.readyState === "complete" ||
-        document.readyState === "interactive", () => window.addEventListener("DOMContentLoaded", func));
+function executeIfWhenDOMContentLoaded(func: () => void) {
+    executeOrWait(
+        func,
+        document.readyState === "complete" ||
+            document.readyState === "interactive",
+        () => window.addEventListener("DOMContentLoaded", func)
+    );
 }
-class FunctionBatch {
+
+class FunctionBatch<TArgs> {
+    funcs: ((args: TArgs) => void)[];
     /**
      *
      * @param {Array<function>} arrFuncs an array of functions
      */
-    constructor(arrFuncs) {
+    constructor(arrFuncs: ((args: TArgs) => void)[]) {
         this.funcs = arrFuncs || [];
     }
+
     /**
      * Add a function to the batch. Chainable.
      * @param {function} func
      * @return {FunctionBatch}
      */
-    add(func) {
+    add(func: (args: TArgs) => void) {
         this.funcs.push(func);
         return this;
     }
+
     /**
      * Execute all functions in the batch.
      */
-    runAll(args) {
+    runAll(args: TArgs) {
         for (const func of this.funcs) {
             func(args);
         }
     }
 }
-function toggleHidden(htmlElement) {
+
+function toggleHidden(htmlElement: HTMLElement) {
     if (htmlElement.className.includes("hidden"))
-        htmlElement.className = htmlElement.className.replace(/(?:^|\s)hidden(?!\S)/g, "");
-    else
-        htmlElement.className = htmlElement.className + " hidden";
+        htmlElement.className = htmlElement.className.replace(
+            /(?:^|\s)hidden(?!\S)/g,
+            ""
+        );
+    else htmlElement.className = htmlElement.className + " hidden";
 }
 /**
  *
  * @param {HTMLElement} htmlElement
  * @param {boolean} hidden
  */
-function setHidden(htmlElement, hidden) {
+function setHidden(htmlElement: HTMLElement, hidden: boolean) {
     if (hidden) {
         if (!htmlElement.className.includes("hidden")) {
             htmlElement.className = htmlElement.className + " hidden";
         }
-    }
-    else {
+    } else {
         if (htmlElement.className.includes("hidden")) {
-            htmlElement.className = htmlElement.className.replace(/(?:^|\s)hidden(?!\S)/g, "");
+            htmlElement.className = htmlElement.className.replace(
+                /(?:^|\s)hidden(?!\S)/g,
+                ""
+            );
         }
     }
 }
-export const getElementById = (id) => {
+
+export const getElementById = (id: string) => {
     const elem = document.getElementById(id);
     if (!elem) {
         throw new Error(`Could not find elemnt with id ${id}`);
     }
     return elem;
 };
-//# sourceMappingURL=util.js.map

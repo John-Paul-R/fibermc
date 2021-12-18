@@ -214,8 +214,13 @@
                             margin: 0;
                         }
                         &.not {
-                            border: 2px solid crimson;
+                            border: 2px dashed crimson;
                             margin: 0;
+                        }
+                        &.reset_categories_button {
+                            &:active {
+                                border: 2px solid var(--color-accent-1);
+                            }
                         }
                         // border-color: var(--color-element-2);
                         // border-bottom: 2px solid var(--color-element-1);

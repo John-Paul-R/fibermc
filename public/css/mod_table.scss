@@ -1,6 +1,7 @@
 
 @import 'mod_categories';
 @import 'searchbar';
+@import 'loadbar';
 
 /* Page structure */
 #page_container{
@@ -36,7 +37,7 @@
 
       display: flex;
       flex-direction: column;
-      --grid-cols: minmax(16ch, 1fr) minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
+      --grid-cols: minmax(16ch, 1fr) 48px minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
       
       overflow-y: scroll;
 
@@ -134,38 +135,6 @@
     width: auto;
   }
   
-  /* Loadbar */
-  #loadbar_container {
-    width: 256px;
-    height: 16px;
-    background-color: var(--color-base-1);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    position: fixed;
-    bottom: 0;
-    right:0;
-  }
-  
-  #loadbar_content {
-    height: 12px;
-    margin-left: 2px;
-    background-color: var(--color-accent-1);
-    width: 0;
-    will-change: width;
-    transition: width 250ms linear 0ms;
-  }
-  
-  #loadbar_text {
-    text-align: center;
-    position: absolute;
-    top: 2px;
-    left: 0;
-    width: 100%;
-    font-size: 12px;
-  }
-  
   .material-icons {
     margin:4px;
   }
@@ -184,4 +153,13 @@
     border-radius: 12px;
     background-color: var(--color-element);
     /* border: 1px solid var(--color-accent-1); */
+}
+
+#search_results_list td.table_mod_links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
 }

@@ -51,10 +51,6 @@
   color: var(--color-accent-1);
 }
 
-.name:hover {
-  text-decoration: underline;
-}
-
 .desc {
   margin: 0;
   /* height: 18px; */
@@ -143,10 +139,14 @@
   flex: 1;
   display: grid;
   grid-template-columns: auto 32px;
+  grid-template-rows: 1fr 1fr;
   flex-wrap: nowrap;
   /* width: 33%; */
   height: 100%;
   align-content: center;
+}
+.end_container .item_categories {
+  grid-row: 1/3;
 }
 
 .container:hover {
@@ -676,8 +676,11 @@ footer {
     margin: 0;
   }
   #categories_wrapper > #categories.view_list #categories_list button.not {
-    border: 2px solid crimson;
+    border: 2px dashed crimson;
     margin: 0;
+  }
+  #categories_wrapper > #categories.view_list #categories_list button.reset_categories_button:active {
+    border: 2px solid var(--color-accent-1);
   }
 
   #search_results_list {
