@@ -142,13 +142,13 @@ var numElemsBuilt: number;
 var numResults: number;
 const getLoadbarText = (doneCount: number, remainingCount: number) => {
     return `Showing ${doneCount}/${remainingCount} mods (${(
-        doneCount / remainingCount
+        (doneCount / remainingCount) *
+        100
     ).toFixed(0)}%)`;
 };
 var updateLoadbar = () => {
     numElemsBuilt = resultsListElement.children.length;
-    const percentComplete = (numElemsBuilt / numResults) * 100;
-    loadbar.setLoadedPercent(percentComplete);
+    loadbar.setLoadedPercent(numElemsBuilt / numResults);
     loadbar.setText(getLoadbarText(numElemsBuilt, numResults));
 
     if (numElemsBuilt === numResults) {
@@ -246,7 +246,8 @@ type ModWithElem = Mod & {
 
 loader.addCompletionFunc(() => {
     loadbar = createLoadbar({
-        parentElement: getElementById("loadbar_container"),
+        parentElement: getElementById("content_main"),
+        hideOnComplete: true,
     });
 
     const MAX_FAILS = 100;

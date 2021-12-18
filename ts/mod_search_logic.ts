@@ -253,13 +253,7 @@ function initCategoriesSidebar() {
 // Performance monitoring vars
 var fuzzysortAvg = 0;
 var searchCount = 0;
-/**
- *
- * @param {string} queryText
- * @param {boolean} selectBest
- *
- * @returns {Array<Object>}
- */
+
 function search(
     queryText: string,
     search_objects: Mod[],
@@ -321,6 +315,7 @@ function searchTextChanged(value?: string) {
             if (results_persist) {
                 return search_objects;
             }
+            return;
         }
 
         return runSearch(searchValue);
@@ -557,7 +552,11 @@ function initSearch(options: InitSearchOptions) {
             continue;
         }
         elem.addEventListener("input", (e) =>
-            setTimeout(searchTextChanged, 0, e)
+            setTimeout(
+                searchTextChanged,
+                0,
+                (e.target as HTMLInputElement)?.value
+            )
         );
         elem.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {

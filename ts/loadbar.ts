@@ -35,17 +35,21 @@ export function createLoadbar({
     loadbar_container.classList.add("loadbar_container");
 
     const loadbar_text = document.createElement("div");
-    loadbar_text.classList.add("loadbar_content");
+    loadbar_text.classList.add("loadbar_text");
 
     const loadbar_content = document.createElement("div");
-    loadbar_content.classList.add("loadbar_text");
+    loadbar_content.classList.add("loadbar_content");
+
+    loadbar_container.appendChild(loadbar_text);
+    loadbar_container.appendChild(loadbar_content);
+    parentElement.appendChild(loadbar_container);
 
     const percentLoadedRef = asRef(startPercent);
 
     return {
         setLoadedPercent: (percentLoaded: number) => {
             percentLoadedRef.current = percentLoaded;
-            loadbar_content.style.width = `calc(${percentLoaded}% - 4px`;
+            loadbar_content.style.width = `calc(${percentLoaded * 100}% - 4px`;
 
             if (hideOnComplete && percentLoaded >= 1) {
                 setTimeout(() => {
