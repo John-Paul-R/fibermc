@@ -1,58 +1,32 @@
 export { Mod };
 
-class Mod {
+export interface BaseMod {
+    id: string;
     name: string;
-    slug: string;
+    mr_slug: string | null;
+    cf_slug: string | null;
     summary: string;
-    categories: Array<number>;
-    author: Array<Author>;
+    categories: number[];
+    authors: Author[];
+    dateReleased: string;
+    dateModified: string;
     downloadCount: number;
-    dateModified: Date;
     latestMCVersion: string;
-    // Sorting props:
+}
+
+interface Mod extends BaseMod {
     s_name: string;
     s_latestMCVersion: number;
     s_dateModified: number;
-    constructor(mod_arr: any[]) {
-        /**
-         * @type {string}
-         */
-        this.name = formatName(mod_arr[0]);
-        /**
-         * @type {string}
-         */
-        this.slug = mod_arr[1];
-        /**
-         * @type {string}
-         */
-        this.summary = mod_arr[2];
-        /**
-         * @type {Array<number>}
-         */
-        this.categories = mod_arr[3];
-        /**
-         * @type {Array<Author>}
-         */
-        this.author = mod_arr[4][0];
-        /**
-         * @type {number}
-         */
-        this.downloadCount = mod_arr[5];
-        /**
-         * @type {Date}
-         */
-        this.dateModified = new Date(mod_arr[6]);
-        /**
-         * @type {string}
-         */
-        this.latestMCVersion = mod_arr[7];
+}
 
-        // Sorting props:
-
-        this.s_name = sortableName(this.name);
-        this.s_latestMCVersion = versionOrd(this.latestMCVersion);
-        this.s_dateModified = dateOrd(this.dateModified);
-    }
+export function baseModToMod(mod: BaseMod): Mod {
+    return {
+        ...mod,
+        s_name: sortableName(mod.name),
+        s_latestMCVersion: versionOrd(mod.latestMCVersion),
+        s_dateModified: dateOrd(mod.dateModified),
+    };
 }
 
 export type Author = {

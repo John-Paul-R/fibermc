@@ -4,7 +4,7 @@ import {
     getSortFunc,
     registerListener as registerSortListener,
 } from "./table_sort.js";
-import { Mod } from "./mod_types.js";
+import { BaseMod, Mod, baseModToMod } from "./mod_types.js";
 
 export {
     init,
@@ -54,10 +54,11 @@ type Category = {
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
-    .addResource<Mod[]>("https://localhost:5001/api/v1.0/Mods", [
+    .addResource<BaseMod[]>("https://localhost:5001/api/v1.0/Mods", [
         (jsonData) => {
             console.log("TEMP", jsonData);
-            setModData(jsonData);
+
+            setModData(jsonData.map(baseModToMod));
             // Sort descending
             mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
             console.log(mod_data);
@@ -151,20 +152,24 @@ function getFilteredList() {
     }
     return search_objs;
 }
-var fabric_category_id;
-var categories_sidebar_elem;
+var fabric_category_id: number;
+var categories_sidebar_elem: HTMLElement;
 function initCategoriesSidebar() {
     //TODO Group "Selected" items?
     //TODO "select multiple" toggle
     //TODO Option to sort categories by name or by num mods in category
     //TODO Display "searching in these categories" under searchbar. With option to click them to remove.
 
-    categories_sidebar_elem = document.getElementById("categories_list");
-    if (!categories_sidebar_elem) {
-        throw new Error(
-            "Could not find 'categories_sidebar_elem' (Element Id: 'categories_list')"
-        );
-    }
+    const getCategoriesSidebarElem = () => {
+        const elem = document.getElementById("categories_list");
+        if (!elem) {
+            throw new Error(
+                "Could not find 'categories_sidebar_elem' (Element Id: 'categories_list')"
+            );
+        }
+        return elem;
+    };
+    categories_sidebar_elem = getCategoriesSidebarElem();
 
     const createCategoryElement = (categoryId: number): CategoryElement => {
         const cat_elem = document.createElement("button") as CategoryElement;
@@ -400,27 +405,28 @@ function setLiHeight(liHeight: number) {
 var defaultSearchInput: HTMLInputElement;
 type InitSearchOptions = {
     results_persist: boolean;
-    li_height: number;
-    batch_size: number;
+    li_height?: number;
+    batch_size?: number;
     listElemCreationFunc: (modData: Mod) => HTMLElement;
     batchCreationFunc: BatchCreationFunc;
     listCreationFunc: ListBuilderFunc;
-    lazyLoadBatches: boolean;
+    lazyLoadBatches?: (() => void) | boolean;
 };
 function initSearch(options: InitSearchOptions) {
     results_persist = options.results_persist;
-    LI_HEIGHT = options.li_height;
-    BATCH_SIZE = options.batch_size;
+    const defaultOptions = {
+        results_persist: false,
+        li_height: 64,
+        batch_size: 20,
+        listElemCreationFunc: null,
+        batchCreationFunc: null,
+        listCreationFunc: null,
+        lazyLoadBatches: true,
+    };
+
+    LI_HEIGHT = options.li_height ?? defaultOptions.li_height;
+    BATCH_SIZE = options.batch_size ?? defaultOptions.batch_size;
     function resultsViewBuilder(options: InitSearchOptions) {
-        var defaultOptions = {
-            results_persist: false,
-            li_height: 64,
-            batch_size: 20,
-            listElemCreationFunc: null,
-            batchCreationFunc: null,
-            listCreationFunc: null,
-            lazyLoadBatches: true,
-        };
         console.log(options);
         if (options.listElemCreationFunc) {
             createListElement = options.listElemCreationFunc;
@@ -526,8 +532,7 @@ function initSearch(options: InitSearchOptions) {
                     { passive: true }
                 );
             } else {
-                // TODO: Wtf is this? vvv
-                // options.lazyLoadBatches();
+                options.lazyLoadBatches();
             }
         }
     }
@@ -719,17 +724,17 @@ function clear(node: Node) {
 /**
  * @param {HTMLElement} el
  */
-function pxBelowBottom(el: HTMLElement, scrollable = null) {
+function pxBelowBottom(el: HTMLElement, scrollableElement?: HTMLElement) {
     // var rect = el.getBoundingClientRect();
-    let parent = scrollable || el.parentElement!;
+    let parent = scrollableElement ?? el.parentElement!;
     let out = el.offsetTop - (parent.scrollTop + parent.clientHeight);
     return out;
 }
 /**
  * @param {HTMLElement} el
  */
-function pxAboveTop(el: HTMLElement, scrollable = null) {
-    let parent = scrollable || el.parentElement!;
+function pxAboveTop(el: HTMLElement, scrollableElement?: HTMLElement) {
+    let parent = scrollableElement ?? el.parentElement!;
     let out = parent.scrollTop - el.offsetTop;
     return out;
 }

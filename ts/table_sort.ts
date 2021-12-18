@@ -25,11 +25,11 @@ var sort_funcs: Record<string, ModSortFunc> = {
         return a["s_name"] > b["s_name"] ? 1 : -1;
     },
     author: (a, b) => {
-        if (!(a["author"] && b["author"])) {
+        if (!(a["authors"] && b["authors"])) {
             return 1;
         }
-        return a["author"][0].name.toLowerCase() >
-            b["author"][0].name.toLowerCase()
+        return a["authors"][0].name.toLowerCase() >
+            b["authors"][0].name.toLowerCase()
             ? 1
             : -1;
     },
@@ -98,55 +98,49 @@ const isTableSortableHeaderElement = (
 
         btn.col_field = sortable_cols[btn.parentElement.id];
         btn.parentElement.addEventListener("click", (e) => {
-            /**
-             * @type {HTMLElement}
-             */
-            const elem = btn;
             // if already selected, rotate order, or deselect.
-            if (sortMode === elem.col_field) {
+            if (sortMode === btn.col_field) {
                 if (reverseNum === -1) {
                     reverseNum = 1;
                     sortMode = null;
                 } else {
                     reverseNum = -1;
                 }
-                1;
-                elem.classList.toggle("ascending");
+                btn.classList.toggle("ascending");
             } else {
-                sortMode = elem.col_field;
+                sortMode = btn.col_field;
                 reverseNum = 1;
                 if (default_order[sortMode] === "ascending") {
-                    elem.classList.add("ascending");
+                    btn.classList.add("ascending");
                 }
             }
         });
 
-        updateSortIndicator();
+        // function updateSortIndicator()
+        {
+            for (const btn of sortBtns) {
+                if (btn.col_field == sortMode) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+                if (btn.classList.contains("active")) {
+                    if (btn.classList.contains("ascending")) {
+                        btn.textContent = "north";
+                    } else {
+                        btn.textContent = "south";
+                    }
+                } else {
+                    btn.textContent = "sort";
+                }
+            }
+        }
 
         for (const func of onModeChangeFuncs) {
             func(sortMode);
         }
     }
 })();
-
-function updateSortIndicator() {
-    for (const btn of sortBtns) {
-        if (btn.col_field == sortMode) {
-            btn.classList.add("active");
-        } else {
-            btn.classList.remove("active");
-        }
-        if (btn.classList.contains("active")) {
-            if (btn.classList.contains("ascending")) {
-                btn.textContent = "north";
-            } else {
-                btn.textContent = "south";
-            }
-        } else {
-            btn.textContent = "sort";
-        }
-    }
-}
 
 export function getSortFunc() {
     return sortMode ? finalizeSortFunc(sort_funcs[sortMode]) : undefined;

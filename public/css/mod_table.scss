@@ -1,6 +1,7 @@
 
 @import 'mod_categories';
 @import 'searchbar';
+@import 'loadbar';
 
 /* Page structure */
 #page_container{
@@ -132,38 +133,6 @@
   }
   #t_date {
     width: auto;
-  }
-  
-  /* Loadbar */
-  #loadbar_container {
-    width: 256px;
-    height: 16px;
-    background-color: var(--color-base-1);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    position: fixed;
-    bottom: 0;
-    right:0;
-  }
-  
-  #loadbar_content {
-    height: 12px;
-    margin-left: 2px;
-    background-color: var(--color-accent-1);
-    width: 0;
-    will-change: width;
-    transition: width 250ms linear 0ms;
-  }
-  
-  #loadbar_text {
-    text-align: center;
-    position: absolute;
-    top: 2px;
-    left: 0;
-    width: 100%;
-    font-size: 12px;
   }
   
   .material-icons {
