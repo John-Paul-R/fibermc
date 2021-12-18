@@ -1,4 +1,4 @@
-import { Mod, Author } from "./mod_types";
+import { Mod, Author } from "./mod_types.js";
 
 type SortColumnClass = "t_name" | "t_auth" | "t_dl" | "t_vers" | "t_date";
 type SortableModField =
@@ -77,47 +77,57 @@ const sortBtns = document.getElementsByClassName(
 const isTableSortableHeaderElement = (
     el: Element
 ): el is TableSortableHeaderElement =>
-    !!el.id && el.id in Object.keys(sortable_cols);
+    !!el.id && Object.keys(sortable_cols).includes(el.id);
 
-for (const btn of sortBtns) {
-    if (!btn.parentElement) {
-        throw new Error("Table sort button parent element was null.");
+(async function () {
+    console.log(sortBtns);
+    if (sortBtns.length === 0) {
+        return;
     }
-    if (!isTableSortableHeaderElement(btn.parentElement)) {
-        throw new Error(
-            "Table sort button parent element missing a valid sort css class (see sortable_columns)."
-        );
-    }
-    btn.col_field = sortable_cols[btn.parentElement.id];
-    btn.parentElement.addEventListener("click", (e) => {
-        /**
-         * @type {HTMLElement}
-         */
-        const elem = btn;
-        // if already selected, rotate order, or deselect.
-        if (sortMode === elem.col_field) {
-            if (reverseNum === -1) {
-                reverseNum = 1;
-                sortMode = null;
-            } else {
-                reverseNum = -1;
-            }
-            1;
-            elem.classList.toggle("ascending");
-        } else {
-            sortMode = elem.col_field;
-            reverseNum = 1;
-            if (default_order[sortMode] === "ascending") {
-                elem.classList.add("ascending");
-            }
+    for (const btn of sortBtns) {
+        if (!btn.parentElement) {
+            throw new Error("Table sort button parent element was null.");
         }
+
+        if (!isTableSortableHeaderElement(btn.parentElement)) {
+            console.error(btn, btn.parentElement);
+            throw new Error(
+                "Table sort button parent element missing a valid sort css class (see sortable_columns)."
+            );
+        }
+
+        btn.col_field = sortable_cols[btn.parentElement.id];
+        btn.parentElement.addEventListener("click", (e) => {
+            /**
+             * @type {HTMLElement}
+             */
+            const elem = btn;
+            // if already selected, rotate order, or deselect.
+            if (sortMode === elem.col_field) {
+                if (reverseNum === -1) {
+                    reverseNum = 1;
+                    sortMode = null;
+                } else {
+                    reverseNum = -1;
+                }
+                1;
+                elem.classList.toggle("ascending");
+            } else {
+                sortMode = elem.col_field;
+                reverseNum = 1;
+                if (default_order[sortMode] === "ascending") {
+                    elem.classList.add("ascending");
+                }
+            }
+        });
+
         updateSortIndicator();
 
         for (const func of onModeChangeFuncs) {
             func(sortMode);
         }
-    });
-}
+    }
+})();
 
 function updateSortIndicator() {
     for (const btn of sortBtns) {

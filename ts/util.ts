@@ -38,6 +38,7 @@ function throttle(func: () => void, timeInterval: number): () => void {
 function debounce(func: (...funcArgs: any) => void, delay: number): () => void {
     let debounceTimer: number | undefined;
     return function () {
+        // @ts-ignore
         const context = this;
         const args = arguments;
         clearTimeout(debounceTimer);

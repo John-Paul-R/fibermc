@@ -1,10 +1,10 @@
-import { executeIfWhenDOMContentLoaded, setHidden } from "./util";
-import { AsyncDataResourceLoader } from "./resource_loader";
+import { executeIfWhenDOMContentLoaded, setHidden } from "./util.js";
+import { AsyncDataResourceLoader } from "./resource_loader.js";
 import {
     getSortFunc,
     registerListener as registerSortListener,
 } from "./table_sort.js";
-import { Mod } from "./mod_types";
+import { Mod } from "./mod_types.js";
 
 export {
     init,
@@ -266,8 +266,8 @@ function search(
     //     slug: el.slug,
     // }; });
     var fuzzysortStart = performance.now();
-
-    let results = (fuzzysort as any).go(queryText.trim(), search_objects, {
+    // @ts-ignore
+    let results = fuzzysort.go(queryText.trim(), search_objects, {
         keys: ["name", "author"],
         allowTypo: true,
         threshold: -500,

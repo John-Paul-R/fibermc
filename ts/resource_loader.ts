@@ -1,6 +1,6 @@
 export { AsyncDataResourceLoader, ResourceEntry };
 
-import { executeIfWhenDOMContentLoaded, FunctionBatch } from "./util";
+import { executeIfWhenDOMContentLoaded, FunctionBatch } from "./util.js";
 
 class ResourceEntry<TResponse> {
     url: string;
