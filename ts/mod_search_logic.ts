@@ -81,7 +81,15 @@ function init() {
             searchTextChanged();
             console.log("mod_data loaded. Running empty search.");
         })
-        .addCompletionFunc(() => updateTimestamp(timestamp))
+        .addCompletionFunc(() =>
+            updateTimestamp(
+                new Date(
+                    mod_data
+                        .map((mod) => mod.s_dateModified)
+                        .reduce((accum, current) => Math.max(accum, current), 0)
+                ).toLocaleDateString()
+            )
+        )
         .fetchResources();
 }
 function formatDate(date: string | number | Date) {
