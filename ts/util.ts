@@ -139,3 +139,11 @@ function setHidden(htmlElement: HTMLElement, hidden: boolean) {
         }
     }
 }
+
+export const getElementById = (id: string) => {
+    const elem = document.getElementById(id);
+    if (!elem) {
+        throw new Error(`Could not find elemnt with id ${id}`);
+    }
+    return elem;
+};

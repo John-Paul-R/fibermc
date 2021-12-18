@@ -18,8 +18,19 @@ import {
     pxBelowBottom,
     data_batches as dataBatches,
 } from "./mod_search_logic.js";
-
-import { Mod, Author } from "./mod_types.js";
+import { getElementById } from "./util.js";
+import {
+    Mod,
+    Author,
+    getModrinthModUrl,
+    getCurseModUrl,
+    getModrinthAuthorUrl,
+    getCurseAuthorUrl,
+} from "./mod_types.js";
+import {
+    createCurseLinkIcon,
+    createModrinthLinkIcon,
+} from "./platform_links.js";
 
 function createListElement(modData: Mod) {
     const tr = document.createElement("tr");
@@ -28,64 +39,34 @@ function createListElement(modData: Mod) {
     const name = document.createElement("td");
     const name_link = document.createElement("a");
     name_link.textContent = modData.name;
-    let cflink =
-        "https://www.curseforge.com/minecraft/mc-mods/" + modData.cf_slug;
-    name_link.setAttribute("href", cflink);
-    name_link.setAttribute("target", "_blank");
-    name_link.setAttribute("rel", "noreferrer");
     name.appendChild(name_link);
 
     const links = document.createElement("td");
     links.classList.add("table_mod_links");
-    {
-        const cfAnchor = document.createElement("a");
-        const cfAnchorIcon = document.createElement("div");
-        if (modData.cf_slug) {
-            const cflink =
-                "https://www.curseforge.com/minecraft/mc-mods/" +
-                modData.cf_slug;
-            cfAnchor.setAttribute("href", cflink);
-            cfAnchor.setAttribute("target", "_blank");
-        } else {
-            cfAnchor.classList.add("filter-grey");
-            cfAnchor.title = `No CurseForge link found for ${modData.name}.`;
-        }
-        cfAnchor.classList.add("icon_button");
-        cfAnchorIcon.classList.add("cf_icon");
-        cfAnchorIcon.classList.add("icon_dark"); // for multi-pallete-js
-        cfAnchor.appendChild(cfAnchorIcon);
-        links.appendChild(cfAnchor);
-
-        const mrAnchor = document.createElement("a");
-        const mrAnchorIcon = document.createElement("div");
-        if (modData.mr_slug) {
-            const mrLink = "https://modrinth.com/mod/" + modData.mr_slug;
-            mrAnchor.setAttribute("href", mrLink);
-            mrAnchor.setAttribute("target", "_blank");
-        } else {
-            mrAnchor.classList.add("filter-grey");
-            mrAnchor.title = `No Modrinth link found for ${modData.name}.`;
-        }
-        mrAnchor.classList.add("icon_button");
-        mrAnchorIcon.classList.add("mr_icon");
-        mrAnchor.appendChild(mrAnchorIcon);
-        links.appendChild(mrAnchor);
-    }
+    links.appendChild(createCurseLinkIcon(modData));
+    links.appendChild(createModrinthLinkIcon(modData));
 
     const desc = document.createElement("td");
     desc.textContent = modData.summary;
 
     const authorCell = document.createElement("td");
-    try {
+
+    const mod_author = modData.authors[0];
+    if (mod_author) {
         const authorAnchor = document.createElement("a");
-        const mod_author = modData.authors[0];
-        const link_value = `https://www.curseforge.com/members/${mod_author.cf_slug}/projects`;
+        const link_value = mod_author.mr_slug
+            ? getModrinthAuthorUrl(mod_author.mr_slug)
+            : mod_author.cf_slug
+            ? getCurseAuthorUrl(mod_author.cf_slug)
+            : undefined;
         authorAnchor.textContent = mod_author.name;
-        authorAnchor.setAttribute("href", link_value);
-        authorAnchor.setAttribute("target", "_blank");
-        authorAnchor.setAttribute("rel", "noreferrer");
+        if (link_value) {
+            authorAnchor.setAttribute("href", link_value);
+            authorAnchor.setAttribute("target", "_blank");
+            authorAnchor.setAttribute("rel", "noreferrer");
+        }
         authorCell.appendChild(authorAnchor);
-    } catch {
+    } else {
         authorCell.innerText = "undefined";
     }
 
@@ -108,13 +89,6 @@ function createListElement(modData: Mod) {
     const last_updated = document.createElement("td");
     const last_updated_date = new Date(modData.dateModified);
     last_updated.textContent = last_updated_date.toLocaleDateString();
-    // Fill content of elements
-    //cfButtonIcon.textContent = 'launch'
-    //cfButtonIcon.setAttribute('class', 'material-icons');
-    //cfButton.setAttribute('href', cflink);
-    //cfButton.setAttribute('target', '_blank');
-
-    //cfButton.appendChild(cfButtonIcon);
 
     // Add elements as children where they belong and return root elem
     tr.appendChild(name);
@@ -161,8 +135,6 @@ var updateLoadbar = () => {
 function buildTableBatched(modsData: Mod[]) {
     var start = performance.now();
     table.scrollTop = 0;
-    // loadbar.setLoadedPercent(0);
-    // loadbar.setText(getLoadbarText(numElemsBuilt, numResults));
     numResults = modsData.length;
     batchesRemain = true;
     numElemsBuilt = 0;
@@ -190,13 +162,6 @@ var firstElem;
 var batchesRemain: boolean;
 var table: HTMLElement;
 
-const getElementById = (id: string) => {
-    const elem = document.getElementById(id);
-    if (!elem) {
-        throw new Error(`Could not find elemnt with id ${id}`);
-    }
-    return elem;
-};
 function lazyLoadBatches() {
     table = getElementById("search_results_list");
     firstElem = table.firstChild;
@@ -238,7 +203,6 @@ function lazyLoadBatches() {
     );
 }
 
-// Logic createListElement, true, LI_HEIGHT, BATCH_SIZE, createBatch
 var loadbar: LoadbarResult;
 type ModWithElem = Mod & {
     elem: HTMLTableRowElement;
@@ -256,9 +220,7 @@ loader.addCompletionFunc(() => {
         try {
             mod.elem = createListElement(mod);
         } catch (err) {
-            console.warn(`Could not load elem for mod`);
-            // console.warn(mod);
-            // console.error(err);
+            console.warn(`Could not load elem for mod`, mod);
             failCount++;
             if (failCount > MAX_FAILS) {
                 break;

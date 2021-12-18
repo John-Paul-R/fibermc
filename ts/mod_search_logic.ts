@@ -1,4 +1,4 @@
-import { executeIfWhenDOMContentLoaded, setHidden } from "./util.js";
+import { setHidden, getElementById } from "./util.js";
 import { AsyncDataResourceLoader } from "./resource_loader.js";
 import {
     getSortFunc,
@@ -260,12 +260,9 @@ function search(
     selectBest = false
 ): { obj: Mod }[] {
     console.info("Search Query: " + queryText);
-    // let objects = mod_data.map(el => { return {
-    //     name: el.name,
-    //     slug: el.slug,
-    // }; });
+
     var fuzzysortStart = performance.now();
-    // @ts-ignore
+    // @ts-expect-error
     let results = fuzzysort.go(queryText.trim(), search_objects, {
         keys: ["name", "author"],
         allowTypo: true,
@@ -532,19 +529,10 @@ function initSearch(options: InitSearchOptions) {
         }
     }
     resultsViewBuilder(options);
-    // searchElements = document.getElementsByClassName("searchField");
-    searchHTMLElements = []; //Array.from(searchElements);
+    searchHTMLElements = [];
 
-    const defaultInput = document.getElementById(
-        "search_input"
-    ) as HTMLInputElement | null;
-    if (!defaultInput) {
-        throw new Error(
-            "Could not locate a default search input. (make sure there is an element with id 'search_input')"
-        );
-    }
-    defaultSearchInput = defaultInput;
-    searchHTMLElements.push(defaultInput);
+    defaultSearchInput = getElementById("search_input") as HTMLInputElement;
+    searchHTMLElements.push(defaultSearchInput);
 
     for (let i = 0; i < searchHTMLElements.length; i++) {
         const elem = searchHTMLElements[i];
@@ -563,10 +551,9 @@ function initSearch(options: InitSearchOptions) {
                 searchTextChanged((e.target as HTMLInputElement)?.value);
             }
         });
-        // console.info(searchElements[i], " will now listen for input events and trigger searchAtlas.");
     }
     resultsListElement =
-        resultsListElement || document.getElementById("search_results_list");
+        resultsListElement ?? getElementById("search_results_list");
     if (resultsListElement.className.includes("persist")) {
         results_persist = true;
     }

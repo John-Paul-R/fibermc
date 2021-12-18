@@ -81,3 +81,15 @@ function versionOrd(vers: string) {
 function dateOrd(date: string | number | Date) {
     return new Date(date).valueOf();
 }
+
+export const getModrinthModUrl = (slug: string) =>
+    `https://modrinth.com/mod/${slug}`;
+
+export const getCurseModUrl = (slug: string) =>
+    `https://www.curseforge.com/minecraft/mc-mods/${slug}`;
+
+export const getModrinthAuthorUrl = (slug: string) =>
+    `https://modrinth.com/user/${slug}`;
+
+export const getCurseAuthorUrl = (slug: string) =>
+    `https://www.curseforge.com/members/${slug}/projects`;
