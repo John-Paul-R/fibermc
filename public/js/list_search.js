@@ -102,6 +102,7 @@ function createListElement(modData, includeCategories = true) {
         }
         cfAnchor.classList.add('icon_button')
         cfAnchorIcon.classList.add('cf_icon');
+        cfAnchorIcon.classList.add('icon_dark'); // for multi-pallete-js
         cfAnchor.appendChild(cfAnchorIcon);
         end_container.appendChild(cfAnchor);
 

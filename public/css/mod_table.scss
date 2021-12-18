@@ -36,7 +36,7 @@
 
       display: flex;
       flex-direction: column;
-      --grid-cols: minmax(16ch, 1fr) minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
+      --grid-cols: minmax(16ch, 1fr) 48px minmax(24ch, 2.75fr) repeat(5, minmax(16ch, 1fr));
       
       overflow-y: scroll;
 
@@ -184,4 +184,13 @@
     border-radius: 12px;
     background-color: var(--color-element);
     /* border: 1px solid var(--color-accent-1); */
+}
+
+#search_results_list td.table_mod_links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
 }
