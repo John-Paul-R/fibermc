@@ -206,14 +206,16 @@ a.logo img {
 }
 
 .cf_icon {
+  --cf-aspect-inv: 0.53446694;
   background-image: url("/img/curse.svg");
-  height: clamp(8px, 24px, 100%);
+  height: clamp(8px * var(--cf-aspect-inv), 24px * var(--cf-aspect-inv), 100%);
   width: clamp(8px, 24px, 100%);
   background-size: clamp(8px, 24px, 100%);
+  background-repeat: no-repeat;
 }
 
 .filter-grey {
-  filter: grayscale(100%) opacity(85%);
+  filter: grayscale(100%) opacity(50%);
 }
 
 .icon_button {
@@ -223,7 +225,7 @@ a.logo img {
   justify-content: center;
 }
 .icon_button[href]:hover {
-  background-color: var(--color-base);
+  background-color: var(--color-base-1);
 }
 :root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;

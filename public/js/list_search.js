@@ -98,6 +98,7 @@ function createListElement(modData, includeCategories = true) {
             cfAnchor.setAttribute('target', '_blank');
         } else {
             cfAnchor.classList.add('filter-grey');
+            cfAnchor.title = `No CurseForge link found for ${modData.name}.`;
         }
         cfAnchor.classList.add('icon_button')
         cfAnchorIcon.classList.add('cf_icon');
@@ -112,6 +113,7 @@ function createListElement(modData, includeCategories = true) {
             mrAnchor.setAttribute('target', '_blank');
         } else {
             mrAnchor.classList.add('filter-grey');
+            mrAnchor.title = `No Modrinth link found for ${modData.name}.`;
         }
         mrAnchor.classList.add('icon_button')
         mrAnchorIcon.classList.add('mr_icon')

@@ -6,15 +6,19 @@ $iconSize: clamp(8px, 24px, 100%);
     background-size: $iconSize;
 }
 
+// $cfIconWidth: clamp($iconMinDim, $iconBaseDim, 100%);
+// $cfIconHeight: clamp($iconMinDim * $cfAspectRatioInv, $iconBaseDim * $cfAspectRatioInv, 100%);
 .cf_icon {
+    --cf-aspect-inv: 0.53446694;
     background-image: url('/img/curse.svg');
-    height: $iconSize;
+    height: clamp(8px * var(--cf-aspect-inv), 24px * var(--cf-aspect-inv), 100%);
     width: $iconSize;
     background-size: $iconSize;
+    background-repeat:  no-repeat;
 }
 
 .filter-grey {
-    filter: grayscale(100%) opacity(85%);
+    filter: grayscale(100%) opacity(50%);
 }
 
 .icon_button {
@@ -24,7 +28,7 @@ $iconSize: clamp(8px, 24px, 100%);
     justify-content: center;
     &[href] {
         &:hover {
-            background-color: var(--color-base);
+            background-color: var(--color-base-1);
         }
     }
 
