@@ -298,12 +298,16 @@ function search(
     var fuzzysortStart = performance.now();
     // @ts-expect-error
     let results = fuzzysort.go(queryText.trim(), search_objects, {
-        keys: ["name", "author"],
+        keys: ["name", "author", "summary"],
         allowTypo: true,
         threshold: -500,
         // Create a custom combined score to sort by. -100 to the desc score makes it a worse match
         scoreFn: (a: { score: number }[]) =>
-            Math.max(a[0] ? a[0].score : -1000, a[1] ? a[1].score - 50 : -1000),
+            Math.max(
+                a[0] ? a[0].score : -1000,
+                a[1] ? a[1].score - 50 : -1000,
+                a[2] ? a[2].score - 100 : -1000
+            ),
     });
 
     // Performance logging
