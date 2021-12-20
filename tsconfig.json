@@ -61,7 +61,7 @@
         // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
         "noUnusedLocals": false,
         "noUnusedParameters": false,
-        "rootDir": "./ts",
+        "rootDir": "./public/ts",
         "outDir": "./public/js"
     }
 }

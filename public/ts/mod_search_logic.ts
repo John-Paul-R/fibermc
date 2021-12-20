@@ -99,7 +99,8 @@ function formatDate(date: string | number | Date) {
 function updateTimestamp(timestamp: string) {
     const timestampElement = document.getElementById("last_updated_timestamp");
     if (!timestampElement) {
-        throw new Error("Could not find timestamp element.");
+        console.error("Could not find timestamp element.");
+        return;
     }
     timestampElement.textContent = `List updated: ${formatDate(timestamp)}`;
 }

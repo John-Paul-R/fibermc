@@ -12,7 +12,13 @@ var sort_funcs = {
     author: (a, b) => {
         var _a, _b;
         if (!(a["authors"] && b["authors"])) {
+            return 0;
+        }
+        if (!a.authors?.length && b.authors?.length) {
             return 1;
+        }
+        if (a.authors?.length && !b.authors?.length) {
+            return -1;
         }
         return ((_a = a["authors"][0]) === null || _a === void 0 ? void 0 : _a.name.toLowerCase()) >
             ((_b = b["authors"][0]) === null || _b === void 0 ? void 0 : _b.name.toLowerCase())
@@ -79,7 +85,6 @@ const isTableSortableHeaderElement = (el) => !!el.id && Object.keys(sortable_col
                     btn.classList.add("ascending");
                 }
             }
-
             // function updateSortIndicator()
             {
                 for (const btn of sortBtns) {
@@ -102,12 +107,9 @@ const isTableSortableHeaderElement = (el) => !!el.id && Object.keys(sortable_col
                     }
                 }
             }
-
-
             for (const func of onModeChangeFuncs) {
                 func(sortMode);
             }
-
         });
     }
 })();

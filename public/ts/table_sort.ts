@@ -28,6 +28,12 @@ var sort_funcs: Record<string, ModSortFunc> = {
         if (!(a["authors"] && b["authors"])) {
             return 1;
         }
+        if (!a.authors && b.authors) {
+            return 1;
+        }
+        if (a.authors && !b.authors) {
+            return -1;
+        }
         return a["authors"][0]?.name.toLowerCase() >
             b["authors"][0]?.name.toLowerCase()
             ? 1
@@ -114,31 +120,31 @@ const isTableSortableHeaderElement = (
                     btn.classList.add("ascending");
                 }
             }
-        });
 
-        // function updateSortIndicator()
-        {
-            for (const btn of sortBtns) {
-                if (btn.col_field == sortMode) {
-                    btn.classList.add("active");
-                } else {
-                    btn.classList.remove("active");
-                }
-                if (btn.classList.contains("active")) {
-                    if (btn.classList.contains("ascending")) {
-                        btn.textContent = "north";
+            // function updateSortIndicator()
+            {
+                for (const btn of sortBtns) {
+                    if (btn.col_field == sortMode) {
+                        btn.classList.add("active");
                     } else {
-                        btn.textContent = "south";
+                        btn.classList.remove("active");
                     }
-                } else {
-                    btn.textContent = "sort";
+                    if (btn.classList.contains("active")) {
+                        if (btn.classList.contains("ascending")) {
+                            btn.textContent = "north";
+                        } else {
+                            btn.textContent = "south";
+                        }
+                    } else {
+                        btn.textContent = "sort";
+                    }
                 }
             }
-        }
 
-        for (const func of onModeChangeFuncs) {
-            func(sortMode);
-        }
+            for (const func of onModeChangeFuncs) {
+                func(sortMode);
+            }
+        });
     }
 })();
 
