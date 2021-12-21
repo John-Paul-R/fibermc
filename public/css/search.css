@@ -193,6 +193,10 @@
   color: var(--color-text-1);
 }
 
+.author {
+  display: inline-flex;
+  border-bottom: 1px solid var(--color-text-1);
+}
 #categories {
   box-sizing: border-box;
   background-color: var(--color-element);

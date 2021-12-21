@@ -17,6 +17,8 @@ $iconSize: 24px;
     background-repeat:  no-repeat;
 }
 
+
+
 .filter-grey {
     filter: grayscale(100%) opacity(50%);
 }
@@ -30,6 +32,25 @@ $iconSize: 24px;
     justify-items: center;
     padding: 4px;
     border: 1px solid transparent;
+    &.inline {
+        width: auto;
+        height: auto;
+        padding: 0 4px;
+
+        .mr_icon {
+            height: 1em;
+            width: 1em;
+            background-size: 1em;
+        }
+        
+        // For some reason cf svg has empty space at right side.
+        .cf_icon {
+            --cf-aspect-inv: 0.53446694;
+            --cf-aspect-em: calc(1em / var(--cf-aspect-inv));
+            width: var(--cf-aspect-em);
+            height: 1em;
+        }
+    }
     &[href] {
         &:hover {
             background-color: var(--color-base-1);

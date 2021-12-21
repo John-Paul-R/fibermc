@@ -232,3 +232,15 @@
         
     }
 }
+
+.author {
+    & > span {
+        // margin-right: 0.5rem;
+    }
+    display: inline-flex;
+    // border: 1px solid var(--color-text-1);
+    // border-top: none;
+    border-bottom: 1px solid var(--color-text-1);
+    // border-radius: 1rem;
+    // padding: 0 0.5rem;
+}
