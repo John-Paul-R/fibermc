@@ -1,6 +1,7 @@
 export function baseModToMod(mod) {
     return {
         ...mod,
+        name: formatName(mod.name),
         s_name: sortableName(mod.name),
         s_latestMCVersion: versionOrd(mod.latestMCVersion),
         s_dateModified: dateOrd(mod.dateModified),

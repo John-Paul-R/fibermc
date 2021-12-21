@@ -23,6 +23,7 @@ interface Mod extends BaseMod {
 export function baseModToMod(mod: BaseMod): Mod {
     return {
         ...mod,
+        name: formatName(mod.name),
         s_name: sortableName(mod.name),
         s_latestMCVersion: versionOrd(mod.latestMCVersion),
         s_dateModified: dateOrd(mod.dateModified),
