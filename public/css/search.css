@@ -299,8 +299,9 @@
   padding-right: 4px;
 }
 #search_container > a, #search_container > button, #search_container > .hover_dropdown {
+  font-size: 0.8rem;
   box-sizing: border-box;
-  vertical-align: center;
+  vertical-align: middle;
   height: 42px;
   text-decoration: none;
   border-radius: 4px;
@@ -384,10 +385,10 @@ input.searchField::placeholder {
   position: relative;
   background-color: var(--color-base-2);
   border: 1px solid var(--color-base-1);
-  padding: 6px 8px;
 }
 .hover_dropdown .hover_dropdown-content {
   position: absolute;
+  top: 2rem;
   display: none;
   flex-direction: column;
   align-items: stretch;

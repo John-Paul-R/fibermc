@@ -108,12 +108,15 @@ input[type=submit] {
   appearance: button;
   text-decoration: none;
   text-align: center;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
   background-color: var(--color-accent-1);
   border: 1px solid var(--color-accent-1);
   font-weight: 600;
+  font-size: 0.8rem;
 }
 
 .button:hover,
