@@ -38,6 +38,9 @@
 #search_container > a:hover, #search_container > button:hover, #search_container > .hover_dropdown:hover {
   background-color: var(--color-base-1);
 }
+#search_container > a:active, #search_container > button:active, #search_container > .hover_dropdown:active {
+  background-color: var(--color-base);
+}
 .searchbar {
   width: clamp(128px, 600px, 100%);
   border-radius: 4px;

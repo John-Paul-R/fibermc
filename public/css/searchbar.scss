@@ -37,6 +37,9 @@
         &:hover {
             background-color: var(--color-base-1);
         }
+        &:active {
+            background-color: var(--color-base);
+        }
     }
     & > :last-child {
         // margin-left: auto;
