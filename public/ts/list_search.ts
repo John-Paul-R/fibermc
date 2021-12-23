@@ -132,7 +132,8 @@ function createListElementDetailed(modData: Mod) {
 
     const title_container = document.createElement("div");
     const name = document.createElement("a");
-    const authorAnchor = document.createElement("a");
+    const authorDiv = document.createElement("div");
+    authorDiv.setAttribute("class", "author");
 
     const categories = document.createElement("ul");
     const desc = document.createElement("p");
@@ -145,7 +146,6 @@ function createListElementDetailed(modData: Mod) {
     front_container.classList.add("front_container");
     end_container.classList.add("end_container");
     name.classList.add("name");
-    authorAnchor.classList.add("author");
     categories.classList.add("item_categories");
     desc.classList.add("desc");
 
@@ -174,13 +174,13 @@ function createListElementDetailed(modData: Mod) {
         name.textContent = modData.name;
         try {
             const mod_author = modData.authors[0];
-            const link_value = `https://www.curseforge.com/members/${mod_author.cf_slug}/projects`;
-            authorAnchor.textContent = mod_author.name;
-            authorAnchor.setAttribute("href", link_value);
-            authorAnchor.setAttribute("target", "_blank");
-            authorAnchor.setAttribute("rel", "noreferrer");
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = mod_author.name;
+            authorDiv.appendChild(nameSpan);
+            authorDiv.appendChild(createCurseAuthorIcon(mod_author));
+            authorDiv.appendChild(createModrinthAuthorIcon(mod_author));
         } catch {
-            authorAnchor.innerText = "undefined";
+            authorDiv.innerText = "undefined";
         }
 
         for (const category of modData.categories) {
@@ -198,7 +198,7 @@ function createListElementDetailed(modData: Mod) {
         // Add elements as children where they belong and return root elem
         title_container.appendChild(name);
         title_container.insertAdjacentText("beforeend", " by ");
-        title_container.appendChild(authorAnchor);
+        title_container.appendChild(authorDiv);
         front_container.appendChild(title_container);
         front_container.appendChild(desc);
         li.appendChild(front_container);
