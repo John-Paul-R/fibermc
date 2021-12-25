@@ -3,8 +3,9 @@ export function baseModToMod(mod) {
         ...mod,
         name: formatName(mod.name),
         s_name: sortableName(mod.name),
-        s_latestMCVersion: versionOrd(mod.latestMCVersion),
+        s_latestMCVersion: versionOrd(mod.mc_versions[0]),
         s_dateModified: dateOrd(mod.dateModified),
+        latestMCVersion: mod.mc_versions[0],
     };
 }
 /**

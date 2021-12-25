@@ -12,12 +12,12 @@ var sort_funcs = {
     author: (a, b) => {
         var _a, _b;
         if (!(a["authors"] && b["authors"])) {
-            return 0;
-        }
-        if (!a.authors?.length && b.authors?.length) {
             return 1;
         }
-        if (a.authors?.length && !b.authors?.length) {
+        if (!a.authors && b.authors) {
+            return 1;
+        }
+        if (a.authors && !b.authors) {
             return -1;
         }
         return ((_a = a["authors"][0]) === null || _a === void 0 ? void 0 : _a.name.toLowerCase()) >
