@@ -25,8 +25,9 @@
   padding-right: 4px;
 }
 #search_container > a, #search_container > button, #search_container > .hover_dropdown {
+  font-size: 0.8rem;
   box-sizing: border-box;
-  vertical-align: center;
+  vertical-align: middle;
   height: 42px;
   text-decoration: none;
   border-radius: 4px;
@@ -36,6 +37,9 @@
 }
 #search_container > a:hover, #search_container > button:hover, #search_container > .hover_dropdown:hover {
   background-color: var(--color-base-1);
+}
+#search_container > a:active, #search_container > button:active, #search_container > .hover_dropdown:active {
+  background-color: var(--color-base);
 }
 .searchbar {
   width: clamp(128px, 600px, 100%);

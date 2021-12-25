@@ -50,11 +50,17 @@ type Category = {
 //==============
 // DATA LOADING
 //==============
+console.log("hostname", window.location.hostname);
+const apiUrl = `https://${
+    window.location.hostname === "localhost"
+        ? "localhost:5001"
+        : window.location.hostname
+}/api/v1.0`;
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
-    .addResource<BaseMod[]>("/api/v1.0/Mods", [
+    .addResource<BaseMod[]>(`${apiUrl}/Mods`, [
         (jsonData) => {
             console.log("TEMP", jsonData);
 
@@ -66,7 +72,7 @@ var loader = new AsyncDataResourceLoader({
             // timestamp = jsonData.timestamp;
         },
     ])
-    .addResource<string[]>("/api/v1.0/Categories", [
+    .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
             categoryNames = jsonData;
 
@@ -438,9 +444,9 @@ type InitSearchOptions = {
     results_persist: boolean;
     li_height?: number;
     batch_size?: number;
-    listElemCreationFunc: (modData: Mod) => HTMLElement;
+    listElemCreationFunc?: (modData: Mod) => HTMLElement;
     batchCreationFunc: BatchCreationFunc;
-    listCreationFunc: ListBuilderFunc;
+    listCreationFunc?: ListBuilderFunc;
     lazyLoadBatches?: (() => void) | boolean;
 };
 function initSearch(options: InitSearchOptions) {

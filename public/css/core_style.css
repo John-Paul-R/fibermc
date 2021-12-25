@@ -108,12 +108,15 @@ input[type=submit] {
   appearance: button;
   text-decoration: none;
   text-align: center;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
   background-color: var(--color-accent-1);
   border: 1px solid var(--color-accent-1);
   font-weight: 600;
+  font-size: 0.8rem;
 }
 
 .button:hover,
@@ -227,6 +230,22 @@ a.logo img {
   justify-items: center;
   padding: 4px;
   border: 1px solid transparent;
+}
+.icon_button.inline {
+  width: auto;
+  height: auto;
+  padding: 0 4px;
+}
+.icon_button.inline .mr_icon {
+  height: 1em;
+  width: 1em;
+  background-size: 1em;
+}
+.icon_button.inline .cf_icon {
+  --cf-aspect-inv: 0.53446694;
+  --cf-aspect-em: calc(1em / var(--cf-aspect-inv));
+  width: var(--cf-aspect-em);
+  height: 1em;
 }
 .icon_button[href]:hover {
   background-color: var(--color-base-1);

@@ -7,11 +7,15 @@ const isCategoryElement = (el) => el.cat_id !== undefined;
 //==============
 // DATA LOADING
 //==============
+console.log("hostname", window.location.hostname);
+const apiUrl = `https://${window.location.hostname === "localhost"
+    ? "localhost:5001"
+    : window.location.hostname}/api/v1.0`;
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
-    .addResource("/api/v1.0/Mods", [
+    .addResource(`${apiUrl}/Mods`, [
     (jsonData) => {
         console.log("TEMP", jsonData);
         setModData(jsonData.map(baseModToMod));
@@ -21,7 +25,7 @@ var loader = new AsyncDataResourceLoader({
         // timestamp = jsonData.timestamp;
     },
 ])
-    .addResource("/api/v1.0/Categories", [
+    .addResource(`${apiUrl}/Categories`, [
     (jsonData) => {
         categoryNames = jsonData;
         console.log(categoryNames);
