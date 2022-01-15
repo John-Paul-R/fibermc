@@ -11,7 +11,7 @@ export interface BaseMod {
     dateReleased: string;
     dateModified: string;
     downloadCount: number;
-    mc_versions: string;
+    mc_versions: string[];
 }
 
 interface Mod extends BaseMod {
@@ -26,9 +26,9 @@ export function baseModToMod(mod: BaseMod): Mod {
         ...mod,
         name: formatName(mod.name),
         s_name: sortableName(mod.name),
-        s_latestMCVersion: versionOrd(mod.mc_versions[0]),
+        s_latestMCVersion: versionOrd(mod.mc_versions.at(-1)),
         s_dateModified: dateOrd(mod.dateModified),
-        latestMCVersion: mod.mc_versions[0],
+        latestMCVersion: mod.mc_versions.at(-1),
     };
 }
 
