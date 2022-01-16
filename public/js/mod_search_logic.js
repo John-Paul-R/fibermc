@@ -43,7 +43,7 @@ function init() {
     })
         .addCompletionFunc(() => updateTimestamp(new Date(mod_data
         .map((mod) => mod.s_dateModified)
-        .reduce((accum, current) => Math.max(accum, current), 0)).toLocaleDateString()))
+        .reduce((accum, current) => Math.max(accum, current), 0))))
         .fetchResources();
 }
 function formatDate(date) {

@@ -94,7 +94,7 @@ function init() {
                     mod_data
                         .map((mod) => mod.s_dateModified)
                         .reduce((accum, current) => Math.max(accum, current), 0)
-                ).toLocaleDateString()
+                )
             )
         )
         .fetchResources();
@@ -103,7 +103,7 @@ function formatDate(date: string | number | Date) {
     date = new Date(date);
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
-function updateTimestamp(timestamp: string) {
+function updateTimestamp(timestamp: Date) {
     const timestampElement = document.getElementById("last_updated_timestamp");
     if (!timestampElement) {
         console.error("Could not find timestamp element.");
