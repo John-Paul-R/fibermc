@@ -3,11 +3,13 @@ export function baseModToMod(mod) {
         ...mod,
         name: formatName(mod.name),
         s_name: sortableName(mod.name),
+        s_author: searchableAuthors(mod.authors),
         s_latestMCVersion: versionOrd(mod.mc_versions.at(-1)),
         s_dateModified: dateOrd(mod.dateModified),
         latestMCVersion: mod.mc_versions.at(-1),
     };
 }
+const searchableAuthors = (authors) => authors.map((author) => author.name.toLowerCase()).join(",");
 /**
  * @param {string} name
  */

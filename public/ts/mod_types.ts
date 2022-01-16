@@ -19,6 +19,7 @@ interface Mod extends BaseMod {
     s_latestMCVersion: number;
     s_dateModified: number;
     latestMCVersion: string;
+    s_author: string;
 }
 
 export function baseModToMod(mod: BaseMod): Mod {
@@ -26,6 +27,7 @@ export function baseModToMod(mod: BaseMod): Mod {
         ...mod,
         name: formatName(mod.name),
         s_name: sortableName(mod.name),
+        s_author: searchableAuthors(mod.authors),
         s_latestMCVersion: versionOrd(mod.mc_versions.at(-1)),
         s_dateModified: dateOrd(mod.dateModified),
         latestMCVersion: mod.mc_versions.at(-1),
@@ -38,6 +40,9 @@ export type Author = {
     cf_slug: string | null;
     name: string;
 };
+
+const searchableAuthors = (authors: Author[]) =>
+    authors.map((author) => author.name.toLowerCase()).join(",");
 
 /**
  * @param {string} name

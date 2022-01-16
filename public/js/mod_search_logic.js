@@ -227,7 +227,7 @@ function search(queryText, search_objects, selectBest = false) {
     var fuzzysortStart = performance.now();
     // @ts-expect-error
     let results = fuzzysort.go(queryText.trim(), search_objects, {
-        keys: ["name", "author", "summary"],
+        keys: ["name", "s_author", "summary"],
         allowTypo: true,
         threshold: -500,
         // Create a custom combined score to sort by. -100 to the desc score makes it a worse match
