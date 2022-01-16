@@ -225,14 +225,17 @@ var searchCount = 0;
 function search(queryText, search_objects, selectBest = false) {
     console.info("Search Query: " + queryText);
     var fuzzysortStart = performance.now();
+    var maxDownloads = Math.max(...mod_data.map((mod) => mod.downloadCount));
     // @ts-expect-error
     let results = fuzzysort.go(queryText.trim(), search_objects, {
         keys: ["name", "s_author", "summary"],
         allowTypo: true,
         threshold: -500,
         // Create a custom combined score to sort by. -100 to the desc score makes it a worse match
-        scoreFn: (a) => Math.max(a[0] ? a[0].score : -1000, a[1] ? a[1].score - 50 : -1000, a[2] ? a[2].score - 100 : -1000),
+        scoreFn: (a) => Math.max(a[0] ? a[0].score : -1000, a[1] ? a[1].score - 50 : -1000, a[2] ? a[2].score - 100 : -1000) +
+            a["obj"].downloadCount / maxDownloads,
     });
+    // results.sort((a, b) => a.downloadCount);
     // Performance logging
     var fuzzysortTime = performance.now() - fuzzysortStart;
     searchCount += 1;
