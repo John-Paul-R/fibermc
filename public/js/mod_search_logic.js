@@ -188,6 +188,9 @@ function initCategoriesSidebar() {
     });
     for (let i = 0; i < sorted_CATEGORIES.length; i++) {
         const category = sorted_CATEGORIES[i];
+        if (category.modCount === 0) {
+            continue;
+        }
         const cat_elem = category.htmlElement;
         const cat_count = document.createElement("span");
         cat_elem.selected = false;
