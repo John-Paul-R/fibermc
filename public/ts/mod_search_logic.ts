@@ -293,6 +293,8 @@ function initCategoriesSidebar() {
             cat_elem.classList.remove("not");
             cat_elem.bool_mode = BoolMode.None;
         }
+        applyCategorySelections();
+        updateUrlSearch(getSearchOptions());
         searchTextChanged(undefined, true);
     }
     selectCategories(getUrlSearchOptions());
