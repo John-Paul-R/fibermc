@@ -36,8 +36,10 @@ var timestamp;
 function init() {
     loader
         .addCompletionFunc(() => {
-        searchTextChanged();
-        console.log("mod_data loaded. Running empty search.");
+        var _a;
+        defaultSearchInput.value = (_a = getUrlSearch()) !== null && _a !== void 0 ? _a : "";
+        searchTextChanged(getUrlSearch());
+        console.log("mod_data loaded. Running search from query params.");
     })
         .addCompletionFunc(() => updateTimestamp(new Date(mod_data
         .map((mod) => mod.s_dateModified)
@@ -222,6 +224,26 @@ function initCategoriesSidebar() {
 // Performance monitoring vars
 var fuzzysortAvg = 0;
 var searchCount = 0;
+function updateUrlSearch(searchValue) {
+    if ("URLSearchParams" in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        if (searchValue) {
+            searchParams.set("search", searchValue);
+        }
+        else {
+            searchParams.delete("search");
+        }
+        var queryAsText = searchParams.toString();
+        var newRelativePathQuery = window.location.pathname +
+            (queryAsText.length > 0 ? "?" + queryAsText : "");
+        history.replaceState(null, "", newRelativePathQuery);
+    }
+}
+function getUrlSearch() {
+    var _a;
+    var searchParams = new URLSearchParams(window.location.search);
+    return (_a = searchParams.get("search")) !== null && _a !== void 0 ? _a : undefined;
+}
 function search(queryText, search_objects, selectBest = false) {
     console.info("Search Query: " + queryText);
     var fuzzysortStart = performance.now();
@@ -430,12 +452,17 @@ function initSearch(options) {
         }
         elem.addEventListener("input", (e) => {
             var _a;
-            return setTimeout(searchTextChanged, 0, (_a = e.target) === null || _a === void 0 ? void 0 : _a.value);
+            return setTimeout((value) => {
+                updateUrlSearch(value);
+                searchTextChanged(value);
+            }, 0, (_a = e.target) === null || _a === void 0 ? void 0 : _a.value);
         });
         elem.addEventListener("keydown", (e) => {
             var _a;
             if (e.key === "Enter") {
-                searchTextChanged((_a = e.target) === null || _a === void 0 ? void 0 : _a.value);
+                const value = (_a = e.target) === null || _a === void 0 ? void 0 : _a.value;
+                updateUrlSearch(value);
+                searchTextChanged(value);
             }
         });
     }

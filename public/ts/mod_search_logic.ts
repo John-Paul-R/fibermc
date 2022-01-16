@@ -84,8 +84,9 @@ var timestamp: string;
 function init() {
     loader
         .addCompletionFunc(() => {
-            searchTextChanged();
-            console.log("mod_data loaded. Running empty search.");
+            defaultSearchInput.value = getUrlSearch() ?? "";
+            searchTextChanged(getUrlSearch());
+            console.log("mod_data loaded. Running search from query params.");
         })
         .addCompletionFunc(() =>
             updateTimestamp(
@@ -294,6 +295,27 @@ function initCategoriesSidebar() {
 // Performance monitoring vars
 var fuzzysortAvg = 0;
 var searchCount = 0;
+
+function updateUrlSearch(searchValue: string) {
+    if ("URLSearchParams" in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        if (searchValue) {
+            searchParams.set("search", searchValue);
+        } else {
+            searchParams.delete("search");
+        }
+        var queryAsText = searchParams.toString();
+        var newRelativePathQuery =
+            window.location.pathname +
+            (queryAsText.length > 0 ? "?" + queryAsText : "");
+        history.replaceState(null, "", newRelativePathQuery);
+    }
+}
+
+function getUrlSearch(): string | undefined {
+    var searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get("search") ?? undefined;
+}
 
 function search(
     queryText: string,
@@ -594,14 +616,19 @@ function initSearch(options: InitSearchOptions) {
         }
         elem.addEventListener("input", (e) =>
             setTimeout(
-                searchTextChanged,
+                (value: string) => {
+                    updateUrlSearch(value);
+                    searchTextChanged(value);
+                },
                 0,
                 (e.target as HTMLInputElement)?.value
             )
         );
         elem.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
-                searchTextChanged((e.target as HTMLInputElement)?.value);
+                const value = (e.target as HTMLInputElement)?.value;
+                updateUrlSearch(value);
+                searchTextChanged(value);
             }
         });
     }
