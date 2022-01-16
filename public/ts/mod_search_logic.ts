@@ -170,6 +170,23 @@ function getFilteredList() {
 }
 var fabric_category_id: number;
 var categories_sidebar_elem: HTMLElement;
+function applyCategorySelection(cat_elem: CategoryElement) {
+    if (cat_elem.bool_mode == BoolMode.And) {
+        cat_elem.classList.add("and");
+    } else {
+        cat_elem.classList.remove("and"); //.border = '2px solid var(--color-element-1)';
+    }
+    if (cat_elem.bool_mode == BoolMode.Not) {
+        cat_elem.classList.add("not");
+    } else {
+        cat_elem.classList.remove("not"); //.border = '2px solid var(--color-element-1)';
+    }
+}
+
+function applyCategorySelections() {
+    CATEGORIES.map((cat) => cat.htmlElement).forEach(applyCategorySelection);
+}
+
 function initCategoriesSidebar() {
     //TODO Group "Selected" items?
     //TODO "select multiple" toggle
@@ -248,7 +265,7 @@ function initCategoriesSidebar() {
         cat_elem.textContent = category.name + " ";
         cat_elem.appendChild(cat_count);
         cat_count.textContent = category.modCount.toString();
-        applySelected(cat_elem);
+        applyCategorySelection(cat_elem);
         cat_elem.addEventListener("click", onClick);
         categories_sidebar_elem.appendChild(cat_elem);
     }
@@ -262,33 +279,31 @@ function initCategoriesSidebar() {
                 "Category click listener was applied to an element without CategoryElement metadata."
             );
         }
-        const bool_mode = cat_elem.bool_mode ?? 0;
-        cat_elem.bool_mode = bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : 0;
-        applySelected(cat_elem);
+        const bool_mode = cat_elem.bool_mode ?? BoolMode.None;
+        cat_elem.bool_mode =
+            bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : BoolMode.None;
+        applyCategorySelection(cat_elem);
+        updateUrlSearch(getSearchOptions());
         searchTextChanged(undefined, true);
-    }
-    function applySelected(cat_elem: CategoryElement) {
-        if (cat_elem.bool_mode == 1) {
-            cat_elem.classList.add("and");
-        } else {
-            cat_elem.classList.remove("and"); //.border = '2px solid var(--color-element-1)';
-        }
-        if (cat_elem.bool_mode == 2) {
-            cat_elem.classList.add("not");
-        } else {
-            cat_elem.classList.remove("not"); //.border = '2px solid var(--color-element-1)';
-        }
     }
     function clearFilters() {
         for (const cat of CATEGORIES) {
             const cat_elem = cat.htmlElement;
             cat_elem.classList.remove("and");
             cat_elem.classList.remove("not");
-            cat_elem.bool_mode = 0;
+            cat_elem.bool_mode = BoolMode.None;
         }
         searchTextChanged(undefined, true);
     }
+    selectCategories(getUrlSearchOptions());
 }
+
+enum BoolMode {
+    None = 0,
+    And = 1,
+    Not = 2,
+}
+
 //==============
 // Search Logic
 //==============
@@ -296,16 +311,81 @@ function initCategoriesSidebar() {
 var fuzzysortAvg = 0;
 var searchCount = 0;
 
-function updateUrlSearch(searchValue: string) {
+type SearchOptions = Readonly<{
+    search?: string;
+    sortField?: string;
+    sortDirection?: "asc" | "desc";
+    categoryIncludes?: string[];
+    categoryExcludes?: string[];
+}>;
+
+// var searchOptions: SearchOptions;
+
+function getSearchOptions(): SearchOptions {
+    const categories = CATEGORIES.map((cat) => ({
+        name: cat.name,
+        bool_mode: cat.htmlElement.bool_mode,
+    }));
+    const categoryIncludes = categories
+        .filter((cat) => cat.bool_mode === BoolMode.And)
+        .map((cat) => cat.name);
+    const categoryExcludes = categories
+        .filter((cat) => cat.bool_mode === BoolMode.Not)
+        .map((cat) => cat.name);
+
+    return {
+        search: defaultSearchInput.value,
+        categoryIncludes,
+        categoryExcludes,
+    };
+}
+
+const urlFormatCategories = (categories: string[]) =>
+    categories.join(encodeURIComponent(","));
+
+const urlDecodeCategories = (urlEncString: string | undefined | null) =>
+    urlEncString ? urlEncString.split(encodeURIComponent(",")) : undefined;
+
+function updateUrlSearch(options: SearchOptions) {
     if ("URLSearchParams" in window) {
         var searchParams = new URLSearchParams(window.location.search);
-        if (searchValue) {
-            searchParams.set("search", searchValue);
-        } else {
-            searchParams.delete("search");
+
+        {
+            if (options.search) {
+                searchParams.set("search", options.search);
+            } else {
+                searchParams.delete("search");
+            }
         }
-        var queryAsText = searchParams.toString();
-        var newRelativePathQuery =
+
+        {
+            if (
+                options.categoryIncludes &&
+                options.categoryIncludes.length > 0
+            ) {
+                searchParams.set(
+                    "categoryIncludes",
+                    urlFormatCategories(options.categoryIncludes)
+                );
+            } else {
+                searchParams.delete("categoryIncludes");
+            }
+
+            if (
+                options.categoryExcludes &&
+                options.categoryExcludes.length > 0
+            ) {
+                searchParams.set(
+                    "categoryExcludes",
+                    urlFormatCategories(options.categoryExcludes)
+                );
+            } else {
+                searchParams.delete("categoryExcludes");
+            }
+        }
+
+        const queryAsText = searchParams.toString();
+        const newRelativePathQuery =
             window.location.pathname +
             (queryAsText.length > 0 ? "?" + queryAsText : "");
         history.replaceState(null, "", newRelativePathQuery);
@@ -315,6 +395,34 @@ function updateUrlSearch(searchValue: string) {
 function getUrlSearch(): string | undefined {
     var searchParams = new URLSearchParams(window.location.search);
     return searchParams.get("search") ?? undefined;
+}
+
+function getUrlSearchOptions(): SearchOptions {
+    var searchParams = new URLSearchParams(window.location.search);
+    return {
+        search: searchParams.get("search") ?? undefined,
+        categoryIncludes: urlDecodeCategories(
+            searchParams.get("categoryIncludes")
+        ),
+        categoryExcludes: urlDecodeCategories(
+            searchParams.get("categoryExcludes")
+        ),
+    };
+}
+
+function selectCategories({
+    categoryIncludes,
+    categoryExcludes,
+}: SearchOptions): void {
+    categoryIncludes?.forEach((element) => {
+        CATEGORIES.find((cat) => cat.name === element)!.htmlElement.bool_mode =
+            BoolMode.And;
+    });
+    categoryExcludes?.forEach((element) => {
+        CATEGORIES.find((cat) => cat.name === element)!.htmlElement.bool_mode =
+            BoolMode.Not;
+    });
+    applyCategorySelections();
 }
 
 function search(
@@ -617,7 +725,7 @@ function initSearch(options: InitSearchOptions) {
         elem.addEventListener("input", (e) =>
             setTimeout(
                 (value: string) => {
-                    updateUrlSearch(value);
+                    updateUrlSearch(getSearchOptions());
                     searchTextChanged(value);
                 },
                 0,
@@ -627,7 +735,7 @@ function initSearch(options: InitSearchOptions) {
         elem.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 const value = (e.target as HTMLInputElement)?.value;
-                updateUrlSearch(value);
+                updateUrlSearch(getSearchOptions());
                 searchTextChanged(value);
             }
         });
