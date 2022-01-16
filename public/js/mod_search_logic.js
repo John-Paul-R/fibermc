@@ -37,8 +37,8 @@ function init() {
     loader
         .addCompletionFunc(() => {
         var _a;
-        defaultSearchInput.value = (_a = getUrlSearch()) !== null && _a !== void 0 ? _a : "";
-        searchTextChanged(getUrlSearch());
+        defaultSearchInput.value = (_a = getUrlSearchValue()) !== null && _a !== void 0 ? _a : "";
+        searchTextChanged(getUrlSearchValue());
         console.log("mod_data loaded. Running search from query params.");
     })
         .addCompletionFunc(() => updateTimestamp(new Date(mod_data
@@ -210,7 +210,7 @@ function initCategoriesSidebar() {
         cat_elem.bool_mode =
             bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : BoolMode.None;
         applyCategorySelection(cat_elem);
-        updateUrlSearch(getSearchOptions());
+        updateUrlFromSearchOptions(getSearchOptionsFromState());
         searchTextChanged(undefined, true);
     }
     function clearFilters() {
@@ -221,10 +221,10 @@ function initCategoriesSidebar() {
             cat_elem.bool_mode = BoolMode.None;
         }
         applyCategorySelections();
-        updateUrlSearch(getSearchOptions());
+        updateUrlFromSearchOptions(getSearchOptionsFromState());
         searchTextChanged(undefined, true);
     }
-    selectCategories(getUrlSearchOptions());
+    selectCategories(getSearchOptionsFromUrl());
 }
 var BoolMode;
 (function (BoolMode) {
@@ -239,7 +239,7 @@ var BoolMode;
 var fuzzysortAvg = 0;
 var searchCount = 0;
 // var searchOptions: SearchOptions;
-function getSearchOptions() {
+function getSearchOptionsFromState() {
     const categories = CATEGORIES.map((cat) => ({
         name: cat.name,
         bool_mode: cat.htmlElement.bool_mode,
@@ -258,7 +258,7 @@ function getSearchOptions() {
 }
 const urlFormatCategories = (categories) => categories.join(encodeURIComponent(","));
 const urlDecodeCategories = (urlEncString) => urlEncString ? urlEncString.split(encodeURIComponent(",")) : undefined;
-function updateUrlSearch(options) {
+function updateUrlFromSearchOptions(options) {
     if ("URLSearchParams" in window) {
         var searchParams = new URLSearchParams(window.location.search);
         {
@@ -291,12 +291,12 @@ function updateUrlSearch(options) {
         history.replaceState(null, "", newRelativePathQuery);
     }
 }
-function getUrlSearch() {
+function getUrlSearchValue() {
     var _a;
     var searchParams = new URLSearchParams(window.location.search);
     return (_a = searchParams.get("search")) !== null && _a !== void 0 ? _a : undefined;
 }
-function getUrlSearchOptions() {
+function getSearchOptionsFromUrl() {
     var _a;
     var searchParams = new URLSearchParams(window.location.search);
     return {
@@ -525,7 +525,7 @@ function initSearch(options) {
         elem.addEventListener("input", (e) => {
             var _a;
             return setTimeout((value) => {
-                updateUrlSearch(getSearchOptions());
+                updateUrlFromSearchOptions(getSearchOptionsFromState());
                 searchTextChanged(value);
             }, 0, (_a = e.target) === null || _a === void 0 ? void 0 : _a.value);
         });
@@ -533,7 +533,7 @@ function initSearch(options) {
             var _a;
             if (e.key === "Enter") {
                 const value = (_a = e.target) === null || _a === void 0 ? void 0 : _a.value;
-                updateUrlSearch(getSearchOptions());
+                updateUrlFromSearchOptions(getSearchOptionsFromState());
                 searchTextChanged(value);
             }
         });
