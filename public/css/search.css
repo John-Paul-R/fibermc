@@ -196,7 +196,28 @@
 .author {
   display: inline-flex;
   border-bottom: 1px solid var(--color-text-1);
+  position: relative;
 }
+.item_author_list {
+  display: grid;
+  grid-template-columns: 1fr min-content min-content;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 0.25rem;
+  position: absolute;
+  top: 80%;
+  background-color: var(--color-base);
+  border: 1px solid var(--color-base-1);
+}
+.item_author_list > * {
+  display: flex;
+  flex-direction: row;
+  display: contents;
+}
+.item_author_list > * > * {
+  border-bottom: 1px solid var(--color-base-1);
+}
+
 #categories {
   box-sizing: border-box;
   background-color: var(--color-element);

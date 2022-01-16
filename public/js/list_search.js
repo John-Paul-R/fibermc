@@ -2,6 +2,67 @@ var _a;
 import { init, initSearch, fabric_category_id, loader, mod_data, CATEGORIES, resultsListElement, setResultsListElement, storeBatches, runBatches, resetBatches, batch_containers, BATCH_SIZE, setLiHeight, } from "./mod_search_logic.js";
 import { executeIfWhenDOMContentLoaded, getElementById, } from "./util.js";
 import { createCurseAuthorIcon, createCurseLinkIcon, createModrinthAuthorIcon, createModrinthLinkIcon, } from "./platform_links.js";
+function createAuthorListDiv() {
+    const contentDiv = document.createElement("div");
+    contentDiv.classList.add("hidden");
+    contentDiv.classList.add("item_author_list");
+    document.body.appendChild(contentDiv);
+    return contentDiv;
+}
+var authorListPopup = createAuthorListDiv();
+/**
+ *
+ * @param {HTMLElement} node
+ */
+function clearChildren(node) {
+    while (node.hasChildNodes()) {
+        node.removeChild(node.firstChild);
+    }
+}
+function showAuthorList(listDiv, authors, x, y, triggeringElement, triggeringListener) {
+    clearChildren(authorListPopup);
+    listDiv.style.top = `${y}px`;
+    listDiv.style.left = `${x}px`;
+    for (const mod_author of authors) {
+        const authorRow = document.createElement("div");
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = mod_author.name;
+        authorRow.appendChild(nameSpan);
+        authorRow.appendChild(createCurseAuthorIcon(mod_author));
+        authorRow.appendChild(createModrinthAuthorIcon(mod_author));
+        listDiv.appendChild(authorRow);
+    }
+    listDiv.classList.remove("hidden");
+    triggeringElement.removeEventListener("pointerover", triggeringListener);
+    listDiv.addEventListener("pointerleave", (e) => {
+        listDiv.classList.add("hidden");
+        triggeringElement.addEventListener("pointerover", triggeringListener);
+        console.log("OUT");
+    }, { once: true });
+}
+function fillAuthorDiv(authorDiv, modData) {
+    if (modData.authors && modData.authors.length > 0) {
+        if (modData.authors.length === 1) {
+            const mod_author = modData.authors[0];
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = mod_author.name;
+            authorDiv.appendChild(nameSpan);
+            authorDiv.appendChild(createCurseAuthorIcon(mod_author));
+            authorDiv.appendChild(createModrinthAuthorIcon(mod_author));
+        }
+        else {
+            authorDiv.textContent = "Several People...";
+            const hoverListener = (e) => {
+                const textRect = e.target.getBoundingClientRect();
+                showAuthorList(authorListPopup, modData.authors, textRect.x, textRect.y, authorDiv, hoverListener);
+            };
+            authorDiv.addEventListener("pointerover", hoverListener);
+        }
+    }
+    else {
+        authorDiv.innerText = "undefined";
+    }
+}
 function createListElement(modData, includeCategories = true) {
     const li = document.createElement("li");
     const container = document.createElement("div");
@@ -34,17 +95,7 @@ function createListElement(modData, includeCategories = true) {
         li.appendChild(startContainer);
         // Fill content of elements
         name.textContent = modData.name;
-        try {
-            const mod_author = modData.authors[0];
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = mod_author.name;
-            authorDiv.appendChild(nameSpan);
-            authorDiv.appendChild(createCurseAuthorIcon(mod_author));
-            authorDiv.appendChild(createModrinthAuthorIcon(mod_author));
-        }
-        catch {
-            authorDiv.innerText = "undefined";
-        }
+        fillAuthorDiv(authorDiv, modData);
         for (const category of modData.categories) {
             // if not "Fabric"
             if (category !== fabric_category_id) {
@@ -112,17 +163,7 @@ function createListElementDetailed(modData) {
         botContainer.appendChild(latestSupportedVers);
         // Fill content of elements
         name.textContent = modData.name;
-        try {
-            const mod_author = modData.authors[0];
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = mod_author.name;
-            authorDiv.appendChild(nameSpan);
-            authorDiv.appendChild(createCurseAuthorIcon(mod_author));
-            authorDiv.appendChild(createModrinthAuthorIcon(mod_author));
-        }
-        catch {
-            authorDiv.innerText = "undefined";
-        }
+        fillAuthorDiv(authorDiv, modData);
         for (const category of modData.categories) {
             // if not "Fabric"
             if (category !== fabric_category_id) {
