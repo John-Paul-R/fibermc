@@ -106,6 +106,13 @@ function init() {
                 sortDirection: searchOptions.sortDirection,
             });
             searchTextChanged(undefined);
+            registerSortListener(({ sortMode: sortField, sortDirection }) => {
+                updateUrlFromSearchOptions({
+                    ...getSearchOptionsFromState(),
+                    sortField,
+                    sortDirection,
+                });
+            });
         })
         .fetchResources();
 }
@@ -507,6 +514,7 @@ function search(
 }
 
 registerSortListener(() => searchTextChanged(undefined, true));
+
 //================
 // Input Handling
 //================

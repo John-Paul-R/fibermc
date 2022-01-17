@@ -67,7 +67,7 @@ function finalizeSortFunc(func: ModSortFunc) {
     return (a: Mod, b: Mod) => func(a, b) * reverseNum;
 }
 
-var onModeChangeFuncs: Array<(mode: SortMode) => void> = [];
+var onModeChangeFuncs: Array<(mode: SortState) => void> = [];
 
 interface TableSortButtonElement extends Element {
     col_field: SortableModField;
@@ -125,7 +125,10 @@ export function setSortMode({
     sortMode = sortField;
     reverseNum = sortField ? toReverseNum(sortField, sortDirection) : 0;
     updateSortIndicators(true);
-    onModeChangeFuncs.forEach((func) => func(sortMode));
+    const sortState = getSortState();
+    for (const func of onModeChangeFuncs) {
+        func(sortState);
+    }
 }
 
 (async function () {
@@ -166,8 +169,9 @@ export function setSortMode({
 
             updateSortIndicators();
 
+            const sortState = getSortState();
             for (const func of onModeChangeFuncs) {
-                func(sortMode);
+                func(sortState);
             }
         });
     }
@@ -195,7 +199,7 @@ export function getSortState(): SortState {
     };
 }
 
-export function registerListener(callback: (mode: SortMode) => void) {
+export function registerListener(callback: (mode: SortState) => void) {
     onModeChangeFuncs.push(callback);
 }
 

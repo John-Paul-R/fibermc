@@ -82,7 +82,10 @@ export function setSortMode({ sortField, sortDirection, }) {
     sortMode = sortField;
     reverseNum = sortField ? toReverseNum(sortField, sortDirection) : 0;
     updateSortIndicators(true);
-    onModeChangeFuncs.forEach((func) => func(sortMode));
+    const sortState = getSortState();
+    for (const func of onModeChangeFuncs) {
+        func(sortState);
+    }
 }
 (async function () {
     console.log(sortBtns);
@@ -118,8 +121,9 @@ export function setSortMode({ sortField, sortDirection, }) {
                 }
             }
             updateSortIndicators();
+            const sortState = getSortState();
             for (const func of onModeChangeFuncs) {
-                func(sortMode);
+                func(sortState);
             }
         });
     }
