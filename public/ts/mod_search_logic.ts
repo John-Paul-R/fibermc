@@ -2,7 +2,9 @@ import { setHidden, getElementById } from "./util.js";
 import { AsyncDataResourceLoader } from "./resource_loader.js";
 import {
     getSortFunc,
+    getSortState,
     registerListener as registerSortListener,
+    setSortMode,
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod } from "./mod_types.js";
 
@@ -97,6 +99,14 @@ function init() {
                 )
             )
         )
+        .addCompletionFunc(() => {
+            const searchOptions = getSearchOptionsFromUrl();
+            setSortMode({
+                sortField: searchOptions.sortField,
+                sortDirection: searchOptions.sortDirection,
+            });
+            searchTextChanged(undefined);
+        })
         .fetchResources();
 }
 function formatDate(date: string | number | Date) {
@@ -316,7 +326,7 @@ enum BoolMode {
 var fuzzysortAvg = 0;
 var searchCount = 0;
 
-type SearchOptions = Readonly<{
+export type SearchOptions = Readonly<{
     search?: string;
     sortField?: string;
     sortDirection?: "asc" | "desc";
@@ -338,10 +348,14 @@ function getSearchOptionsFromState(): SearchOptions {
         .filter((cat) => cat.bool_mode === BoolMode.Not)
         .map((cat) => cat.name);
 
+    const sortState = getSortState();
+
     return {
         search: defaultSearchInput.value,
         categoryIncludes,
         categoryExcludes,
+        sortField: sortState.sortMode,
+        sortDirection: sortState.sortDirection,
     };
 }
 
@@ -389,6 +403,16 @@ function updateUrlFromSearchOptions(options: SearchOptions) {
             }
         }
 
+        {
+            if (options.sortField && options.sortDirection) {
+                searchParams.set("sortField", options.sortField);
+                searchParams.set("sortDirection", options.sortDirection);
+            } else {
+                searchParams.delete("sortField");
+                searchParams.delete("sortDirection");
+            }
+        }
+
         const queryAsText = searchParams.toString();
         const newRelativePathQuery =
             window.location.pathname +
@@ -412,6 +436,10 @@ function getSearchOptionsFromUrl(): SearchOptions {
         categoryExcludes: urlDecodeCategories(
             searchParams.get("categoryExcludes")
         ),
+        sortField: searchParams.get("sortField") ?? undefined,
+        sortDirection:
+            (searchParams.get("sortDirection") as "asc" | "desc" | undefined) ??
+            undefined,
     };
 }
 

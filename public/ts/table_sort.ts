@@ -1,3 +1,4 @@
+import { SearchOptions } from "./mod_search_logic.js";
 import { Mod, Author } from "./mod_types.js";
 
 type SortColumnClass = "t_name" | "t_auth" | "t_dl" | "t_vers" | "t_date";
@@ -85,6 +86,48 @@ const isTableSortableHeaderElement = (
 ): el is TableSortableHeaderElement =>
     !!el.id && Object.keys(sortable_cols).includes(el.id);
 
+const toReverseNum = (
+    sortMode: SortableModField,
+    direction: "asc" | "desc" | undefined
+) => {
+    if (!direction) {
+        return 0;
+    }
+    const baseOrder = default_order[sortMode] === "ascending" ? 1 : -1;
+    const selectedOrder = baseOrder * (direction === "asc" ? 1 : -1);
+    return selectedOrder;
+};
+
+function toDirection(sortMode: SortableModField, directionMultiplier: number) {
+    const baseOrder = default_order[sortMode] === "ascending" ? 1 : -1;
+    const selectedOrder = baseOrder * directionMultiplier;
+    return selectedOrder === 1 ? "asc" : "desc";
+}
+
+const stringIsSortable = (str: string): str is SortableModField => {
+    if (!str) {
+        return false;
+    }
+    return (Object.values(sortable_cols) as string[]).includes(str);
+};
+
+export function setSortMode({
+    sortField,
+    sortDirection,
+}: Pick<SearchOptions, "sortField" | "sortDirection">) {
+    if (sortField === undefined) {
+        sortMode = null;
+        return;
+    }
+    if (!stringIsSortable(sortField)) {
+        return;
+    }
+    sortMode = sortField;
+    reverseNum = sortField ? toReverseNum(sortField, sortDirection) : 0;
+    updateSortIndicators(true);
+    onModeChangeFuncs.forEach((func) => func(sortMode));
+}
+
 (async function () {
     console.log(sortBtns);
     if (sortBtns.length === 0) {
@@ -121,25 +164,7 @@ const isTableSortableHeaderElement = (
                 }
             }
 
-            // function updateSortIndicator()
-            {
-                for (const btn of sortBtns) {
-                    if (btn.col_field == sortMode) {
-                        btn.classList.add("active");
-                    } else {
-                        btn.classList.remove("active");
-                    }
-                    if (btn.classList.contains("active")) {
-                        if (btn.classList.contains("ascending")) {
-                            btn.textContent = "north";
-                        } else {
-                            btn.textContent = "south";
-                        }
-                    } else {
-                        btn.textContent = "sort";
-                    }
-                }
-            }
+            updateSortIndicators();
 
             for (const func of onModeChangeFuncs) {
                 func(sortMode);
@@ -151,6 +176,55 @@ const isTableSortableHeaderElement = (
 export function getSortFunc() {
     return sortMode ? finalizeSortFunc(sort_funcs[sortMode]) : undefined;
 }
+
+type SortState = Readonly<{
+    sortMode: SortableModField | undefined;
+    sortDirection: "asc" | "desc" | undefined;
+}>;
+export function getSortState(): SortState {
+    if (!sortMode) {
+        return {
+            sortMode: undefined,
+            sortDirection: undefined,
+        };
+    }
+
+    return {
+        sortMode: sortMode,
+        sortDirection: toDirection(sortMode, reverseNum),
+    };
+}
+
 export function registerListener(callback: (mode: SortMode) => void) {
     onModeChangeFuncs.push(callback);
+}
+
+function updateSortIndicators(recalculate = false) {
+    for (const btn of sortBtns) {
+        if (recalculate) {
+            if (sortMode === btn.col_field) {
+                if (toDirection(sortMode, reverseNum) === "asc") {
+                    btn.classList.add("ascending");
+                } else {
+                    btn.classList.remove("ascending");
+                }
+            }
+        }
+
+        if (btn.col_field == sortMode) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+
+        if (btn.classList.contains("active")) {
+            if (btn.classList.contains("ascending")) {
+                btn.textContent = "north";
+            } else {
+                btn.textContent = "south";
+            }
+        } else {
+            btn.textContent = "sort";
+        }
+    }
 }

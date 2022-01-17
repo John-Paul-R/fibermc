@@ -1,6 +1,6 @@
 import { setHidden, getElementById } from "./util.js";
 import { AsyncDataResourceLoader } from "./resource_loader.js";
-import { getSortFunc, registerListener as registerSortListener, } from "./table_sort.js";
+import { getSortFunc, getSortState, registerListener as registerSortListener, setSortMode, } from "./table_sort.js";
 import { baseModToMod } from "./mod_types.js";
 export { init, initSearch, initCategoriesSidebar, fabric_category_id, loader, mod_data, setModData, CATEGORIES, setCategories, resultsListElement, setResultsListElement, storeBatches, runBatches, resetBatches, pxAboveTop, pxBelowBottom, data_batches, batch_containers, last_contentful_container_idx, first_contentful_container_idx, LI_HEIGHT, BATCH_SIZE, setLiHeight, };
 const isCategoryElement = (el) => el.cat_id !== undefined;
@@ -44,6 +44,14 @@ function init() {
         .addCompletionFunc(() => updateTimestamp(new Date(mod_data
         .map((mod) => mod.s_dateModified)
         .reduce((accum, current) => Math.max(accum, current), 0))))
+        .addCompletionFunc(() => {
+        const searchOptions = getSearchOptionsFromUrl();
+        setSortMode({
+            sortField: searchOptions.sortField,
+            sortDirection: searchOptions.sortDirection,
+        });
+        searchTextChanged(undefined);
+    })
         .fetchResources();
 }
 function formatDate(date) {
@@ -253,10 +261,13 @@ function getSearchOptionsFromState() {
     const categoryExcludes = categories
         .filter((cat) => cat.bool_mode === BoolMode.Not)
         .map((cat) => cat.name);
+    const sortState = getSortState();
     return {
         search: defaultSearchInput.value,
         categoryIncludes,
         categoryExcludes,
+        sortField: sortState.sortMode,
+        sortDirection: sortState.sortDirection,
     };
 }
 const urlFormatCategories = (categories) => categories.join(encodeURIComponent(","));
@@ -288,6 +299,16 @@ function updateUrlFromSearchOptions(options) {
                 searchParams.delete("categoryExcludes");
             }
         }
+        {
+            if (options.sortField && options.sortDirection) {
+                searchParams.set("sortField", options.sortField);
+                searchParams.set("sortDirection", options.sortDirection);
+            }
+            else {
+                searchParams.delete("sortField");
+                searchParams.delete("sortDirection");
+            }
+        }
         const queryAsText = searchParams.toString();
         const newRelativePathQuery = window.location.pathname +
             (queryAsText.length > 0 ? "?" + queryAsText : "");
@@ -300,12 +321,14 @@ function getUrlSearchValue() {
     return (_a = searchParams.get("search")) !== null && _a !== void 0 ? _a : undefined;
 }
 function getSearchOptionsFromUrl() {
-    var _a;
+    var _a, _b, _c;
     var searchParams = new URLSearchParams(window.location.search);
     return {
         search: (_a = searchParams.get("search")) !== null && _a !== void 0 ? _a : undefined,
         categoryIncludes: urlDecodeCategories(searchParams.get("categoryIncludes")),
         categoryExcludes: urlDecodeCategories(searchParams.get("categoryExcludes")),
+        sortField: (_b = searchParams.get("sortField")) !== null && _b !== void 0 ? _b : undefined,
+        sortDirection: (_c = searchParams.get("sortDirection")) !== null && _c !== void 0 ? _c : undefined,
     };
 }
 function selectCategories({ categoryIncludes, categoryExcludes, }) {
