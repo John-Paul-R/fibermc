@@ -3,7 +3,7 @@
 
 ### A searchable list of (almost) all Fabric Minecraft mods.
 
-![Website](https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fwww.fibermc.com)
+[![Website](https://img.shields.io/website?down_message=offline&up_message=online&url=https%3A%2F%2Fwww.fibermc.com)](https://www.fibermc.com)
 
 See the site, [fibermc.com](https://www.fibermc.com).
 
