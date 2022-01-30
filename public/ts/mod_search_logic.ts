@@ -614,6 +614,7 @@ function setLiHeight(liHeight: number) {
     sheet.insertRule(`.item_batch {
         height: ${height}px;
         min-height: ${height}px;
+        grid-template-rows: repeat(${BATCH_SIZE}, 1fr);
     }`);
     // console.log(sheet.cssRules);
     searchTextChanged();
@@ -836,6 +837,8 @@ const storeBatches = (
         storeBatches(results, endIdx, nextBatchSize, useContainers);
 };
 
+var runningBatches: number[] = [];
+
 let runBatches = (
     results: Mod[],
     batchIdx: number,
@@ -872,7 +875,11 @@ let runBatches = (
             last_contentful_container_idx = batchIdx;
             nextBatchFunc = nextBatchFn;
         } else {
-            setTimeout(nextBatchFn, 0);
+            for (const timeout of runningBatches) {
+                clearTimeout(timeout);
+            }
+            runningBatches = [];
+            runningBatches.push(setTimeout(nextBatchFn, 0));
         }
     }
     // resultsListElement.appendChild(batch_elem);

@@ -470,9 +470,9 @@ loader.addCompletionFunc(() => {
         // listCreationFunc: buildList,
         lazyLoadBatches: true,
         batch_size: 20,
-        li_height: getLiHeightDetailed(),
+        li_height: modeLiHeights[currentViewIdx](),
     });
     updateViewModes();
 });
-loader.addCompletionFunc(() => console.log(getLiHeightDetailed()));
+
 init();

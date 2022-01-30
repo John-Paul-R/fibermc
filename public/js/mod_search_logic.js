@@ -452,6 +452,7 @@ function setLiHeight(liHeight) {
     sheet.insertRule(`.item_batch {
         height: ${height}px;
         min-height: ${height}px;
+        grid-template-rows: repeat(${BATCH_SIZE}, 1fr);
     }`);
     // console.log(sheet.cssRules);
     searchTextChanged();
@@ -615,6 +616,7 @@ const storeBatches = (results, startIdx, batchSize, useContainers = true) => {
     if (nextBatchSize > 0)
         storeBatches(results, endIdx, nextBatchSize, useContainers);
 };
+var runningBatches = [];
 let runBatches = (results, batchIdx, remainingBatches = 0, waitForScrollAfter = 0, callback) => {
     if (batchIdx >= data_batches.length) {
         nextBatchFunc = () => { };
@@ -638,7 +640,11 @@ let runBatches = (results, batchIdx, remainingBatches = 0, waitForScrollAfter = 
             nextBatchFunc = nextBatchFn;
         }
         else {
-            setTimeout(nextBatchFn, 0);
+            for (const timeout of runningBatches) {
+                clearTimeout(timeout);
+            }
+            runningBatches = [];
+            runningBatches.push(setTimeout(nextBatchFn, 0));
         }
     }
     // resultsListElement.appendChild(batch_elem);
