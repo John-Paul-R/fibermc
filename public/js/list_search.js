@@ -1,15 +1,14 @@
 var _a;
-import { init, initSearch, fabric_category_id, loader, mod_data, CATEGORIES, resultsListElement, setResultsListElement, storeBatches, runBatches, resetBatches, batch_containers, BATCH_SIZE, setLiHeight, } from "./mod_search_logic.js";
-import { executeIfWhenDOMContentLoaded, getElementById, } from "./util.js";
+import { init, initSearch, fabric_category_id, loader, mod_data, CATEGORIES, resultsListElement, setResultsListElement, batch_containers, setLiHeight, } from "./mod_search_logic.js";
+import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
 import { createCurseAuthorIcon, createCurseLinkIcon, createModrinthAuthorIcon, createModrinthLinkIcon, } from "./platform_links.js";
-function createAuthorListDiv() {
+var authorListPopup = (function createAuthorListDiv() {
     const contentDiv = document.createElement("div");
     contentDiv.classList.add("hidden");
     contentDiv.classList.add("item_author_list");
     document.body.appendChild(contentDiv);
     return contentDiv;
-}
-var authorListPopup = createAuthorListDiv();
+})();
 /**
  *
  * @param {HTMLElement} node
@@ -194,36 +193,6 @@ function createListElementDetailed(modData) {
     }
     return li;
 }
-// var BATCH_SIZE = 25;
-var numElemsBuilt;
-var numResults;
-function buildTableBatched(modsData) {
-    var start = performance.now();
-    table.scrollTop = 0;
-    // showLoadbar(0);
-    numResults = modsData.length;
-    batchesRemain = true;
-    numElemsBuilt = 0;
-    resetBatches();
-    storeBatches(modsData, 0, Math.min(BATCH_SIZE, modsData.length), false);
-    runBatches(modsData, 0, -1, 10, () => { });
-    console.log(performance.now() - start);
-}
-const initialNumBatches = 10;
-function buildList(resultsArray) {
-    let listBuildTime = performance.now();
-    resetBatches();
-    storeBatches(resultsArray, 0, Math.min(BATCH_SIZE, resultsArray.length));
-    // runBatches(resultsArray, idx, Math.min(BATCH_SIZE, resultsArray.length), -1, 10);//Math.floor(window.innerHeight/40)
-    runBatches(resultsArray, 0, -1, initialNumBatches); //Math.floor(window.innerHeight/40)
-    listBuildTime = performance.now() - listBuildTime;
-    listBuildTimeAvg =
-        (listBuildTimeAvg * (searchCount - 1) + listBuildTime) / searchCount;
-    console.log(`List Build - A:${listBuildTimeAvg.toFixed(3)} ms, I:${listBuildTime.toFixed(3)} ms, numMatches: ${resultsArray.length}`);
-}
-var listBuildTimeAvg = 0;
-var fuzzysortAvg = 0;
-var searchCount = 0;
 var createBatch = (batchIdx, data_batches) => {
     for (const result_data of data_batches[batchIdx]) {
         try {
@@ -238,19 +207,7 @@ var createBatch = (batchIdx, data_batches) => {
         }
     }
 };
-// var firstLoadedBatchIdx;
-var lastLoadedBatchIdx;
-var firstElem;
-var batchesRemain;
-var table;
-// Logic createListElement, true, LI_HEIGHT, BATCH_SIZE, createBatch
-var loadbar_container;
-var loadbar_text;
-var loadbar_content;
 loader.addCompletionFunc(() => {
-    loadbar_container = document.getElementById("loadbar_container");
-    loadbar_text = document.getElementById("loadbar_text");
-    loadbar_content = document.getElementById("loadbar_content");
     const MAX_FAILS = 100;
     let failCount = 0;
     for (const mod of mod_data) {
@@ -318,9 +275,7 @@ executeIfWhenDOMContentLoaded(() => {
 loader.addCompletionFunc(() => {
     initSearch({
         results_persist: true,
-        // listElemCreationFunc: createListElement,
         batchCreationFunc: createBatch,
-        // listCreationFunc: buildList,
         lazyLoadBatches: true,
         batch_size: 20,
         li_height: modeLiHeights[currentViewIdx](),
