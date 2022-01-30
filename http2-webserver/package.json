@@ -20,7 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "command-line-args": "^5.1.1",
-    "log4js": "^6.3.0",
+    "log4js": "^6.4.0",
     "mime": "^2.5.2",
     "node-dir": "^0.1.17",
     "nodemon": "^2.0.7",
