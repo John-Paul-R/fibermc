@@ -62,6 +62,6 @@
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "rootDir": "./public/ts",
-        "outDir": "./public/js"
+        "outDir": "./public/js/ts-compiled"
     }
 }
