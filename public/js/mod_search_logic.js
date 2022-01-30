@@ -17,18 +17,16 @@ var loader = new AsyncDataResourceLoader({
 })
     .addResource(`${apiUrl}/Mods`, [
     (jsonData) => {
-        console.log("TEMP", jsonData);
         setModData(jsonData.map(baseModToMod));
         // Sort descending
         mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
-        console.log(mod_data);
-        // timestamp = jsonData.timestamp;
+        console.log("mod_data", mod_data);
     },
 ])
     .addResource(`${apiUrl}/Categories`, [
     (jsonData) => {
         categoryNames = jsonData;
-        console.log(categoryNames);
+        console.log("categoryNames", categoryNames);
     },
 ])
     .addCompletionFunc(initCategoriesSidebar);
@@ -362,7 +360,6 @@ function search(queryText, search_objects, selectBest = false) {
         scoreFn: (a) => Math.max(a[0] ? a[0].score : -1000, a[1] ? a[1].score - 50 : -1000, a[2] ? a[2].score - 100 : -1000) +
             a["obj"].downloadCount / maxDownloads,
     });
-    // results.sort((a, b) => a.downloadCount);
     // Performance logging
     var fuzzysortTime = performance.now() - fuzzysortStart;
     searchCount += 1;
@@ -380,7 +377,6 @@ function searchTextChanged(value, resultsPersist) {
     const search_objects = getFilteredList();
     const searchValue = value !== null && value !== void 0 ? value : defaultSearchInput.value;
     const runSearch = (query) => {
-        console.log(query);
         return search(query, search_objects).map((el) => el.obj);
     };
     const results = (() => {
@@ -401,7 +397,6 @@ function searchTextChanged(value, resultsPersist) {
     }
     // Sort results if sorting method selected.
     const sortFunc = getSortFunc();
-    console.log("PREP_SORT");
     const finalResults = sortFunc !== undefined ? Array.from(results).sort(sortFunc) : results;
     updateSearchResultsListElement(finalResults);
     // queryDisplayElement.innerText = query.target.value;
@@ -415,10 +410,6 @@ function updateSearchResultsListElement(resultsArray) {
     while (resultsListElement.firstChild) {
         resultsListElement.removeChild(resultsListElement.lastChild);
     }
-    const elems = resultsListElement.children;
-    // for (let i = 1; i < elems.length; i++) {
-    //     setHidden(elems[i], true);
-    // }
     if (resultsArray) {
         setHidden(resultsListElement, false);
         buildList(resultsArray);
@@ -454,7 +445,6 @@ function setLiHeight(liHeight) {
         min-height: ${height}px;
         grid-template-rows: repeat(${BATCH_SIZE}, 1fr);
     }`);
-    // console.log(sheet.cssRules);
     searchTextChanged();
 }
 var defaultSearchInput;
@@ -473,7 +463,6 @@ function initSearch(options) {
     LI_HEIGHT = (_a = options.li_height) !== null && _a !== void 0 ? _a : defaultOptions.li_height;
     BATCH_SIZE = (_b = options.batch_size) !== null && _b !== void 0 ? _b : defaultOptions.batch_size;
     function resultsViewBuilder(options) {
-        console.log(options);
         if (options.listElemCreationFunc) {
             createListElement = options.listElemCreationFunc;
         }

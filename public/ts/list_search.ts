@@ -89,7 +89,6 @@ function showAuthorList(
                 "pointerover",
                 triggeringListener
             );
-            console.log("OUT");
         },
         { once: true }
     );
@@ -373,8 +372,6 @@ loader.addCompletionFunc(() => {
             mod.elem = createListElement(mod);
         } catch (err) {
             console.warn(`Could not load elem for mod`);
-            // console.warn(mod);
-            // console.error(err);
             failCount++;
             if (failCount > MAX_FAILS) {
                 break;

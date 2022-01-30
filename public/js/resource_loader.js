@@ -67,7 +67,6 @@ class AsyncDataResourceLoader {
                 }
             })
                 .then((resJson) => {
-                console.debug("hi there");
                 console.debug(resJson);
                 resource.funcs.runAll(resJson);
             })

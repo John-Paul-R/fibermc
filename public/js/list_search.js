@@ -37,7 +37,6 @@ function showAuthorList(listDiv, authors, x, y, triggeringElement, triggeringLis
     listDiv.addEventListener("pointerleave", (e) => {
         listDiv.classList.add("hidden");
         triggeringElement.addEventListener("pointerover", triggeringListener);
-        console.log("OUT");
     }, { once: true });
 }
 function fillAuthorDiv(authorDiv, modData) {
@@ -260,8 +259,6 @@ loader.addCompletionFunc(() => {
         }
         catch (err) {
             console.warn(`Could not load elem for mod`);
-            // console.warn(mod);
-            // console.error(err);
             failCount++;
             if (failCount > MAX_FAILS) {
                 break;

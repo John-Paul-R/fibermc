@@ -64,21 +64,16 @@ var loader = new AsyncDataResourceLoader({
 })
     .addResource<BaseMod[]>(`${apiUrl}/Mods`, [
         (jsonData) => {
-            console.log("TEMP", jsonData);
-
             setModData(jsonData.map(baseModToMod));
             // Sort descending
             mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
-            console.log(mod_data);
-
-            // timestamp = jsonData.timestamp;
+            console.log("mod_data", mod_data);
         },
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
             categoryNames = jsonData;
-
-            console.log(categoryNames);
+            console.log("categoryNames", categoryNames);
         },
     ])
     .addCompletionFunc(initCategoriesSidebar);
@@ -493,8 +488,6 @@ function search(
         }
     );
 
-    // results.sort((a, b) => a.downloadCount);
-
     // Performance logging
     var fuzzysortTime = performance.now() - fuzzysortStart;
     searchCount += 1;
@@ -523,7 +516,6 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
     const searchValue = value ?? defaultSearchInput.value;
 
     const runSearch = (query: string) => {
-        console.log(query);
         return search(query, search_objects).map((el) => el.obj);
     };
 
@@ -548,7 +540,6 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
 
     // Sort results if sorting method selected.
     const sortFunc = getSortFunc();
-    console.log("PREP_SORT");
     const finalResults =
         sortFunc !== undefined ? Array.from(results).sort(sortFunc) : results;
     updateSearchResultsListElement(finalResults);
@@ -565,10 +556,7 @@ function updateSearchResultsListElement(resultsArray: Mod[]) {
     while (resultsListElement.firstChild) {
         resultsListElement.removeChild(resultsListElement.lastChild!);
     }
-    const elems = resultsListElement.children;
-    // for (let i = 1; i < elems.length; i++) {
-    //     setHidden(elems[i], true);
-    // }
+
     if (resultsArray) {
         setHidden(resultsListElement, false);
 
@@ -616,7 +604,6 @@ function setLiHeight(liHeight: number) {
         min-height: ${height}px;
         grid-template-rows: repeat(${BATCH_SIZE}, 1fr);
     }`);
-    // console.log(sheet.cssRules);
     searchTextChanged();
 }
 var defaultSearchInput: HTMLInputElement;
@@ -644,7 +631,6 @@ function initSearch(options: InitSearchOptions) {
     LI_HEIGHT = options.li_height ?? defaultOptions.li_height;
     BATCH_SIZE = options.batch_size ?? defaultOptions.batch_size;
     function resultsViewBuilder(options: InitSearchOptions) {
-        console.log(options);
         if (options.listElemCreationFunc) {
             createListElement = options.listElemCreationFunc;
         } else {
