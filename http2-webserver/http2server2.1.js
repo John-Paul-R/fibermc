@@ -177,7 +177,7 @@ function loadFiles() {
 
   function preloadFiles(filePath) {
     if (!filePath.includes("git")) {
-      const relFilePath = Path.relative(exec_path, filePath).replace('\\', '/');
+      const relFilePath = Path.relative(exec_path, filePath).replace(/\\/g, '/');
       const fileDescriptor = fs.openSync(filePath, "r");
       const stat = fs.fstatSync(fileDescriptor);
       const contentType = Mime.getType(relFilePath);
