@@ -35,3 +35,5 @@ mod_list.min.json
 public/data/*
 
 chromedriver*.exe
+
+public/js/ts-compiled

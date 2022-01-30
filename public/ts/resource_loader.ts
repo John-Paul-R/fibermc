@@ -76,7 +76,7 @@ class AsyncDataResourceLoader {
 
     fetchResources() {
         const promises = [];
-        const requestOpts = {
+        const requestOpts: RequestInit = {
             method: "GET",
         };
 
@@ -93,7 +93,6 @@ class AsyncDataResourceLoader {
                         }
                     })
                     .then((resJson) => {
-                        console.debug("hi there");
                         console.debug(resJson);
                         resource.funcs.runAll(resJson);
                     })

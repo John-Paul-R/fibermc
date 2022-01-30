@@ -1,50 +1,31 @@
 import {
     init,
     initSearch,
-    initCategoriesSidebar,
     fabric_category_id,
     loader,
     mod_data,
-    setModData,
     CATEGORIES,
-    setCategories,
     resultsListElement,
     setResultsListElement,
-    storeBatches,
-    runBatches,
-    resetBatches,
-    pxAboveTop,
-    pxBelowBottom,
-    data_batches as dataBatches,
     batch_containers,
-    last_contentful_container_idx,
-    first_contentful_container_idx,
-    LI_HEIGHT,
-    BATCH_SIZE,
     setLiHeight,
 } from "./mod_search_logic.js";
-import {
-    executeIfWhenDOMContentLoaded,
-    getElementById,
-    setHidden,
-} from "./util.js";
+import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
 import {
     createCurseAuthorIcon,
     createCurseLinkIcon,
     createModrinthAuthorIcon,
     createModrinthLinkIcon,
 } from "./platform_links.js";
-import { getCurseAuthorUrl, Mod, Author } from "./mod_types.js";
-import { LoadbarResult } from "./loadbar.js";
+import { Mod, Author } from "./mod_types.js";
 
-function createAuthorListDiv() {
+var authorListPopup = (function createAuthorListDiv() {
     const contentDiv = document.createElement("div");
     contentDiv.classList.add("hidden");
     contentDiv.classList.add("item_author_list");
     document.body.appendChild(contentDiv);
     return contentDiv;
-}
-var authorListPopup = createAuthorListDiv();
+})();
 
 /**
  *
@@ -89,7 +70,6 @@ function showAuthorList(
                 "pointerover",
                 triggeringListener
             );
-            console.log("OUT");
         },
         { once: true }
     );
@@ -290,47 +270,6 @@ function createListElementDetailed(modData: Mod) {
     return li;
 }
 
-// var BATCH_SIZE = 25;
-var numElemsBuilt;
-var numResults: number;
-
-function buildTableBatched(modsData: Mod[]) {
-    var start = performance.now();
-    table.scrollTop = 0;
-    // showLoadbar(0);
-    numResults = modsData.length;
-    batchesRemain = true;
-    numElemsBuilt = 0;
-    resetBatches();
-    storeBatches(modsData, 0, Math.min(BATCH_SIZE, modsData.length), false);
-    runBatches(modsData, 0, -1, 10, () => {});
-
-    console.log(performance.now() - start);
-}
-const initialNumBatches = 10;
-function buildList(resultsArray: Mod[]) {
-    let listBuildTime = performance.now();
-
-    resetBatches();
-    storeBatches(resultsArray, 0, Math.min(BATCH_SIZE, resultsArray.length));
-    // runBatches(resultsArray, idx, Math.min(BATCH_SIZE, resultsArray.length), -1, 10);//Math.floor(window.innerHeight/40)
-    runBatches(resultsArray, 0, -1, initialNumBatches); //Math.floor(window.innerHeight/40)
-
-    listBuildTime = performance.now() - listBuildTime;
-    listBuildTimeAvg =
-        (listBuildTimeAvg * (searchCount - 1) + listBuildTime) / searchCount;
-    console.log(
-        `List Build - A:${listBuildTimeAvg.toFixed(
-            3
-        )} ms, I:${listBuildTime.toFixed(3)} ms, numMatches: ${
-            resultsArray.length
-        }`
-    );
-}
-
-var listBuildTimeAvg = 0;
-var fuzzysortAvg = 0;
-var searchCount = 0;
 var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
     for (const result_data of data_batches[batchIdx]) {
         try {
@@ -347,25 +286,13 @@ var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
         }
     }
 };
-// var firstLoadedBatchIdx;
-var lastLoadedBatchIdx;
-
-var firstElem;
-var batchesRemain;
-var table: HTMLElement;
 
 // Logic createListElement, true, LI_HEIGHT, BATCH_SIZE, createBatch
-var loadbar_container;
-var loadbar_text;
-var loadbar_content;
 type ModWithElem = Mod & {
     elem: HTMLElement;
 };
 
 loader.addCompletionFunc(() => {
-    loadbar_container = document.getElementById("loadbar_container");
-    loadbar_text = document.getElementById("loadbar_text");
-    loadbar_content = document.getElementById("loadbar_content");
     const MAX_FAILS = 100;
     let failCount = 0;
     for (const mod of mod_data as ModWithElem[]) {
@@ -373,8 +300,6 @@ loader.addCompletionFunc(() => {
             mod.elem = createListElement(mod);
         } catch (err) {
             console.warn(`Could not load elem for mod`);
-            // console.warn(mod);
-            // console.error(err);
             failCount++;
             if (failCount > MAX_FAILS) {
                 break;
@@ -382,9 +307,11 @@ loader.addCompletionFunc(() => {
         }
     }
 });
+
 loader.addCompletionFunc(() =>
     setResultsListElement(getElementById("search_results_list"))
 );
+
 function getLiHeight() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
@@ -408,6 +335,7 @@ function getLiHeight() {
         descFontSize * descLineCount
     );
 }
+
 function getLiHeightDetailed() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
@@ -455,6 +383,7 @@ function cycleListViewModes() {
     );
     updateViewModes();
 }
+
 executeIfWhenDOMContentLoaded(() => {
     getElementById("list_view_cycle_button").addEventListener(
         "click",
@@ -465,9 +394,7 @@ executeIfWhenDOMContentLoaded(() => {
 loader.addCompletionFunc(() => {
     initSearch({
         results_persist: true,
-        // listElemCreationFunc: createListElement,
         batchCreationFunc: createBatch,
-        // listCreationFunc: buildList,
         lazyLoadBatches: true,
         batch_size: 20,
         li_height: modeLiHeights[currentViewIdx](),
