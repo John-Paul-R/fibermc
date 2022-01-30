@@ -76,7 +76,7 @@ class AsyncDataResourceLoader {
 
     fetchResources() {
         const promises = [];
-        const requestOpts = {
+        const requestOpts: RequestInit = {
             method: "GET",
         };
 

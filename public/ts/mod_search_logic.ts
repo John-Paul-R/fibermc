@@ -55,7 +55,7 @@ type Category = {
 console.log("hostname", window.location.hostname);
 const apiUrl = `https://${
     window.location.hostname === "localhost"
-        ? "localhost:5001"
+        ? "dev.fibermc.com"
         : window.location.hostname
 }/api/v1.0`;
 // Load mod data from external file
