@@ -73,7 +73,10 @@ function versionOrd(vers: string) {
     let weight = 100000;
     let out = 0;
     for (const x of nums) {
-        let strNum = x.replace(/[^0-9]/g, "");
+        let strNum = x
+            .replace("-pre", "1")
+            .replace("-rc", "2")
+            .replace(/[^0-9]/g, "");
         out += parseFloat(strNum) * weight;
         weight /= 100;
     }
