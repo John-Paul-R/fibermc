@@ -69,11 +69,31 @@ function versionOrd(vers: string) {
     if (!vers) {
         return -1;
     }
-    const nums = vers.split(".");
+    const nums = vers.split(/[.\-]/);
     let weight = 100000;
     let out = 0;
     for (const x of nums) {
-        let strNum = x.replace(/[^0-9]/g, "");
+        const handleStr = (
+            baseStr: string,
+            searchStr: string,
+            ordinalModifier: number
+        ) => {
+            const searchStrIdx = baseStr.indexOf(searchStr);
+            if (searchStrIdx === -1) {
+                return baseStr;
+            }
+
+            weight /= 100;
+            out += ordinalModifier * weight;
+            weight /= 100;
+
+            return x.replace(searchStr, "");
+        };
+
+        let strNum = x;
+        strNum = handleStr(strNum, "pre", -5);
+        strNum = handleStr(strNum, "rc", -4);
+        strNum = strNum.replace(/[^0-9]/g, "");
         out += parseFloat(strNum) * weight;
         weight /= 100;
     }
@@ -85,6 +105,8 @@ function versionOrd(vers: string) {
     }
     return out;
 }
+
+console.log();
 
 function dateOrd(date: string | number | Date) {
     return new Date(date).valueOf();
