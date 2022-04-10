@@ -5,6 +5,7 @@ type FiberElement = HTMLElement & {
 type MultiSelectValueElement<TValue> = HTMLLabelElement & {
     _fibermc_optionValue: TValue;
     _fibermc_onSelect: () => void;
+    _fibermc_setChecked: (checked: boolean) => void;
 };
 
 type MultiSelectProps<TValue> = Readonly<{
@@ -34,15 +35,43 @@ export function initMultiselectElement<TValue>({
             const element = document.createElement(
                 "label"
             ) as MultiSelectValueElement<TValue>;
-            element._fibermc_optionValue = optionValue;
-            element._fibermc_onSelect = () =>
-                setSelectedValues((curValues) =>
-                    toggleValue(optionValue, curValues)
-                );
+
             const check = document.createElement("input");
             check.type = "checkbox";
-            element.textContent = (optionValue as any) ?? "unknown";
             element.appendChild(check);
+
+            const labelTextSpan = document.createElement("span");
+            labelTextSpan.textContent = (optionValue as any) ?? "unknown";
+            element.appendChild(labelTextSpan);
+
+            element._fibermc_optionValue = optionValue;
+            element._fibermc_setChecked = (checked: boolean) =>
+                (check.checked = checked);
+
+            //@ts-expect-error
+            element._fibermc_onSelect = (e) => {
+                let newValuesAsSet: Set<TValue>;
+                setSelectedValues((curValues) => {
+                    const newValues = toggleValue(optionValue, curValues);
+                    newValuesAsSet = new Set(newValues);
+                    return newValues;
+                });
+                (
+                    [
+                        ..._rootElement.children,
+                    ] as MultiSelectValueElement<TValue>[]
+                ).forEach((el) => {
+                    if (newValuesAsSet.has(el._fibermc_optionValue)) {
+                        el._fibermc_setChecked(true);
+                    } else {
+                        el._fibermc_setChecked(false);
+                    }
+                });
+                console.log(e);
+            };
+            check.addEventListener("change", element._fibermc_onSelect);
+
+            element.classList.add("button");
             return element;
         })
         .forEach((el) => root.appendChild(el));
