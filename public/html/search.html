@@ -38,8 +38,9 @@
             <div id="content_center" class="filled">
                 <div id="search_container">
                     <button id="list_view_cycle_button" class="button">Cycle View</button>
+
                     <div class="hover_dropdown button">
-                        <span>Sort&nbsp;By</span>
+                        <span>Sort</span>
                         <div class="hover_dropdown-content">
                             <button id="t_name">Name
                                 <span class="tbl_sort material-icons">sort</span>
@@ -58,6 +59,13 @@
                             </button>
                         </div>
                     </div>
+
+                    <div class="hover_dropdown button">
+                        <span>Version</span>
+                        <div id="version_multiselect" class="hover_dropdown-content">
+                        </div>
+                    </div>
+
                     <label for="search_input" class="searchbar filled">
                         <i class="material-icons"><label for="search_input">search</label></i>
                         <input id="search_input" type="text" class="searchField" placeholder="Search by mod name or author..." autofocus>

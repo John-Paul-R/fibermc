@@ -7,6 +7,7 @@ import {
     setSortMode,
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod } from "./mod_types.js";
+import { initMultiselectElement } from "./multiselect.js";
 
 export {
     init,
@@ -55,7 +56,7 @@ type Category = {
 console.log("hostname", window.location.hostname);
 const apiUrl = `https://${
     window.location.hostname === "localhost"
-        ? "dev.fibermc.com"
+        ? "localhost:5001"
         : window.location.hostname
 }/api/v1.0`;
 // Load mod data from external file
@@ -111,6 +112,15 @@ function init() {
         })
         .fetchResources();
 }
+var options = ["option a", "option b", "option c"];
+var currentSelected: string[] = [];
+initMultiselectElement({
+    rootElement: getElementById("version_multiselect"),
+    options,
+    setSelectedValues: (setter) => (currentSelected = setter(currentSelected)),
+    currentValues: currentSelected,
+});
+
 function formatDate(date: string | number | Date) {
     date = new Date(date);
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
