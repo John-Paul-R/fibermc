@@ -110,16 +110,31 @@ function init() {
                 });
             });
         })
+        .addCompletionFunc(() => {
+            const versionNums = new Set<number>();
+            const versions: [string, number][] = [];
+            mod_data.forEach((m) => {
+                if (!versionNums.has(m.s_latestMCVersion)) {
+                    versions.push([m.latestMCVersion, m.s_latestMCVersion]);
+                }
+                versionNums.add(m.s_latestMCVersion);
+            });
+            versions.sort((a, b) => a[1] - b[1]);
+            // var options = ["option a", "option b", "option c"];
+            var currentSelected: [string, number][] = [];
+            initMultiselectElement({
+                rootElement: getElementById("version_multiselect"),
+                options: versions,
+                setSelectedValues: (setter) => {
+                    currentSelected = setter(currentSelected);
+                    console.log(currentSelected);
+                },
+                currentValues: currentSelected,
+                renderValue: (val) => val[0],
+            });
+        })
         .fetchResources();
 }
-var options = ["option a", "option b", "option c"];
-var currentSelected: string[] = [];
-initMultiselectElement({
-    rootElement: getElementById("version_multiselect"),
-    options,
-    setSelectedValues: (setter) => (currentSelected = setter(currentSelected)),
-    currentValues: currentSelected,
-});
 
 function formatDate(date: string | number | Date) {
     date = new Date(date);
@@ -228,6 +243,7 @@ function initCategoriesSidebar() {
 
     const createAllModsElement = () => {
         const elem = document.createElement("button") as CategoryElement;
+
         elem.classList.add("reset_button");
         elem.cat_id = -1;
         const title = "All mods (reset)";

@@ -15,6 +15,7 @@ type MultiSelectProps<TValue> = Readonly<{
         setValues: (currentValues: TValue[]) => TValue[]
     ) => void;
     currentValues: TValue[] | undefined;
+    renderValue: (val: TValue) => string;
 }>;
 
 export function initMultiselectElement<TValue>({
@@ -22,6 +23,7 @@ export function initMultiselectElement<TValue>({
     options,
     setSelectedValues,
     currentValues,
+    renderValue,
 }: MultiSelectProps<TValue>) {
     const root = _rootElement as FiberElement;
 
@@ -29,6 +31,9 @@ export function initMultiselectElement<TValue>({
         curValues.includes(val)
             ? curValues.filter((el) => el != val)
             : [...curValues, val];
+
+    _rootElement.style.maxHeight = "60vh";
+    _rootElement.style.overflow = "auto";
 
     options
         .map((optionValue) => {
@@ -41,7 +46,7 @@ export function initMultiselectElement<TValue>({
             element.appendChild(check);
 
             const labelTextSpan = document.createElement("span");
-            labelTextSpan.textContent = (optionValue as any) ?? "unknown";
+            labelTextSpan.textContent = renderValue(optionValue) ?? "unknown";
             element.appendChild(labelTextSpan);
 
             element._fibermc_optionValue = optionValue;
