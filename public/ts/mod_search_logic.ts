@@ -7,6 +7,7 @@ import {
     setSortMode,
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod } from "./mod_types.js";
+import { initMultiselectElement } from "./multiselect.js";
 
 export {
     init,
@@ -55,7 +56,7 @@ type Category = {
 console.log("hostname", window.location.hostname);
 const apiUrl = `https://${
     window.location.hostname === "localhost"
-        ? "dev.fibermc.com"
+        ? "localhost:5001"
         : window.location.hostname
 }/api/v1.0`;
 // Load mod data from external file
@@ -78,6 +79,7 @@ var loader = new AsyncDataResourceLoader({
     ])
     .addCompletionFunc(initCategoriesSidebar);
 var timestamp: string;
+var currentSelectedVersions: [string, number][] = [];
 function init() {
     loader
         .addCompletionFunc(() => {
@@ -109,8 +111,32 @@ function init() {
                 });
             });
         })
+        .addCompletionFunc(() => {
+            const versionNums = new Set<number>();
+            const versions: [string, number][] = [];
+            mod_data.forEach((m) => {
+                if (!versionNums.has(m.s_latestMCVersion)) {
+                    versions.push([m.latestMCVersion, m.s_latestMCVersion]);
+                }
+                versionNums.add(m.s_latestMCVersion);
+            });
+            versions.sort((a, b) => a[1] - b[1]);
+            // var options = ["option a", "option b", "option c"];
+            initMultiselectElement({
+                rootElement: getElementById("version_multiselect"),
+                options: versions,
+                setSelectedValues: (setter) => {
+                    currentSelectedVersions = setter(currentSelectedVersions);
+                    searchTextChanged(undefined, true);
+                    console.log(currentSelectedVersions);
+                },
+                currentValues: currentSelectedVersions,
+                renderValue: (val) => val[0],
+            });
+        })
         .fetchResources();
 }
+
 function formatDate(date: string | number | Date) {
     date = new Date(date);
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -218,6 +244,7 @@ function initCategoriesSidebar() {
 
     const createAllModsElement = () => {
         const elem = document.createElement("button") as CategoryElement;
+
         elem.classList.add("reset_button");
         elem.cat_id = -1;
         const title = "All mods (reset)";
@@ -469,6 +496,7 @@ function search(
 
     var fuzzysortStart = performance.now();
     var maxDownloads = Math.max(...mod_data.map((mod) => mod.downloadCount));
+    // mod_data[0].mc_versions
     // @ts-expect-error
     let results: { obj: Mod }[] = fuzzysort.go(
         queryText.trim(),
@@ -508,6 +536,18 @@ function search(
 
 registerSortListener(() => searchTextChanged(undefined, true));
 
+const filterByVersion = (results: Mod[]) => {
+    if (currentSelectedVersions && currentSelectedVersions.length > 0) {
+        const selectedVersionStrings = currentSelectedVersions.map(
+            ([str, num]) => str
+        );
+        return results.filter((mod) =>
+            mod.mc_versions.some((val) => selectedVersionStrings.includes(val))
+        );
+    }
+    return results;
+};
+
 //================
 // Input Handling
 //================
@@ -526,12 +566,12 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
             // (Ex: if the page, by default, is a mod list, not a separate page w/ a
             // search overlay)
             if (resultsPersist ?? results_persist) {
-                return search_objects;
+                return filterByVersion(search_objects);
             }
             return;
         }
 
-        return runSearch(searchValue);
+        return filterByVersion(runSearch(searchValue));
     })();
 
     if (results === undefined) {
