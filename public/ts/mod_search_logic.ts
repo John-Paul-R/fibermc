@@ -79,6 +79,7 @@ var loader = new AsyncDataResourceLoader({
     ])
     .addCompletionFunc(initCategoriesSidebar);
 var timestamp: string;
+var currentSelectedVersions: [string, number][] = [];
 function init() {
     loader
         .addCompletionFunc(() => {
@@ -121,15 +122,15 @@ function init() {
             });
             versions.sort((a, b) => a[1] - b[1]);
             // var options = ["option a", "option b", "option c"];
-            var currentSelected: [string, number][] = [];
             initMultiselectElement({
                 rootElement: getElementById("version_multiselect"),
                 options: versions,
                 setSelectedValues: (setter) => {
-                    currentSelected = setter(currentSelected);
-                    console.log(currentSelected);
+                    currentSelectedVersions = setter(currentSelectedVersions);
+                    searchTextChanged(undefined, true);
+                    console.log(currentSelectedVersions);
                 },
-                currentValues: currentSelected,
+                currentValues: currentSelectedVersions,
                 renderValue: (val) => val[0],
             });
         })
@@ -495,6 +496,7 @@ function search(
 
     var fuzzysortStart = performance.now();
     var maxDownloads = Math.max(...mod_data.map((mod) => mod.downloadCount));
+    // mod_data[0].mc_versions
     // @ts-expect-error
     let results: { obj: Mod }[] = fuzzysort.go(
         queryText.trim(),
@@ -534,6 +536,18 @@ function search(
 
 registerSortListener(() => searchTextChanged(undefined, true));
 
+const filterByVersion = (results: Mod[]) => {
+    if (currentSelectedVersions && currentSelectedVersions.length > 0) {
+        const selectedVersionStrings = currentSelectedVersions.map(
+            ([str, num]) => str
+        );
+        return results.filter((mod) =>
+            mod.mc_versions.some((val) => selectedVersionStrings.includes(val))
+        );
+    }
+    return results;
+};
+
 //================
 // Input Handling
 //================
@@ -552,12 +566,12 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
             // (Ex: if the page, by default, is a mod list, not a separate page w/ a
             // search overlay)
             if (resultsPersist ?? results_persist) {
-                return search_objects;
+                return filterByVersion(search_objects);
             }
             return;
         }
 
-        return runSearch(searchValue);
+        return filterByVersion(runSearch(searchValue));
     })();
 
     if (results === undefined) {
