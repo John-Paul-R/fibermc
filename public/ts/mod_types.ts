@@ -65,7 +65,7 @@ function sortableName(name: string) {
 /**
  * @param {string} vers
  */
-function versionOrd(vers: string) {
+export function versionOrd(vers: string) {
     if (!vers) {
         return -1;
     }

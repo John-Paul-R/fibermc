@@ -6,7 +6,7 @@ import {
     registerListener as registerSortListener,
     setSortMode,
 } from "./table_sort.js";
-import { BaseMod, Mod, baseModToMod } from "./mod_types.js";
+import { BaseMod, Mod, baseModToMod, versionOrd } from "./mod_types.js";
 import { initMultiselectElement } from "./multiselect.js";
 
 export {
@@ -102,6 +102,11 @@ function init() {
                 sortField: searchOptions.sortField,
                 sortDirection: searchOptions.sortDirection,
             });
+            currentSelectedVersions =
+                searchOptions.versions?.map(
+                    (str) => [str, versionOrd(str)] as [string, number]
+                ) ?? [];
+            console.log(searchOptions, currentSelectedVersions);
             searchTextChanged(undefined);
             registerSortListener(({ sortMode: sortField, sortDirection }) => {
                 updateUrlFromSearchOptions({
@@ -122,16 +127,22 @@ function init() {
             });
             versions.sort((a, b) => a[1] - b[1]);
             // var options = ["option a", "option b", "option c"];
+            getSearchOptionsFromUrl().versions;
             initMultiselectElement({
                 rootElement: getElementById("version_multiselect"),
                 options: versions,
                 setSelectedValues: (setter) => {
                     currentSelectedVersions = setter(currentSelectedVersions);
                     searchTextChanged(undefined, true);
+                    updateUrlFromSearchOptions({
+                        ...getSearchOptionsFromState(),
+                    });
+
                     console.log(currentSelectedVersions);
                 },
                 currentValues: currentSelectedVersions,
                 renderValue: (val) => val[0],
+                key: (val) => val[1], // gets the version in num form
             });
         })
         .fetchResources();
@@ -361,6 +372,7 @@ export type SearchOptions = Readonly<{
     sortDirection?: "asc" | "desc";
     categoryIncludes?: string[];
     categoryExcludes?: string[];
+    versions?: string[];
 }>;
 
 // var searchOptions: SearchOptions;
@@ -385,6 +397,7 @@ function getSearchOptionsFromState(): SearchOptions {
         categoryExcludes,
         sortField: sortState.sortMode,
         sortDirection: sortState.sortDirection,
+        versions: currentSelectedVersions.map(([str, num]) => str),
     };
 }
 
@@ -442,6 +455,14 @@ function updateUrlFromSearchOptions(options: SearchOptions) {
             }
         }
 
+        {
+            if (options.versions && options.versions.length > 0) {
+                searchParams.set("versions", options.versions.join("|"));
+            } else {
+                searchParams.delete("versions");
+            }
+        }
+
         const queryAsText = searchParams.toString();
         const newRelativePathQuery =
             window.location.pathname +
@@ -469,6 +490,8 @@ function getSearchOptionsFromUrl(): SearchOptions {
         sortDirection:
             (searchParams.get("sortDirection") as "asc" | "desc" | undefined) ??
             undefined,
+        // `|| undefined` to disallow empty string ('')
+        versions: searchParams.get("versions")?.split("|") || undefined,
     };
 }
 
