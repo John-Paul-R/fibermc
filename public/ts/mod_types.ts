@@ -44,18 +44,27 @@ export type Author = {
 const searchableAuthors = (authors: Author[]) =>
     authors.map((author) => author.name.toLowerCase()).join(",");
 
-/**
- * @param {string} name
- */
-function formatName(name: string) {
-    return name
-        .trim()
-        .replace(
-            /[\[({][^\[{(\n]*(?<![a-z])(fabric)(?![a-z])[^)\]}\n]*[)\]}]/gi,
-            ""
-        )
-        .trim();
+var formatName: (name: string) => string;
+try {
+    // Safari doesn't support lookbehinds lol
+    /**
+     * @param {string} name
+     */
+    formatName = function formatName(name: string) {
+        return name
+            .trim()
+            .replace(
+                /[\[({][^\[{(\n]*(?<![a-z])(fabric)(?![a-z])[^)\]}\n]*[)\]}]/gi,
+                ""
+            )
+            .trim();
+    };
+} catch (ex) {
+    formatName = function formatName(name: string) {
+        return name.trim();
+    };
 }
+
 /**
  * @param {string} name
  */
