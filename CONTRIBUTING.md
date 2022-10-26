@@ -1,4 +1,6 @@
 
+WARN: This is outdated, and may not work
+
 # Contributing
 
 Code contributions are more than welcome. To get a local dev version of fibermc running:
