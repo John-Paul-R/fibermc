@@ -119,31 +119,69 @@ function init() {
         .addCompletionFunc(() => {
             const versionNums = new Set<number>();
             const versions: [string, number][] = [];
-            mod_data.forEach((m) => {
+            for (let i = 0; i < mod_data.length; i++) {
+                const m = mod_data[i];
                 if (!versionNums.has(m.s_latestMCVersion)) {
                     versions.push([m.latestMCVersion, m.s_latestMCVersion]);
                 }
                 versionNums.add(m.s_latestMCVersion);
-            });
-            versions.sort((a, b) => a[1] - b[1]);
+            }
+
+            versions.sort((a, b) => b[1] - a[1]); // descending
             // var options = ["option a", "option b", "option c"];
             getSearchOptionsFromUrl().versions;
-            initMultiselectElement({
-                rootElement: getElementById("version_multiselect"),
-                options: versions,
-                setSelectedValues: (setter) => {
-                    currentSelectedVersions = setter(currentSelectedVersions);
-                    searchTextChanged(undefined, true);
-                    updateUrlFromSearchOptions({
-                        ...getSearchOptionsFromState(),
-                    });
 
-                    console.log(currentSelectedVersions);
-                },
-                currentValues: currentSelectedVersions,
-                renderValue: (val) => val[0],
-                key: (val) => val[1], // gets the version in num form
-            });
+            const showSnapshotsLabel = document.createElement('label');
+            showSnapshotsLabel.textContent = "show snapshots"
+            showSnapshotsLabel.classList.add('button');
+            const showSnapshotsCheckbox = document.createElement('input');
+            showSnapshotsCheckbox.type = 'checkbox';
+            showSnapshotsCheckbox.id = "snapshot_toggle";
+            const getSnapshotsLabel = () => {
+                showSnapshotsLabel.textContent = "show snapshots"
+                showSnapshotsLabel.appendChild(showSnapshotsCheckbox);
+                return showSnapshotsLabel;
+            };
+
+            const setSelectedVersions = (newVersions: [string, number][]) => {
+                currentSelectedVersions = newVersions;
+                searchTextChanged(undefined, true);
+                updateUrlFromSearchOptions({
+                    ...getSearchOptionsFromState(),
+                });
+
+                console.log(currentSelectedVersions);
+            };
+            const initVersionsMultiselect = (versionsForMultiselect: [string, number][]) => {
+                initMultiselectElement({
+                    rootElement: getElementById("version_multiselect"),
+                    options: versionsForMultiselect,
+                    setSelectedValues: (setter) => {
+                        setSelectedVersions(setter(currentSelectedVersions))
+                    },
+                    currentValues: currentSelectedVersions,
+                    renderValue: (val) => val[0],
+                    key: (val) => val[1], // gets the version in num form,
+                    leadingChildren: [getSnapshotsLabel()]
+                });
+            }
+            const snapshotRegex = /[a-z]/i;
+            initVersionsMultiselect(versions.filter(v => !snapshotRegex.test(v[0])));
+
+            showSnapshotsCheckbox.addEventListener('change', (e) => {
+                const shouldShowSnapshots = (e.target as HTMLInputElement).checked;
+                clearInner(getElementById("version_multiselect"));
+
+                const versionsForMultiselect = shouldShowSnapshots
+                    ? versions
+                    : versions.filter(v => !snapshotRegex.test(v[0]));
+
+                setSelectedVersions(shouldShowSnapshots
+                    ? currentSelectedVersions
+                    : currentSelectedVersions.filter(v => !snapshotRegex.test(v[0])));
+                initVersionsMultiselect(versionsForMultiselect);
+                console.log(shouldShowSnapshots, versionsForMultiselect, versions)
+            })
         })
         .fetchResources();
 }

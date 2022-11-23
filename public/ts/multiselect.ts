@@ -17,6 +17,7 @@ type MultiSelectProps<TValue, TKey> = Readonly<{
     currentValues: TValue[] | undefined;
     renderValue: (val: TValue) => string;
     key?: (val: TValue) => TKey;
+    leadingChildren?: HTMLElement[]
 }>;
 
 function uniqueBy<T, TKey>(arr: T[], key: (val: T) => TKey): T[] {
@@ -30,6 +31,7 @@ export function initMultiselectElement<TValue, TKey>({
     currentValues,
     renderValue,
     key,
+    leadingChildren
 }: MultiSelectProps<TValue, TKey>) {
     const root = _rootElement as FiberElement;
     const equals = (a: TValue, b: TValue) => (key ? key(a) == key(b) : a == b);
@@ -41,6 +43,8 @@ export function initMultiselectElement<TValue, TKey>({
 
     _rootElement.style.maxHeight = "60vh";
     _rootElement.style.overflow = "auto";
+
+    leadingChildren?.forEach(el => root.appendChild(el));
 
     options
         .map((optionValue) => {
@@ -75,15 +79,10 @@ export function initMultiselectElement<TValue, TKey>({
                         ..._rootElement.children,
                     ] as MultiSelectValueElement<TValue>[]
                 ).forEach((el) => {
-                    if (
-                        newValues?.some((val) =>
-                            equals(val, el._fibermc_optionValue)
-                        )
-                    ) {
-                        el._fibermc_setChecked(true);
-                    } else {
-                        el._fibermc_setChecked(false);
-                    }
+                    const isSelected = newValues.some((val) =>
+                        equals(val, el._fibermc_optionValue)
+                    );
+                    el._fibermc_setChecked(isSelected);
                 });
                 console.log(e);
             };

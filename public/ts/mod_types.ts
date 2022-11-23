@@ -62,6 +62,8 @@ function formatName(name: string) {
 function sortableName(name: string) {
     return name.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
+
+const explicitlyUnhandledVersionsRegex = /^(\d\dw|[a-z])/;
 /**
  * @param {string} vers
  */
@@ -69,9 +71,16 @@ export function versionOrd(vers: string) {
     if (!vers) {
         return -1;
     }
-    const nums = vers.split(/[.\-]/);
-    let weight = 100000;
+
     let out = 0;
+    let weight = 100_000;
+
+    if (explicitlyUnhandledVersionsRegex.test(vers)) {
+        // Knock things that we can't fully parse to after the ones we can.
+        out = -1 * weight * 10_000;
+    }
+
+    const nums = vers.split(/[.\-]/);
     for (const x of nums) {
         const handleStr = (
             baseStr: string,

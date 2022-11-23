@@ -450,6 +450,13 @@ input.searchField::placeholder {
   z-index: 5;
 }
 
+#version_multiselect {
+  cursor: default;
+}
+#version_multiselect * {
+  cursor: pointer;
+}
+
 :root {
   --spacing-amount: 16px;
   --shadow:0 0px 8px rgba(var(--color-text-rgb), 0.15);
