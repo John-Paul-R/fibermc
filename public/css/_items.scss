@@ -136,7 +136,7 @@
 .end_container {
     flex: 1;
     display: grid;
-    grid-template-columns: auto 32px;
+    grid-template-columns: auto 34px;
     grid-template-rows: 1fr 1fr;
     flex-wrap: nowrap;
     /* width: 33%; */
@@ -145,6 +145,14 @@
     
     & .item_categories {
         grid-row: 1 / 3;
+    }
+
+    & .icon_button:nth-child(2) {
+        align-self: end;
+    }
+
+    & .icon_button:nth-child(3) {
+        align-self: start;
     }
 }
 
