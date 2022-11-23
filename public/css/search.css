@@ -447,6 +447,7 @@ input.searchField::placeholder {
 .hover_dropdown:hover .hover_dropdown-content,
 .hover_dropdown-content:hover {
   display: flex;
+  z-index: 5;
 }
 
 :root {
