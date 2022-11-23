@@ -94,10 +94,14 @@ export function versionOrd(vers: string) {
         strNum = handleStr(strNum, "pre", -5);
         strNum = handleStr(strNum, "rc", -4);
         strNum = strNum.replace(/[^0-9]/g, "");
+        if (strNum.length === 0) {
+            // if the token had no numeric character, stop numeric parsing
+            break;
+        }
         out += parseFloat(strNum) * weight;
         weight /= 100;
     }
-    if (nums[nums.length - 1].endsWith("-Snapshot")) {
+    if (nums[nums.length - 1].endsWith("Snapshot")) {
         out -= 1;
     }
     if (Number.isNaN(out)) {
