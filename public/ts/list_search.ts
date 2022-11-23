@@ -133,7 +133,7 @@ const formatNumberCompact = (num: number): string =>
         : baseNum.toLocaleString(undefined, numFormatOptions) + " " + suffix;
 }
 
-function createListElement(modData: Mod, includeCategories = true) {
+const listElementTemplate = (() => {
     const li = document.createElement("li");
 
     const container = document.createElement("div");
@@ -144,14 +144,14 @@ function createListElement(modData: Mod, includeCategories = true) {
     const name = document.createElement("a");
 
     const authorDiv = document.createElement("div");
-    authorDiv.setAttribute("class", "author");
 
     const categories = document.createElement("ul");
     const desc = document.createElement("p");
 
-    let startContainer;
-    let dlCount;
+    const startContainer = document.createElement("div");
+    const dlCount = document.createElement("p");
 
+    authorDiv.setAttribute("class", "author");
     li.setAttribute("class", "item");
     container.setAttribute("class", "container");
     front_container.setAttribute("class", "front_container");
@@ -159,19 +159,60 @@ function createListElement(modData: Mod, includeCategories = true) {
     name.setAttribute("class", "name");
     categories.setAttribute("class", "item_categories");
     desc.setAttribute("class", "desc");
+    dlCount.setAttribute("class", "dl_count");
+    startContainer.setAttribute("class", "start_container");
+
+    return () => {
+        const elements = {
+            li:              li             .cloneNode(true) as HTMLLIElement,
+            container:       container      .cloneNode(true) as HTMLDivElement,
+            front_container: front_container.cloneNode(true) as HTMLDivElement,
+            end_container:   end_container  .cloneNode(true) as HTMLDivElement,
+            title_container: title_container.cloneNode(true) as HTMLDivElement,
+            name:            name           .cloneNode(true) as HTMLAnchorElement,
+            authorDiv:       authorDiv      .cloneNode(true) as HTMLDivElement,
+            categories:      categories     .cloneNode(true) as HTMLUListElement,
+            desc:            desc           .cloneNode(true) as HTMLParagraphElement,
+            startContainer:  startContainer .cloneNode(true) as HTMLDivElement,
+            dlCount:         dlCount        .cloneNode(true) as HTMLParagraphElement,
+        }
+
+        // Add elements as children where they belong and return root elem
+        elements.li.appendChild(elements.startContainer);
+        elements.startContainer.appendChild(elements.dlCount);
+        elements.title_container.appendChild(elements.name);
+        elements.title_container.insertAdjacentText("beforeend", " by ");
+        elements.title_container.appendChild(elements.authorDiv);
+        elements.front_container.appendChild(elements.title_container);
+        elements.front_container.appendChild(elements.desc);
+        elements.container.appendChild(elements.front_container);
+        elements.end_container.appendChild(elements.categories);
+        elements.container.appendChild(elements.end_container);
+        elements.li.appendChild(elements.container);
+
+        return elements;
+    };
+})()
+function createListElement(modData: Mod, includeCategories = true) {
+    const {
+        li,
+        container,
+        front_container,
+        end_container,
+        title_container,
+        name,
+        authorDiv,
+        categories,
+        desc,
+        startContainer,
+        dlCount,
+    } = listElementTemplate();
+
     try {
         desc.setAttribute("data-text", modData.summary);
 
         // Add DL Count Element
-        startContainer = document.createElement("div");
-        dlCount = document.createElement("p");
-
-        dlCount.setAttribute("class", "dl_count");
-        startContainer.setAttribute("class", "start_container");
-
         dlCount.textContent = formatNumberCompact(modData.downloadCount);
-        startContainer.appendChild(dlCount);
-        li.appendChild(startContainer);
 
         // Fill content of elements
         name.textContent = modData.name;
@@ -181,9 +222,7 @@ function createListElement(modData: Mod, includeCategories = true) {
         for (const category of modData.categories) {
             // if not "Fabric"
             if (category !== fabric_category_id) {
-                const catElem = document.createElement("li");
-                catElem.textContent = CATEGORIES[category].name;
-                categories.appendChild(catElem);
+                categories.appendChild(modCategoryElements[category]());
             }
         }
         desc.textContent = modData.summary;
@@ -198,16 +237,6 @@ function createListElement(modData: Mod, includeCategories = true) {
         console.groupEnd();
     }
 
-    // Add elements as children where they belong and return root elem
-    title_container.appendChild(name);
-    title_container.insertAdjacentText("beforeend", " by ");
-    title_container.appendChild(authorDiv);
-    front_container.appendChild(title_container);
-    front_container.appendChild(desc);
-    container.appendChild(front_container);
-    end_container.appendChild(categories);
-    container.appendChild(end_container);
-    li.appendChild(container);
     return li;
 }
 
@@ -315,6 +344,19 @@ var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
 loader.addCompletionFunc(() =>
     setResultsListElement(getElementById("search_results_list"))
 );
+
+var modCategoryElements: (() => Node)[];
+loader.addCompletionFunc(() => {
+    modCategoryElements = (() => {
+        const categoryReferenceElements = CATEGORIES
+            .map(c => {
+                const catElem = document.createElement("li");
+                catElem.textContent = c.name;
+                return catElem;
+            });
+        return categoryReferenceElements.map((c) => () => c.cloneNode(true));
+    })();
+})
 
 function getLiHeight() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
