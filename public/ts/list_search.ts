@@ -132,6 +132,7 @@ const formatNumberCompact = (num: number): string =>
         ? baseNum.toFixed(0)
         : baseNum.toLocaleString(undefined, numFormatOptions) + " " + suffix;
 }
+
 function createListElement(modData: Mod, includeCategories = true) {
     const li = document.createElement("li");
 
@@ -310,27 +311,6 @@ var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
         }
     }
 };
-
-// Logic createListElement, true, LI_HEIGHT, BATCH_SIZE, createBatch
-type ModWithElem = Mod & {
-    elem: HTMLElement;
-};
-
-loader.addCompletionFunc(() => {
-    const MAX_FAILS = 100;
-    let failCount = 0;
-    for (const mod of mod_data as ModWithElem[]) {
-        try {
-            mod.elem = createListElement(mod);
-        } catch (err) {
-            console.warn(`Could not load elem for mod`);
-            failCount++;
-            if (failCount > MAX_FAILS) {
-                break;
-            }
-        }
-    }
-});
 
 loader.addCompletionFunc(() =>
     setResultsListElement(getElementById("search_results_list"))
