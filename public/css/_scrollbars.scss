@@ -5,8 +5,14 @@
 
 ::-webkit-scrollbar-thumb {
     background-color: var(--color-element-1);
-    border: 0.25rem solid var(--color-element-2);
-    border-radius: 0.5rem;
+    border-left-width: 0.25rem;
+    border-right-width: 0.25rem;
+    border-top-width: 0.08rem;
+    border-bottom-width: 0.08rem;
+    border-style: solid;
+    border-color: var(--color-element-2);
+
+    border-radius: 0.4rem;
 }
 
 ::-webkit-scrollbar {
