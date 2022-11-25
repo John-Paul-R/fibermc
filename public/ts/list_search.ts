@@ -3,7 +3,6 @@ import {
     initSearch,
     fabric_category_id,
     loader,
-    mod_data,
     CATEGORIES,
     resultsListElement,
     setResultsListElement,
@@ -213,18 +212,14 @@ const listElementTemplate = (() => {
         return elements;
     };
 })()
-function createListElement(modData: Mod, includeCategories = true) {
+function createListElement(modData: Mod) {
     const {
         li,
-        container,
-        front_container,
         end_container,
-        title_container,
         name,
         authorDiv,
         categories,
         desc,
-        startContainer,
         dlCount,
     } = listElementTemplate();
 
