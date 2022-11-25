@@ -18,6 +18,7 @@ import {
     createModrinthLinkIcon,
 } from "./platform_links.js";
 import { Mod, Author } from "./mod_types.js";
+import { formatNumberCompact } from "./number_formatter.js";
 
 var authorListPopup = (function createAuthorListDiv() {
     const contentDiv = document.createElement("div");
@@ -150,31 +151,6 @@ function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
     } else {
         authorDiv.innerText = "undefined";
     }
-}
-
-const numFormatOptions: Intl.NumberFormatOptions = {
-    maximumFractionDigits: 1,
-}
-const numFormatLookup = [
-    [1, ''],
-    [1e3, 'K'],
-    [1e6, 'M'],
-    [1e9, 'B'],
-] as const;
-const formatNumberCompact = (num: number): string =>
-{
-    const [val, suffix] =
-        num < 1e3 ? numFormatLookup[0]
-        : num < 1e6 ? numFormatLookup[1]
-        : num < 1e9 ? numFormatLookup[2]
-        : num < 1e12 ? numFormatLookup[3]
-        : numFormatLookup[0];
-
-    const baseNum = (num / val);
-
-    return val === 1
-        ? baseNum.toFixed(0)
-        : baseNum.toLocaleString(undefined, numFormatOptions) + " " + suffix;
 }
 
 const listElementTemplate = (() => {
@@ -384,6 +360,31 @@ var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
         }
     }
 };
+
+// // Logic createListElement, true, LI_HEIGHT, BATCH_SIZE, createBatch
+// type ModWithElem = Mod & {
+//     elem: HTMLElement;
+//     _elem: HTMLElement;
+//     _elemFn: () => HTMLElement;
+//     getElem: () => HTMLElement;
+// };
+//
+// loader.addCompletionFunc(() => {
+//     const MAX_FAILS = 100;
+//     let failCount = 0;
+//     for (const mod of mod_data as ModWithElem[]) {
+//         try {
+//             // mod.elem = createListElement(mod);
+//             // mod._elemFn = () => mod._elem = createListElement(mod);
+//         } catch (err) {
+//             console.warn(`Could not load elem for mod`);
+//             failCount++;
+//             if (failCount > MAX_FAILS) {
+//                 break;
+//             }
+//         }
+//     }
+// });
 
 loader.addCompletionFunc(() =>
     setResultsListElement(getElementById("search_results_list"))
