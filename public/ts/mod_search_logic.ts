@@ -49,6 +49,7 @@ type Category = {
     renderCount: () => void;
     name: string;
     modCount: number;
+    filteredModCount: number | null;
 };
 
 //==============
@@ -275,8 +276,14 @@ function applyCategorySelections() {
     CATEGORIES.map((cat) => cat.htmlElement).forEach(applyCategorySelection);
 }
 
-var setTotalModCount: (count: number) => void;
-function updateCategoryModCounts(mods: Mod[]) {
+const buildCategoryCountStr = (totalModCount: number, filteredModCount: number | null) => {
+    return filteredModCount !== null
+        ? `${filteredModCount} / ${totalModCount}`
+        : totalModCount.toString();
+};
+var setTotalModCount: (count: number | null) => void;
+
+function initCategoryModCounts(mods: Mod[]) {
     for (const category of CATEGORIES) {
         category.modCount = 0;
     }
@@ -286,8 +293,29 @@ function updateCategoryModCounts(mods: Mod[]) {
             CATEGORIES[cat_id].modCount += 1;
         }
     }
+    updateCategoryModCounts(mod_data);
+}
 
-    setTotalModCount(mods.length)
+function updateCategoryModCounts(mods: Mod[]) {
+    const selectedCategories = getSelectedCategoryIds();
+    const isFiltering = mod_data.length !== mods.length || selectedCategories.and.length > 0 || selectedCategories.not.length > 0;
+    if (isFiltering) {
+        for (const category of CATEGORIES) {
+            category.filteredModCount = 0;
+        }
+        // Mod Counts
+        for (const mod of mods) {
+            for (const cat_id of mod.categories) {
+                CATEGORIES[cat_id].filteredModCount! += 1;
+            }
+        }
+    } else {
+        for (const category of CATEGORIES) {
+            category.filteredModCount = null;
+        }
+    }
+
+    setTotalModCount(isFiltering ? mods.length : null)
     for (const category of CATEGORIES) {
         category.renderCount();
     }
@@ -327,8 +355,8 @@ function initCategoriesSidebar() {
         elem.classList.add("reset_categories_button");
 
         return {
-            setTotalModCount: (count: number) => {
-                mod_count.textContent = count.toFixed(0);
+            setTotalModCount: (count: number | null) => {
+                mod_count.textContent = buildCategoryCountStr(mod_data.length, count);
             },
         }
     };
@@ -354,14 +382,15 @@ function initCategoriesSidebar() {
                 return {
                     name: name,
                     modCount: 0,
+                    filteredModCount: null,
                     renderCount() {
-                        countElement.textContent = this.modCount.toFixed(0);
+                        countElement.textContent = buildCategoryCountStr(this.modCount, this.filteredModCount);
                     },
                     htmlElement: categoryElement,
                 };
             })
         );
-        updateCategoryModCounts(mod_data);
+        initCategoryModCounts(mod_data);
     }
 
     for (let i = 0; i < CATEGORIES.length; i++) {
