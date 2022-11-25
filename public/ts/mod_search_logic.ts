@@ -46,6 +46,7 @@ const isCategoryElement = (el: any): el is CategoryElement =>
 
 type Category = {
     htmlElement: CategoryElement;
+    renderCount: () => void;
     name: string;
     modCount: number;
 };
@@ -274,6 +275,24 @@ function applyCategorySelections() {
     CATEGORIES.map((cat) => cat.htmlElement).forEach(applyCategorySelection);
 }
 
+var setTotalModCount: (count: number) => void;
+function updateCategoryModCounts(mods: Mod[]) {
+    for (const category of CATEGORIES) {
+        category.modCount = 0;
+    }
+    // Mod Counts
+    for (const mod of mods) {
+        for (const cat_id of mod.categories) {
+            CATEGORIES[cat_id].modCount += 1;
+        }
+    }
+
+    setTotalModCount(mods.length)
+    for (const category of CATEGORIES) {
+        category.renderCount();
+    }
+}
+
 function initCategoriesSidebar() {
     //TODO Group "Selected" items?
     //TODO "select multiple" toggle
@@ -300,14 +319,21 @@ function initCategoriesSidebar() {
 
         elem.textContent = title + " ";
         const mod_count = document.createElement("span");
-        mod_count.textContent = mod_data.length.toString();
+        mod_count.textContent = mod_data.length.toFixed(0);
         elem.appendChild(mod_count);
         elem.addEventListener("click", clearFilters);
         categories_sidebar_elem.appendChild(elem);
 
         elem.classList.add("reset_categories_button");
+
+        return {
+            setTotalModCount: (count: number) => {
+                mod_count.textContent = count.toFixed(0);
+            },
+        }
     };
-    createAllModsElement();
+    const allModsElementRet = createAllModsElement();
+    setTotalModCount = allModsElementRet.setTotalModCount;
 
     const createCategoryElement = (categoryId: number): CategoryElement => {
         const cat_elem = document.createElement("button") as CategoryElement;
@@ -319,19 +345,23 @@ function initCategoriesSidebar() {
     {
         // Init CATEGORIES
         setCategories(
-            categoryNames.map((name, idx) => ({
-                name: name,
-                modCount: 0,
-                htmlElement: createCategoryElement(idx),
-            }))
-        );
+            categoryNames.map((name, idx) => {
+                const categoryElement = createCategoryElement(idx);
+                const countElement = document.createElement("span");
+                categoryElement.textContent = name + " ";
+                categoryElement.appendChild(countElement);
 
-        // Mod Counts
-        for (const mod of mod_data) {
-            for (const cat_id of mod.categories) {
-                CATEGORIES[cat_id].modCount += 1;
-            }
-        }
+                return {
+                    name: name,
+                    modCount: 0,
+                    renderCount() {
+                        countElement.textContent = this.modCount.toFixed(0);
+                    },
+                    htmlElement: categoryElement,
+                };
+            })
+        );
+        updateCategoryModCounts(mod_data);
     }
 
     for (let i = 0; i < CATEGORIES.length; i++) {
@@ -351,11 +381,7 @@ function initCategoriesSidebar() {
             continue;
         }
         const cat_elem = category.htmlElement;
-        const cat_count = document.createElement("span");
         cat_elem.selected = false;
-        cat_elem.textContent = category.name + " ";
-        cat_elem.appendChild(cat_count);
-        cat_count.textContent = category.modCount.toString();
         applyCategorySelection(cat_elem);
         cat_elem.addEventListener("click", onClick);
         categories_sidebar_elem.appendChild(cat_elem);
@@ -643,8 +669,13 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
     const sortFunc = getSortFunc();
     const finalResults =
         sortFunc !== undefined ? Array.from(results).sort(sortFunc) : results;
-    updateSearchResultsListElement(finalResults);
+    updateSearchResults(finalResults);
     // queryDisplayElement.innerText = query.target.value;
+}
+
+function updateSearchResults(results: Mod[]) {
+    updateSearchResultsListElement(results)
+    updateCategoryModCounts(results);
 }
 
 //=======
