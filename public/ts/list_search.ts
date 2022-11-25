@@ -24,6 +24,7 @@ var authorListPopup = (function createAuthorListDiv() {
     contentDiv.classList.add("hidden");
     contentDiv.classList.add("item_author_list");
     document.body.appendChild(contentDiv);
+    contentDiv.addEventListener('click', (e) => e.stopPropagation());
     return contentDiv;
 })();
 
@@ -37,13 +38,23 @@ function clearChildren(node: HTMLElement) {
     }
 }
 
+/**
+ *
+ * @param listDiv
+ * @param authors
+ * @param x
+ * @param y
+ * @param hoverTrigger if null, don't unregister any listeners
+ */
 function showAuthorList(
     listDiv: HTMLElement,
     authors: Author[],
     x: number,
     y: number,
-    triggeringElement: HTMLElement,
-    triggeringListener: (e: PointerEvent) => void
+    hoverTrigger?: {
+        element: HTMLElement,
+        listener: (e: MouseEvent) => void,
+    }
 ) {
     clearChildren(authorListPopup);
 
@@ -60,19 +71,34 @@ function showAuthorList(
         listDiv.appendChild(authorRow);
     }
 
+    let isActive = true;
     listDiv.classList.remove("hidden");
-    triggeringElement.removeEventListener("pointerover", triggeringListener);
-    listDiv.addEventListener(
-        "pointerleave",
-        (e) => {
-            listDiv.classList.add("hidden");
-            triggeringElement.addEventListener(
-                "pointerover",
-                triggeringListener
-            );
-        },
-        { once: true }
-    );
+    hoverTrigger?.element.removeEventListener("mouseover", hoverTrigger.listener);
+
+    const handleExit = () => {
+        isActive = false;
+        listDiv.classList.add("hidden");
+        hoverTrigger?.element.addEventListener(
+            "mouseover",
+            hoverTrigger.listener
+        );
+        document.body.removeEventListener('click', handleExit);
+    };
+
+    document.body.addEventListener('click', handleExit);
+
+    if (hoverTrigger) {
+        const checkForExit = () => {
+            console.log("checkforexit")
+            if (!isActive || !listDiv.matches(':hover')) {
+                console.log("exit");
+                handleExit();
+                return;
+            }
+            requestAnimationFrame(checkForExit);
+        };
+        setTimeout(() => checkForExit(), 1);
+    }
 }
 
 function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
@@ -87,7 +113,7 @@ function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
         } else {
             authorDiv.textContent = "Several People...";
 
-            const hoverListener = (e: PointerEvent) => {
+            const hoverListener = (e: MouseEvent) => {
                 const textRect = (
                     e.target as HTMLElement
                 ).getBoundingClientRect();
@@ -97,11 +123,29 @@ function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                     modData.authors,
                     textRect.x,
                     textRect.y,
-                    authorDiv,
-                    hoverListener
+                    {
+                        element: authorDiv,
+                        listener: hoverListener,
+                    },
                 );
             };
-            authorDiv.addEventListener("pointerover", hoverListener);
+            authorDiv.addEventListener("mouseover", hoverListener);
+
+            authorDiv.addEventListener("click", (e) => {
+                const textRect = (
+                    e.target as HTMLElement
+                ).getBoundingClientRect();
+                console.log("click")
+
+                showAuthorList(
+                    authorListPopup,
+                    modData.authors,
+                    textRect.x,
+                    textRect.y
+                );
+
+                e.stopPropagation();
+            });
         }
     } else {
         authorDiv.innerText = "undefined";
