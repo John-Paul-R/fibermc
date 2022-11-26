@@ -89,9 +89,7 @@ function showAuthorList(
 
     if (hoverTrigger) {
         const checkForExit = () => {
-            console.log("checkforexit")
-            if (!isActive || !listDiv.matches(':hover')) {
-                console.log("exit");
+            if (!isActive || !(listDiv.matches(':hover') || hoverTrigger.element.matches(':hover'))) {
                 handleExit();
                 return;
             }
