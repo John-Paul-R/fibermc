@@ -9,6 +9,13 @@
 @import 'versions_multiselect';
 // @import 'items';
 
+$pseudo-padding: 8px;
+$title-font-size: 21px;
+$desc-font-size: 15px;
+$desc-line-count: 3;
+$border-thickness: 1px;
+$item-height: 2 * $pseudo-padding + $title-font-size + $desc-font-size * $desc-line-count;
+
 :root {
     --spacing-amount: 16px;
     --shadow:0 0px 8px rgba(var(--color-text-rgb), 0.15);
@@ -88,6 +95,7 @@ $mobile-breakpoint: 1000px;
     div#search_results_list {
         grid-row: categories-end / list-end;
         // padding: 0;
+        --item-height: #{$item-height + 64px};
 
         // max-height: calc(100vh - (56px + var(--spacing-amount) + (8px + 42px + 8px) + 256px));
     }
@@ -164,12 +172,7 @@ $mobile-breakpoint: 1000px;
     align-items: stretch;
     justify-content: flex-start;
     flex-shrink: 0; */
-    --pseudo-padding: 8px;
-    --title-font-size: 21px;
-    --desc-font-size: 15px;
-    --desc-line-count: 3;
-    --border-thickness: 1px;
-    --item-height: calc(2 * var(--pseudo-padding) + var(--title-font-size) + var(--desc-font-size) * var(--desc-line-count));
+    --item-height: #{$item-height};
 }
 
 .item_categories > li {

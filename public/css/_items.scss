@@ -171,6 +171,14 @@
             max-height: 100%;
         }
 
+        .front_container {
+            & > :first-child {
+                .name {
+                    display: block;
+                }
+            }
+        }
+
         & .end_container {
             display: block;
             & > a {
@@ -192,11 +200,14 @@
 .item.detailed {
     display: grid;
     grid-template-columns: minmax(256px, 1fr) 1fr;
-    grid-template-rows: var(--item-height) 32px; 
+    grid-template-rows: var(--item-height) 32px;
+    @media only screen and (max-width: 1000px) { // $mobile-breakpoint (search.scss)
+        grid-template-rows: calc(var(--item-height) - 16px) 48px;
+    }
     grid-gap: 4px;
     padding-top: 8px;
     align-items: stretch;
-    height: calc(var(--item-height) + 32px+ 4px + 8px);
+    height: calc(var(--item-height) + 48px+ 4px + 8px);
 
     .front_container,
     .end_container {

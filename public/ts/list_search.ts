@@ -401,51 +401,14 @@ loader.addCompletionFunc(() => {
 function getLiHeight() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
-    const pseudoPadding = parseInt(
-        fmt(style.getPropertyValue("--pseudo-padding"))
-    );
-    const titleFontSize = parseInt(
-        fmt(style.getPropertyValue("--title-font-size"))
-    );
-    const descFontSize = parseInt(
-        fmt(style.getPropertyValue("--desc-font-size"))
-    );
-    const descLineCount = parseInt(style.getPropertyValue("--desc-line-count"));
-    const borderThickness = parseInt(
-        style.getPropertyValue("--border-thickness")
-    );
-    return (
-        2 * pseudoPadding +
-        2 * borderThickness +
-        titleFontSize +
-        descFontSize * descLineCount
-    );
+    return parseInt(fmt(style.getPropertyValue('--item-height')));
 }
 
 function getLiHeightDetailed() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
-    const pseudoPadding = parseInt(
-        fmt(style.getPropertyValue("--pseudo-padding"))
-    );
-    const titleFontSize = parseInt(
-        fmt(style.getPropertyValue("--title-font-size"))
-    );
-    const descFontSize = parseInt(
-        fmt(style.getPropertyValue("--desc-font-size"))
-    );
-    const descLineCount = parseInt(style.getPropertyValue("--desc-line-count"));
-    const borderThickness = parseInt(
-        style.getPropertyValue("--border-thickness")
-    );
-    return (
-        2 * pseudoPadding +
-        2 * borderThickness +
-        titleFontSize +
-        descFontSize * descLineCount +
-        36 +
-        8
-    );
+
+    return parseInt(fmt(style.getPropertyValue('--item-height'))) + 36 + 8 + 2;
 }
 
 var viewModes = [createListElement, createListElementDetailed];
@@ -469,6 +432,8 @@ function cycleListViewModes() {
     );
     updateViewModes();
 }
+
+window.matchMedia("@media only screen and (max-width: 1000px)").onchange = updateViewModes;
 
 executeIfWhenDOMContentLoaded(() => {
     getElementById("list_view_cycle_button").addEventListener(
