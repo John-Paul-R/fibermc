@@ -45,6 +45,9 @@ export function initMultiselectElement<TValue, TKey>({
     _rootElement.style.overflow = "auto";
 
     leadingChildren?.forEach(el => root.appendChild(el));
+    const getOptionElements = () => [
+        ..._rootElement.children,
+    ].slice(leadingChildren?.length ?? 0) as MultiSelectValueElement<TValue>[];
 
     options
         .map((optionValue) => {
@@ -74,11 +77,7 @@ export function initMultiselectElement<TValue, TKey>({
                     }
                     return newValues;
                 });
-                (
-                    [
-                        ..._rootElement.children,
-                    ] as MultiSelectValueElement<TValue>[]
-                ).forEach((el) => {
+                getOptionElements().forEach((el) => {
                     const isSelected = newValues.some((val) =>
                         equals(val, el._fibermc_optionValue)
                     );
