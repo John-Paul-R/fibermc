@@ -399,7 +399,7 @@ loader.addCompletionFunc(() => {
 function getLiHeight() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
-    return parseInt(fmt(style.getPropertyValue('--item-height')));
+    return parseInt(fmt(style.getPropertyValue('--item-height'))) + 2;
 }
 
 function getLiHeightDetailed() {
