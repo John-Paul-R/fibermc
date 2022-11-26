@@ -613,10 +613,18 @@ footer {
     display: block;
   }
   .item .end_container {
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "cat cat" "cat cat" "cf  mr";
   }
-  .item .end_container > a {
-    display: none;
+  .item .end_container .item_categories {
+    grid-column: 1/3;
+    grid-row: 1/3;
+  }
+  .item .end_container > a.icon_button {
+    align-self: center;
+    justify-self: center;
   }
 
   .item .start_container {
