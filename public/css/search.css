@@ -528,7 +528,7 @@ footer {
   #content_center {
     width: calc(100% - 1rem);
     max-height: 100%;
-    grid-template-rows: [searchbar-start] 58px [searchbar-end] min-content [categories-end] auto [list-end];
+    grid-template-rows: [searchbar-start] 58px [searchbar-end] min-content [categories-end] auto [list-end] min-content;
     grid-template-columns: 100%;
     justify-items: center;
     justify-content: center;
