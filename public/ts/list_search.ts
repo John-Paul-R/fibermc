@@ -431,7 +431,9 @@ function cycleListViewModes() {
     updateViewModes();
 }
 
-window.matchMedia("@media only screen and (max-width: 1000px)").onchange = updateViewModes;
+window.matchMedia("only screen and (max-width: 1000px)").onchange = () => {
+    updateViewModes();
+}
 
 executeIfWhenDOMContentLoaded(() => {
     getElementById("list_view_cycle_button").addEventListener(
