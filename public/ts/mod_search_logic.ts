@@ -168,7 +168,12 @@ function init() {
                 });
             }
             const snapshotRegex = /[a-z]/i;
-            initVersionsMultiselect(versions.filter(v => !snapshotRegex.test(v[0])));
+            const anyAreSnapshots = (versionsToTest: [string, number][]) =>
+                versionsToTest.some(v => !snapshotRegex.test(v[0]))
+            initVersionsMultiselect(
+                anyAreSnapshots(currentSelectedVersions)
+                    ? versions
+                    : versions.filter(v => !snapshotRegex.test(v[0])));
 
             showSnapshotsCheckbox.addEventListener('change', (e) => {
                 const shouldShowSnapshots = (e.target as HTMLInputElement).checked;
