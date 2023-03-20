@@ -662,9 +662,21 @@ const filterByVersion = (results: Mod[]) => {
         const selectedVersionStrings = currentSelectedVersions.map(
             ([str, num]) => str
         );
-        return results.filter((mod) =>
-            mod.mc_versions.some((val) => selectedVersionStrings.includes(val))
-        );
+
+        switch ((window as any).fiberVersionFilterMode) {
+            case "allMatch":
+                return results.filter((mod) =>
+                    mod.mc_versions.every((val) => selectedVersionStrings.includes(val))
+                );
+            case "noneMatch":
+                return results.filter((mod) =>
+                    mod.mc_versions.every((val) => !selectedVersionStrings.includes(val))
+                );
+            default:
+                return results.filter((mod) =>
+                    mod.mc_versions.some((val) => selectedVersionStrings.includes(val))
+                );
+        }
     }
     return results;
 };
