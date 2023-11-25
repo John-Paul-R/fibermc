@@ -158,6 +158,114 @@ function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
     }
 }
 
+// program to implement a queue data structure
+class Queue<T> {
+    private queue: T[];
+    constructor() {
+        this.queue = [];
+    }
+
+    enqueue(element: T) {
+        // add element
+        return this.queue.push(element);
+    }
+
+    dequeue() {
+        if (this.queue.length > 0) {
+            return this.queue.shift(); // remove first element
+        }
+    }
+
+    peek() {
+        return this.queue[this.queue.length - 1];
+    }
+
+    size() {
+        return this.queue.length;
+    }
+
+    isEmpty() {
+        return this.queue.length == 0;
+    }
+
+    clear() {
+        this.queue = [];
+    }
+}
+
+type PooledObject<T> = T & {
+    free: () => void;
+};
+// prettier-ignore
+type ListElementTemplate = {
+    li:              HTMLLIElement,
+    container:       HTMLDivElement,
+    front_container: HTMLDivElement,
+    end_container:   HTMLDivElement,
+    title_container: HTMLDivElement,
+    name:            HTMLAnchorElement,
+    authorDiv:       HTMLDivElement,
+    categories:      HTMLUListElement,
+    desc:            HTMLParagraphElement,
+    startContainer:  HTMLDivElement,
+    dlCount:         HTMLParagraphElement,
+}
+
+class ObjectPool<T, TKey extends object = object> {
+    private availableObjects: Queue<T> = new Queue();
+    private listElementObjectPool: WeakMap<TKey, PooledObject<T>> =
+        new WeakMap();
+    private creationFn: (key: TKey) => PooledObject<T>;
+    private initFn: (obj: PooledObject<T>, key: TKey) => void;
+
+    constructor(
+        creationFn: (key: TKey) => T,
+        initFn: (obj: PooledObject<T>, key: TKey) => void
+    ) {
+        this.creationFn = (key: TKey) => {
+            return this._addFreeFn(key, creationFn(key));
+        };
+        this.initFn = initFn;
+    }
+
+    private _addFreeFn(key: TKey, obj: T): PooledObject<T> {
+        (obj as PooledObject<T>).free = () => {
+            // @ts-expect-error
+            obj.free = undefined;
+            this.listElementObjectPool.delete(key);
+            this.availableObjects.enqueue(obj);
+        };
+        return obj as PooledObject<T>;
+    }
+
+    // to be run when not found in the active object pool for the key
+    private _create(key: TKey): PooledObject<T> {
+        let obj: PooledObject<T>;
+        if (this.availableObjects.isEmpty()) {
+            obj = this.creationFn(key);
+            // console.log("create!");
+        } else {
+            obj = this._addFreeFn(key, this.availableObjects.dequeue()!);
+            // console.log("object pool!");
+        }
+        this.initFn(obj, key);
+        return obj;
+    }
+
+    public create(key: TKey) {
+        const cachedValue = this.listElementObjectPool.get(key);
+        if (cachedValue) {
+            // console.log("cache!");
+            return cachedValue;
+        }
+        const createdValue = this._create(key);
+
+        this.listElementObjectPool.set(key, createdValue);
+
+        return createdValue;
+    }
+}
+
 const listElementTemplate = (() => {
     const li = document.createElement("li");
 
@@ -219,9 +327,10 @@ const listElementTemplate = (() => {
         return elements;
     };
 })();
-function createListElement(modData: Mod) {
+
+function fillListElementData(elements: ListElementTemplate, modData: Mod) {
     const { li, end_container, name, authorDiv, categories, desc, dlCount } =
-        listElementTemplate();
+        elements;
 
     try {
         desc.setAttribute("data-text", modData.summary);
@@ -251,8 +360,21 @@ function createListElement(modData: Mod) {
         console.warn(modData);
         console.groupEnd();
     }
+}
 
-    return li;
+const listElemObjectPool = new ObjectPool<ListElementTemplate, Mod>(
+    (modData) => {
+        const elements = listElementTemplate();
+        fillListElementData(elements, modData);
+        return elements;
+    },
+    (elements, modData) => {
+        (elements.li as any).free = elements.free;
+    }
+);
+
+function createListElement(modData: Mod) {
+    return listElemObjectPool.create(modData).li;
 }
 
 function createListElementDetailed(modData: Mod) {

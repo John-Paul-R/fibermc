@@ -1140,6 +1140,9 @@ function clear(node: Node) {
 }
 
 function clearShallow(node: HTMLElement) {
+    for (const c of node.childNodes) {
+        (c as any).free?.();
+    }
     node.replaceChildren();
 }
 
