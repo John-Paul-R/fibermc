@@ -133,7 +133,6 @@ function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                 const textRect = (
                     e.target as HTMLElement
                 ).getBoundingClientRect();
-                console.log("click")
 
                 showAuthorList(
                     authorListPopup,
