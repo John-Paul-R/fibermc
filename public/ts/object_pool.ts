@@ -67,10 +67,10 @@ export class ObjectPool<T, TKey extends object = object> {
         let obj: PooledObject<T>;
         if (this.availableObjects.isEmpty()) {
             obj = this.creationFn(key);
-            // console.log("create!");
+            // console.log("create!", obj);
         } else {
             obj = this._addFreeFn(key, this.availableObjects.dequeue()!);
-            // console.log("object pool!");
+            // console.log("object pool!", (key as any).name, obj);
         }
         this.initFn(obj, key);
         return obj;
@@ -79,7 +79,7 @@ export class ObjectPool<T, TKey extends object = object> {
     public create(key: TKey) {
         const cachedValue = this.listElementObjectPool.get(key);
         if (cachedValue) {
-            // console.log("cache!");
+            // console.log("cache!", cachedValue);
             return cachedValue;
         }
         const createdValue = this._create(key);

@@ -117,6 +117,9 @@ class DetailedListElementRendererImpl extends ListElementRenderer<
         } = elements;
 
         try {
+            categories.replaceChildren();
+            authorDiv.replaceChildren();
+
             dlCount.textContent = modData.downloadCount.toLocaleString();
             dateUpdated.textContent = new Date(
                 modData.dateModified
@@ -138,10 +141,12 @@ class DetailedListElementRendererImpl extends ListElementRenderer<
             }
             desc.textContent = modData.summary;
 
-            end_container.appendChild(createCurseLinkIcon(modData));
-            end_container.appendChild(createModrinthLinkIcon(modData));
             // Add elements as children where they belong and return root elem
-            end_container.appendChild(categories);
+            end_container.replaceChildren(
+                createCurseLinkIcon(modData),
+                createModrinthLinkIcon(modData),
+                categories
+            );
         } catch (err) {
             console.group();
             console.warn("Failed to fill mod info.");

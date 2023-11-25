@@ -100,6 +100,9 @@ class DefaultListElementRendererImpl extends ListElementRenderer<
             elements;
 
         try {
+            authorDiv.replaceChildren();
+            categories.replaceChildren();
+
             desc.setAttribute("data-text", modData.summary);
 
             // Add DL Count Element
@@ -118,8 +121,11 @@ class DefaultListElementRendererImpl extends ListElementRenderer<
             }
             desc.textContent = modData.summary;
 
-            end_container.appendChild(createCurseLinkIcon(modData));
-            end_container.appendChild(createModrinthLinkIcon(modData));
+            end_container.replaceChildren(
+                categories,
+                createCurseLinkIcon(modData),
+                createModrinthLinkIcon(modData)
+            );
         } catch (err) {
             console.group();
             console.warn("Failed to fill mod info.");

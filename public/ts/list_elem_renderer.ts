@@ -10,11 +10,11 @@ export abstract class ListElementRenderer<
     constructor() {
         this.objectPool = new ObjectPool(
             (modData) => {
-                const elements = this.listElementTemplate();
-                this.fillListElementData(elements, modData);
-                return elements;
+                return this.listElementTemplate();
             },
-            () => {}
+            (elements, modData) => {
+                this.fillListElementData(elements, modData);
+            }
         );
     }
 
