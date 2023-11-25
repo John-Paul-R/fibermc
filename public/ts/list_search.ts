@@ -1,9 +1,9 @@
 import { DefaultListElementRenderer } from "./list_elem_default.js";
-import { fillAuthorDiv, setModCategoryElements } from "./list_item_shared.js";
+import { DetailedListElementRenderer } from "./list_elem_detailed.js";
+import { setModCategoryElements } from "./list_item_shared.js";
 import {
     CATEGORIES,
     batch_containers,
-    fabric_category_id,
     init,
     initSearch,
     loader,
@@ -12,98 +12,14 @@ import {
     setResultsListElement,
 } from "./mod_search_logic.js";
 import { Mod } from "./mod_types.js";
-import {
-    createCurseLinkIcon,
-    createModrinthLinkIcon,
-} from "./platform_links.js";
 import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
 
-const createListElement: (modData: Mod) => HTMLLIElement =
-    DefaultListElementRenderer();
+type ListElementRenderFn = (modData: Mod) => HTMLLIElement;
 
-function createListElementDetailed(modData: Mod) {
-    const li = document.createElement("li");
+const createListElement: ListElementRenderFn = DefaultListElementRenderer();
 
-    const front_container = document.createElement("div");
-    const end_container = document.createElement("div");
-
-    const title_container = document.createElement("div");
-    const name = document.createElement("a");
-    const authorDiv = document.createElement("div");
-    authorDiv.setAttribute("class", "author");
-
-    const categories = document.createElement("ul");
-    const desc = document.createElement("p");
-
-    let botContainer;
-
-    li.classList.add("item");
-    li.classList.add("detailed");
-    li.classList.add("container");
-    front_container.classList.add("front_container");
-    end_container.classList.add("end_container");
-    name.classList.add("name");
-    categories.classList.add("item_categories");
-    desc.classList.add("desc");
-
-    try {
-        botContainer = document.createElement("div");
-        let dlCount = document.createElement("div");
-        let dateUpdated = document.createElement("div");
-        let latestSupportedVers = document.createElement("div");
-
-        dlCount.classList.add("dl_count");
-        dateUpdated.classList.add("date_updated");
-        latestSupportedVers.classList.add("latest_version");
-        botContainer.classList.add("bot_container");
-
-        dlCount.textContent = modData.downloadCount.toLocaleString();
-        dateUpdated.textContent = new Date(
-            modData.dateModified
-        ).toLocaleDateString();
-        latestSupportedVers.textContent = modData.latestMCVersion;
-
-        botContainer.appendChild(dlCount);
-        botContainer.appendChild(dateUpdated);
-        botContainer.appendChild(latestSupportedVers);
-
-        // Fill content of elements
-        name.textContent = modData.name;
-
-        fillAuthorDiv(authorDiv, modData);
-
-        for (const category of modData.categories) {
-            // if not "Fabric"
-            if (category !== fabric_category_id) {
-                const catElem = document.createElement("li");
-                catElem.textContent = CATEGORIES[category].name;
-                categories.appendChild(catElem);
-            }
-        }
-        desc.textContent = modData.summary;
-
-        end_container.appendChild(createCurseLinkIcon(modData));
-        end_container.appendChild(createModrinthLinkIcon(modData));
-        // Add elements as children where they belong and return root elem
-        title_container.appendChild(name);
-        title_container.insertAdjacentText("beforeend", " by ");
-        title_container.appendChild(authorDiv);
-        front_container.appendChild(title_container);
-        front_container.appendChild(desc);
-        li.appendChild(front_container);
-        end_container.appendChild(categories);
-        li.appendChild(end_container);
-        li.appendChild(botContainer);
-    } catch (err) {
-        console.group();
-        console.warn("Failed to fill mod info.");
-        console.warn(err);
-        console.warn(modData);
-        console.groupEnd();
-    }
-
-    return li;
-}
+const createListElementDetailed: ListElementRenderFn =
+    DetailedListElementRenderer();
 
 var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
     for (const result_data of data_batches[batchIdx]) {
