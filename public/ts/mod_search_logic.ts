@@ -57,9 +57,10 @@ type Category = {
 //==============
 console.log("hostname", window.location.hostname);
 const apiUrl = `https://${
-    window.location.hostname === "localhost"
-        ? "localhost:5001"
-        : window.location.hostname
+    // window.location.hostname === "localhost"
+    //     ? "localhost:5001"
+    //     : window.location.hostname
+    "dev.fibermc.com"
 }/api/v1.0`;
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
@@ -133,14 +134,14 @@ function init() {
             // var options = ["option a", "option b", "option c"];
             getSearchOptionsFromUrl().versions;
 
-            const showSnapshotsLabel = document.createElement('label');
-            showSnapshotsLabel.textContent = "show snapshots"
-            showSnapshotsLabel.classList.add('button');
-            const showSnapshotsCheckbox = document.createElement('input');
-            showSnapshotsCheckbox.type = 'checkbox';
+            const showSnapshotsLabel = document.createElement("label");
+            showSnapshotsLabel.textContent = "show snapshots";
+            showSnapshotsLabel.classList.add("button");
+            const showSnapshotsCheckbox = document.createElement("input");
+            showSnapshotsCheckbox.type = "checkbox";
             showSnapshotsCheckbox.id = "snapshot_toggle";
             const getSnapshotsLabel = () => {
-                showSnapshotsLabel.textContent = "show snapshots"
+                showSnapshotsLabel.textContent = "show snapshots";
                 showSnapshotsLabel.appendChild(showSnapshotsCheckbox);
                 return showSnapshotsLabel;
             };
@@ -154,41 +155,53 @@ function init() {
 
                 console.log(currentSelectedVersions);
             };
-            const initVersionsMultiselect = (versionsForMultiselect: [string, number][]) => {
+            const initVersionsMultiselect = (
+                versionsForMultiselect: [string, number][]
+            ) => {
                 initMultiselectElement({
                     rootElement: getElementById("version_multiselect"),
                     options: versionsForMultiselect,
                     setSelectedValues: (setter) => {
-                        setSelectedVersions(setter(currentSelectedVersions))
+                        setSelectedVersions(setter(currentSelectedVersions));
                     },
                     currentValues: currentSelectedVersions,
                     renderValue: (val) => val[0],
                     key: (val) => val[1], // gets the version in num form,
-                    leadingChildren: [getSnapshotsLabel()]
+                    leadingChildren: [getSnapshotsLabel()],
                 });
-            }
+            };
             const snapshotRegex = /[a-z]/i;
             const anyAreSnapshots = (versionsToTest: [string, number][]) =>
-                versionsToTest.some(v => !snapshotRegex.test(v[0]))
+                versionsToTest.some((v) => !snapshotRegex.test(v[0]));
             initVersionsMultiselect(
                 anyAreSnapshots(currentSelectedVersions)
                     ? versions
-                    : versions.filter(v => !snapshotRegex.test(v[0])));
+                    : versions.filter((v) => !snapshotRegex.test(v[0]))
+            );
 
-            showSnapshotsCheckbox.addEventListener('change', (e) => {
-                const shouldShowSnapshots = (e.target as HTMLInputElement).checked;
+            showSnapshotsCheckbox.addEventListener("change", (e) => {
+                const shouldShowSnapshots = (e.target as HTMLInputElement)
+                    .checked;
                 clearInner(getElementById("version_multiselect"));
 
                 const versionsForMultiselect = shouldShowSnapshots
                     ? versions
-                    : versions.filter(v => !snapshotRegex.test(v[0]));
+                    : versions.filter((v) => !snapshotRegex.test(v[0]));
 
-                setSelectedVersions(shouldShowSnapshots
-                    ? currentSelectedVersions
-                    : currentSelectedVersions.filter(v => !snapshotRegex.test(v[0])));
+                setSelectedVersions(
+                    shouldShowSnapshots
+                        ? currentSelectedVersions
+                        : currentSelectedVersions.filter(
+                              (v) => !snapshotRegex.test(v[0])
+                          )
+                );
                 initVersionsMultiselect(versionsForMultiselect);
-                console.log(shouldShowSnapshots, versionsForMultiselect, versions)
-            })
+                console.log(
+                    shouldShowSnapshots,
+                    versionsForMultiselect,
+                    versions
+                );
+            });
         })
         .fetchResources();
 }
@@ -281,7 +294,10 @@ function applyCategorySelections() {
     CATEGORIES.map((cat) => cat.htmlElement).forEach(applyCategorySelection);
 }
 
-const buildCategoryCountStr = (totalModCount: number, filteredModCount: number | null) => {
+const buildCategoryCountStr = (
+    totalModCount: number,
+    filteredModCount: number | null
+) => {
     return filteredModCount !== null
         ? `${filteredModCount} / ${totalModCount}`
         : totalModCount.toString();
@@ -303,7 +319,10 @@ function initCategoryModCounts(mods: Mod[]) {
 
 function updateCategoryModCounts(mods: Mod[]) {
     const selectedCategories = getSelectedCategoryIds();
-    const isFiltering = mod_data.length !== mods.length || selectedCategories.and.length > 0 || selectedCategories.not.length > 0;
+    const isFiltering =
+        mod_data.length !== mods.length ||
+        selectedCategories.and.length > 0 ||
+        selectedCategories.not.length > 0;
     if (isFiltering) {
         for (const category of CATEGORIES) {
             category.filteredModCount = 0;
@@ -320,7 +339,7 @@ function updateCategoryModCounts(mods: Mod[]) {
         }
     }
 
-    setTotalModCount(isFiltering ? mods.length : null)
+    setTotalModCount(isFiltering ? mods.length : null);
     for (const category of CATEGORIES) {
         category.renderCount();
     }
@@ -361,9 +380,12 @@ function initCategoriesSidebar() {
 
         return {
             setTotalModCount: (count: number | null) => {
-                mod_count.textContent = buildCategoryCountStr(mod_data.length, count);
+                mod_count.textContent = buildCategoryCountStr(
+                    mod_data.length,
+                    count
+                );
             },
-        }
+        };
     };
     const allModsElementRet = createAllModsElement();
     setTotalModCount = allModsElementRet.setTotalModCount;
@@ -389,7 +411,10 @@ function initCategoriesSidebar() {
                     modCount: 0,
                     filteredModCount: null,
                     renderCount() {
-                        countElement.textContent = buildCategoryCountStr(this.modCount, this.filteredModCount);
+                        countElement.textContent = buildCategoryCountStr(
+                            this.modCount,
+                            this.filteredModCount
+                        );
                     },
                     htmlElement: categoryElement,
                 };
@@ -666,15 +691,21 @@ const filterByVersion = (results: Mod[]) => {
         switch ((window as any).fiberVersionFilterMode) {
             case "allMatch":
                 return results.filter((mod) =>
-                    mod.mc_versions.every((val) => selectedVersionStrings.includes(val))
+                    mod.mc_versions.every((val) =>
+                        selectedVersionStrings.includes(val)
+                    )
                 );
             case "noneMatch":
                 return results.filter((mod) =>
-                    mod.mc_versions.every((val) => !selectedVersionStrings.includes(val))
+                    mod.mc_versions.every(
+                        (val) => !selectedVersionStrings.includes(val)
+                    )
                 );
             default:
                 return results.filter((mod) =>
-                    mod.mc_versions.some((val) => selectedVersionStrings.includes(val))
+                    mod.mc_versions.some((val) =>
+                        selectedVersionStrings.includes(val)
+                    )
                 );
         }
     }
@@ -720,7 +751,7 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
 }
 
 function updateSearchResults(results: Mod[]) {
-    updateSearchResultsListElement(results)
+    updateSearchResultsListElement(results);
     updateCategoryModCounts(results);
 }
 

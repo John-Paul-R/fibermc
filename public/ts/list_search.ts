@@ -24,7 +24,7 @@ var authorListPopup = (function createAuthorListDiv() {
     contentDiv.classList.add("hidden");
     contentDiv.classList.add("item_author_list");
     document.body.appendChild(contentDiv);
-    contentDiv.addEventListener('click', (e) => e.stopPropagation());
+    contentDiv.addEventListener("click", (e) => e.stopPropagation());
     return contentDiv;
 })();
 
@@ -52,8 +52,8 @@ function showAuthorList(
     x: number,
     y: number,
     hoverTrigger?: {
-        element: HTMLElement,
-        listener: (e: MouseEvent) => void,
+        element: HTMLElement;
+        listener: (e: MouseEvent) => void;
     }
 ) {
     clearChildren(authorListPopup);
@@ -73,7 +73,10 @@ function showAuthorList(
 
     let isActive = true;
     listDiv.classList.remove("hidden");
-    hoverTrigger?.element.removeEventListener("mouseover", hoverTrigger.listener);
+    hoverTrigger?.element.removeEventListener(
+        "mouseover",
+        hoverTrigger.listener
+    );
 
     const handleExit = () => {
         isActive = false;
@@ -82,14 +85,20 @@ function showAuthorList(
             "mouseover",
             hoverTrigger.listener
         );
-        document.body.removeEventListener('click', handleExit);
+        document.body.removeEventListener("click", handleExit);
     };
 
-    document.body.addEventListener('click', handleExit);
+    document.body.addEventListener("click", handleExit);
 
     if (hoverTrigger) {
         const checkForExit = () => {
-            if (!isActive || !(listDiv.matches(':hover') || hoverTrigger.element.matches(':hover'))) {
+            if (
+                !isActive ||
+                !(
+                    listDiv.matches(":hover") ||
+                    hoverTrigger.element.matches(":hover")
+                )
+            ) {
                 handleExit();
                 return;
             }
@@ -124,7 +133,7 @@ function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                     {
                         element: authorDiv,
                         listener: hoverListener,
-                    },
+                    }
                 );
             };
             authorDiv.addEventListener("mouseover", hoverListener);
@@ -179,6 +188,7 @@ const listElementTemplate = (() => {
     startContainer.setAttribute("class", "start_container");
 
     return () => {
+        // prettier-ignore
         const elements = {
             li:              li             .cloneNode(true) as HTMLLIElement,
             container:       container      .cloneNode(true) as HTMLDivElement,
@@ -208,17 +218,10 @@ const listElementTemplate = (() => {
 
         return elements;
     };
-})()
+})();
 function createListElement(modData: Mod) {
-    const {
-        li,
-        end_container,
-        name,
-        authorDiv,
-        categories,
-        desc,
-        dlCount,
-    } = listElementTemplate();
+    const { li, end_container, name, authorDiv, categories, desc, dlCount } =
+        listElementTemplate();
 
     try {
         desc.setAttribute("data-text", modData.summary);
@@ -385,27 +388,26 @@ loader.addCompletionFunc(() =>
 var modCategoryElements: (() => Node)[];
 loader.addCompletionFunc(() => {
     modCategoryElements = (() => {
-        const categoryReferenceElements = CATEGORIES
-            .map(c => {
-                const catElem = document.createElement("li");
-                catElem.textContent = c.name;
-                return catElem;
-            });
+        const categoryReferenceElements = CATEGORIES.map((c) => {
+            const catElem = document.createElement("li");
+            catElem.textContent = c.name;
+            return catElem;
+        });
         return categoryReferenceElements.map((c) => () => c.cloneNode(true));
     })();
-})
+});
 
 function getLiHeight() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
-    return parseInt(fmt(style.getPropertyValue('--item-height'))) + 2;
+    return parseInt(fmt(style.getPropertyValue("--item-height"))) + 2;
 }
 
 function getLiHeightDetailed() {
     const fmt = (val: string) => val.slice(0, val.length - 2);
     const style = getComputedStyle(resultsListElement);
 
-    return parseInt(fmt(style.getPropertyValue('--item-height'))) + 36 + 8 + 2;
+    return parseInt(fmt(style.getPropertyValue("--item-height"))) + 36 + 8 + 2;
 }
 
 var viewModes = [createListElement, createListElementDetailed];
@@ -432,7 +434,7 @@ function cycleListViewModes() {
 
 window.matchMedia("only screen and (max-width: 1000px)").onchange = () => {
     updateViewModes();
-}
+};
 
 executeIfWhenDOMContentLoaded(() => {
     getElementById("list_view_cycle_button").addEventListener(
