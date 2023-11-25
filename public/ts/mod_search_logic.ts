@@ -905,7 +905,7 @@ function initSearch(options: InitSearchOptions) {
                                         last_contentful_container_idx + 1,
                                         data_batches
                                     );
-                                    clearInner(
+                                    clearShallow(
                                         batch_containers[
                                             first_contentful_container_idx
                                         ]
@@ -925,7 +925,7 @@ function initSearch(options: InitSearchOptions) {
                                         first_contentful_container_idx - 1,
                                         data_batches
                                     );
-                                    clearInner(
+                                    clearShallow(
                                         batch_containers[
                                             last_contentful_container_idx
                                         ]
@@ -1138,6 +1138,11 @@ function clear(node: Node) {
     }
     node.parentNode?.removeChild(node);
 }
+
+function clearShallow(node: HTMLElement) {
+    node.replaceChildren();
+}
+
 /**
  * @param {HTMLElement} el
  */
