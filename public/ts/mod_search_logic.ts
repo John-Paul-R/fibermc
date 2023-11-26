@@ -803,10 +803,14 @@ var results_persist = false;
 var LI_HEIGHT: number, BATCH_SIZE: number;
 // Add Stylesheet
 var sheet = createStyleSheet("mod-list-constructed");
+var computeLiHeightPx = (liHeight: number, batchSize: number) => {
+    const gap = 4;
+    return liHeight * batchSize + gap * (batchSize - 1);
+};
 function setLiHeight(liHeight: number) {
     LI_HEIGHT = liHeight;
     const gap = 4;
-    const height = LI_HEIGHT * BATCH_SIZE + gap * (BATCH_SIZE - 1);
+    const height = computeLiHeightPx(LI_HEIGHT, BATCH_SIZE);
     if (sheet.cssRules.length > 0) sheet.removeRule();
     sheet.insertRule(`.item_batch {
         height: ${height}px;
@@ -1006,8 +1010,11 @@ const storeBatches = (
     useContainers = true
 ) => {
     const endIdx = startIdx + batchSize;
-    const data_batch = [];
+    const data_batch: Mod[] = [];
     const nextBatchSize = Math.min(batchSize, results.length - endIdx);
+    for (let i = startIdx; i < endIdx; i++) {
+        data_batch.push(results[i]);
+    }
     if (useContainers) {
         const batch_container = document.createElement("div");
         batch_container.setAttribute("class", "item_batch");
@@ -1016,16 +1023,14 @@ const storeBatches = (
 
         batch_containers.push(batch_container);
         resultsListElement.appendChild(batch_container);
+
         if (nextBatchSize <= 0) {
-            batch_container.style.height = data_batch.length * LI_HEIGHT + "px";
-            batch_container.style.minHeight =
-                data_batch.length * LI_HEIGHT + "px";
+            const height = computeLiHeightPx(LI_HEIGHT, data_batch.length);
+            batch_container.style.height = height + "px";
+            batch_container.style.minHeight = height + "px";
         }
     }
 
-    for (let i = startIdx; i < endIdx; i++) {
-        data_batch.push(results[i]);
-    }
     data_batches.push(data_batch);
 
     if (nextBatchSize > 0)
