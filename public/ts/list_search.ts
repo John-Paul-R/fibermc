@@ -6,11 +6,11 @@ import {
     batch_containers,
     init,
     initSearch,
-    loader,
+    registerOnLoad,
     resultsListElement,
     setLiHeight,
     setResultsListElement,
-} from "./mod_search_logic.js";
+} from "./mod_search_logic";
 import { Mod } from "./mod_types.js";
 import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
 
@@ -62,14 +62,13 @@ function createBatch(batchIdx: number, data_batches: Mod[][]): void {
 //         }
 //     }
 // });
+const preInitializationCallbacks: (() => void)[] = [];
 
-loader.addCompletionFunc(() => {
-    setResultsListElement(getElementById("search_results_list"));
-}
-);
+preInitializationCallbacks.push(
+    () => setResultsListElement(getElementById("search_results_list")))
 
 var modCategoryElements: (() => Node)[];
-loader.addCompletionFunc(() => {
+registerOnLoad(() => {
     modCategoryElements = CATEGORIES
         .map((c) => { let ref;(ref = document.createElement("li")).textContent = c.name;return ref })
         .map((c) => () => c.cloneNode(true));
@@ -123,14 +122,17 @@ executeIfWhenDOMContentLoaded(() => {
     );
 });
 
-loader.addCompletionFunc(() => {
-    initSearch({
-        results_persist: true,
-        batchCreationFunc: createBatch,
-        lazyLoadBatches: true,
-        batch_size: 20,
-        li_height: modeLiHeights[currentViewIdx](),
-    });
+preInitializationCallbacks.push
+initSearch({
+    results_persist: true,
+    batchCreationFunc: createBatch,
+    lazyLoadBatches: true,
+    batch_size: 20,
+    li_height: modeLiHeights[currentViewIdx],
+    preInitializationCallbacks
+});
+
+registerOnLoad(() => {
     updateViewModes();
 });
 

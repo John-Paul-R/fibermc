@@ -3,21 +3,25 @@ export { AsyncDataResourceLoader, ResourceEntry };
 import { executeIfWhenDOMContentLoaded, FunctionBatch } from "./util.js";
 
 class ResourceEntry<TResponse> {
-    url: string;
+    fn: () => Promise<TResponse>;
     funcs: FunctionBatch<TResponse>;
     /**
      *
-     * @param {string} resourceURL
+     * @param {string} resourceFetchFn
      * @param {Array<Function>} responseFuncs
      */
     constructor(
-        resourceURL: string,
+        resourceFetchFn: () => Promise<TResponse>,
         responseFuncs: ((response: TResponse) => void)[]
     ) {
-        this.url = resourceURL;
+        this.fn = resourceFetchFn;
         this.funcs = new FunctionBatch(responseFuncs);
     }
 }
+
+const requestOpts: RequestInit = {
+    method: "GET",
+};
 
 class AsyncDataResourceLoader {
     resources: ResourceEntry<any>[];
@@ -61,7 +65,31 @@ class AsyncDataResourceLoader {
         resourceURL: string,
         responseFuncs: ((response: TResponse) => void)[]
     ) {
-        this.resources.push(new ResourceEntry(resourceURL, responseFuncs));
+        this.resources.push(
+            new ResourceEntry(
+                () =>
+                    fetch(new Request(resourceURL, requestOpts)).then(
+                        (response) => {
+                            if (response.status === 200) {
+                                return response.json();
+                            } else {
+                                throw new Error(
+                                    "Requested data file could not be retrieved from server."
+                                );
+                            }
+                        }
+                    ),
+                responseFuncs
+            )
+        );
+        return this;
+    }
+
+    addResourceFn<TResponse>(
+        resourceFn: () => Promise<TResponse>,
+        responseFuncs: ((response: TResponse) => void)[]
+    ) {
+        this.resources.push(new ResourceEntry(resourceFn, responseFuncs))
         return this;
     }
 
@@ -76,22 +104,11 @@ class AsyncDataResourceLoader {
 
     fetchResources() {
         const promises = [];
-        const requestOpts: RequestInit = {
-            method: "GET",
-        };
 
         for (const resource of this.resources) {
             promises.push(
-                fetch(new Request(resource.url, requestOpts))
-                    .then((response) => {
-                        if (response.status === 200) {
-                            return response.json();
-                        } else {
-                            throw new Error(
-                                "Requested data file could not be retrieved from server."
-                            );
-                        }
-                    })
+                resource
+                    .fn()
                     .then((resJson) => {
                         console.debug(resJson);
                         resource.funcs.runAll(resJson);

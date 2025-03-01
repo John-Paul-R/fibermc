@@ -4,7 +4,6 @@ import {
     initSearch,
     initCategoriesSidebar,
     fabric_category_id,
-    loader,
     mod_data,
     setModData,
     CATEGORIES,
@@ -17,7 +16,8 @@ import {
     pxAboveTop,
     pxBelowBottom,
     data_batches as dataBatches,
-} from "./mod_search_logic.js";
+    registerOnLoad,
+} from "./mod_search_logic";
 import { getElementById } from "./util.js";
 import {
     Mod,
@@ -208,7 +208,7 @@ type ModWithElem = Mod & {
     elem: HTMLTableRowElement;
 };
 
-loader.addCompletionFunc(() => {
+registerOnLoad(() => {
     loadbar = createLoadbar({
         parentElement: getElementById("content_main"),
         hideOnComplete: true,
@@ -228,10 +228,10 @@ loader.addCompletionFunc(() => {
         }
     }
 });
-loader.addCompletionFunc(() =>
+registerOnLoad(() =>
     setResultsListElement(getElementById("search_results_content"))
 );
-loader.addCompletionFunc(() =>
+registerOnLoad(() =>
     initSearch({
         results_persist: true,
         listElemCreationFunc: createListElement,

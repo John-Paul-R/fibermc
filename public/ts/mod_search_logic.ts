@@ -1,5 +1,5 @@
 import { setHidden, getElementById } from "./util.js";
-import { AsyncDataResourceLoader } from "./resource_loader.js";
+import { AsyncDataResourceLoader } from "./resource_loader";
 import {
     getSortFunc,
     getSortState,
@@ -8,13 +8,24 @@ import {
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod, versionOrd } from "./mod_types.js";
 import { initMultiselectElement } from "./multiselect.js";
+import { PGlite } from "@electric-sql/pglite";
+
+let prevTime = performance.now();
+function logtime(message: string) {
+    console.log("PERF: " + message, performance.now() - prevTime);
+    prevTime = performance.now();
+}
+
+logtime("start file")
+const db = new PGlite("idb://fibermc");
+await db.waitReady
+logtime("Database Ready!")
 
 export {
     init,
     initSearch,
     initCategoriesSidebar,
     fabric_category_id,
-    loader,
     mod_data,
     setModData,
     CATEGORIES,
@@ -33,6 +44,7 @@ export {
     LI_HEIGHT,
     BATCH_SIZE,
     setLiHeight,
+    registerOnLoad,
 };
 
 type CategoryElement = HTMLButtonElement & {
@@ -51,27 +63,185 @@ type Category = {
     modCount: number;
     filteredModCount: number | null;
 };
+console.log("PROOF OF ALIVE");
 
 //==============
 // DATA LOADING
 //==============
 console.log("hostname", window.location.hostname);
 const apiUrl = `https://${
-    window.location.hostname === "localhost"
-        ? "localhost:5001"
-        : window.location.hostname
-    // "dev.fibermc.com"
+    // window.location.hostname === "localhost"
+    //     ? "localhost:5001"
+    //     : window.location.hostname
+    "dev.fibermc.com"
 }/api/v1.0`;
+
+
+var localLoader = new AsyncDataResourceLoader({
+    completionWaitForDCL: true,
+}).addResourceFn<Mod[] | undefined>(async () => {
+    logtime("Start local db query")
+    if (!db) {
+        return undefined;
+    }
+    console.log("HAVE DB");
+    // const res = await db.query("SELECT COUNT(*) FROM mod_data;");
+    // // @ts-ignore
+    // console.log("CHECK DB RES", res, res.rows[0].count);
+
+    // @ts-ignore
+    // if (res.rows[0].count) {
+        console.log("HAVE ROWS");
+
+        const temp_mod_data = await db.query(
+            `SELECT
+                id,
+                name,
+                mr_slug,
+                cf_slug,
+                summary,
+                categories,
+                authors,
+                date_released as "dateReleased",
+                date_modified as "dateModified",
+                download_count as "downloadCount",
+                mc_versions,
+                s_name,
+                s_latest_mc_version as "s_latestMCVersion"
+            FROM mod_data ORDER BY download_count DESC LIMIT 100;
+            `
+        );
+        logtime("Start local db query...done!")
+        return temp_mod_data.rows as Mod[];
+    // }
+}, [
+    async (temp_mod_data) => {
+        if (!temp_mod_data) {
+            return;
+        }
+        console.log("SET ROWS", temp_mod_data);
+
+        setModData(temp_mod_data);
+        mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
+    },
+])
+.addResource<string[]>(`${apiUrl}/Categories`, [
+    (jsonData) => {
+        categoryNames = jsonData;
+        console.log("categoryNames", categoryNames);
+    },
+])
+.addCompletionFunc(initCategoriesSidebar);
+
+configureModsLoader(localLoader);
+
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
     .addResource<BaseMod[]>(`${apiUrl}/Mods`, [
-        (jsonData) => {
+        async (jsonData) => {
             setModData(jsonData.map(baseModToMod));
             // Sort descending
             mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
+            logtime("api data loaded")
             console.log("mod_data", mod_data);
+            await db.exec(`
+CREATE TABLE IF NOT EXISTS mod_data (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    mr_slug TEXT,
+    cf_slug TEXT,
+    summary TEXT,
+    categories TEXT[], -- Using array type for categories
+    authors JSONB, -- Using JSONB for authors array
+    date_released TIMESTAMP,
+    date_modified TIMESTAMP,
+    download_count BIGINT,
+    mc_versions TEXT[], -- Using array type for versions
+    s_name TEXT,
+    s_latest_mc_version NUMERIC,
+    s_date_modified BIGINT,
+    latest_mc_version TEXT,
+    s_author TEXT
+);
+        `);
+            console.log("TABLE CREATED IF NEEDED");
+            // First create the table if it doesn't exist
+            await db.exec(`
+        CREATE TABLE IF NOT EXISTS mod_data (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            mr_slug TEXT,
+            cf_slug TEXT,
+            summary TEXT,
+            categories TEXT[],
+            authors JSONB,
+            date_released TIMESTAMP,
+            date_modified TIMESTAMP,
+            download_count BIGINT,
+            mc_versions TEXT[],
+            s_name TEXT,
+            s_latest_mc_version NUMERIC,
+            s_date_modified BIGINT,
+            latest_mc_version TEXT,
+            s_author TEXT
+        );
+    `);
+
+            // Now insert or update each mod individually with parameterized queries
+            for (const mod of mod_data){//.slice(0, 5)) {
+                console.log("INSERTING MOD", mod);
+                await db.query(
+                    `
+            INSERT INTO mod_data (
+                id, name, mr_slug, cf_slug, summary, categories, authors,
+                date_released, date_modified, download_count, mc_versions,
+                s_name, s_latest_mc_version, s_date_modified, latest_mc_version, s_author
+            )
+            VALUES (
+                $1, $2, $3, $4, $5, $6, $7, 
+                $8, $9, $10, $11,
+                $12, $13, $14, $15, $16
+            )
+            ON CONFLICT (id) 
+            DO UPDATE SET
+                name = $2,
+                mr_slug = $3,
+                cf_slug = $4,
+                summary = $5,
+                categories = $6,
+                authors = $7,
+                date_released = $8,
+                date_modified = $9,
+                download_count = $10,
+                mc_versions = $11,
+                s_name = $12,
+                s_latest_mc_version = $13,
+                s_date_modified = $14,
+                latest_mc_version = $15,
+                s_author = $16
+        `,
+                    [
+                        mod.id,
+                        mod.name,
+                        mod.mr_slug,
+                        mod.cf_slug,
+                        mod.summary,
+                        mod.categories, // This assumes the library can handle array parameters
+                        JSON.stringify(mod.authors), // Convert authors array to JSON string
+                        mod.dateReleased,
+                        mod.dateModified,
+                        mod.downloadCount,
+                        mod.mc_versions, // This assumes the library can handle array parameters
+                        mod.s_name,
+                        mod.s_latestMCVersion,
+                        mod.s_dateModified,
+                        mod.latestMCVersion,
+                        mod.s_author,
+                    ]
+                );
+            }
         },
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
@@ -81,10 +251,21 @@ var loader = new AsyncDataResourceLoader({
         },
     ])
     .addCompletionFunc(initCategoriesSidebar);
+configureModsLoader(loader);
+
 var timestamp: string;
 var currentSelectedVersions: [string, number][] = [];
-function init() {
+
+function registerOnLoad(fn: () => void): void {
+    localLoader.addCompletionFunc(fn);
+    loader.addCompletionFunc(fn);
+}
+
+function configureModsLoader(loader: AsyncDataResourceLoader): void {
     loader
+        .addCompletionFunc(() => {
+            initSearchInternal();
+        })
         .addCompletionFunc(() => {
             defaultSearchInput.value = getUrlSearchValue() ?? "";
             searchTextChanged(getUrlSearchValue());
@@ -202,8 +383,12 @@ function init() {
                     versions
                 );
             });
-        })
-        .fetchResources();
+        });
+}
+
+function init() {
+    localLoader.fetchResources();
+    loader.fetchResources();
 }
 
 function formatDate(date: string | number | Date) {
@@ -822,14 +1007,25 @@ function setLiHeight(liHeight: number) {
 var defaultSearchInput: HTMLInputElement;
 type InitSearchOptions = {
     results_persist: boolean;
-    li_height?: number;
+    li_height?: () => number;
     batch_size?: number;
     listElemCreationFunc?: (modData: Mod) => HTMLElement;
     batchCreationFunc: BatchCreationFunc;
     listCreationFunc?: ListBuilderFunc;
     lazyLoadBatches?: (() => void) | boolean;
+    /**
+     * pre-initialization callbacks, because order matters
+     */
+    preInitializationCallbacks: (() => void)[]
 };
+var GLOBAL_SEARCH_OPTIONS: InitSearchOptions;
 function initSearch(options: InitSearchOptions) {
+    GLOBAL_SEARCH_OPTIONS = options;
+}
+function initSearchInternal() {
+    const options = GLOBAL_SEARCH_OPTIONS;
+    options.preInitializationCallbacks.forEach(fn => fn())
+
     results_persist = options.results_persist;
     const defaultOptions = {
         results_persist: false,
@@ -841,7 +1037,7 @@ function initSearch(options: InitSearchOptions) {
         lazyLoadBatches: true,
     };
 
-    LI_HEIGHT = options.li_height ?? defaultOptions.li_height;
+    LI_HEIGHT = options.li_height?.() ?? defaultOptions.li_height;
     BATCH_SIZE = options.batch_size ?? defaultOptions.batch_size;
     function resultsViewBuilder(options: InitSearchOptions) {
         if (options.listElemCreationFunc) {
@@ -1010,28 +1206,29 @@ const storeBatches = (
     useContainers = true
 ) => {
     const endIdx = startIdx + batchSize;
-    const data_batch: Mod[] = [];
+
+    const data_batch: Mod[] = results.slice(
+        startIdx,
+        Math.min(endIdx, results.length)
+    );
+    data_batches.push(data_batch);
+
     const nextBatchSize = Math.min(batchSize, results.length - endIdx);
-    for (let i = startIdx; i < endIdx; i++) {
-        data_batch.push(results[i]);
-    }
+
     if (useContainers) {
         const batch_container = document.createElement("div");
         batch_container.setAttribute("class", "item_batch");
-        // batch_container.style.height = LI_HEIGHT*batchSize+'px';
-        // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
 
         batch_containers.push(batch_container);
         resultsListElement.appendChild(batch_container);
 
         if (nextBatchSize <= 0) {
-            const height = computeLiHeightPx(LI_HEIGHT, data_batch.length);
-            batch_container.style.height = height + "px";
-            batch_container.style.minHeight = height + "px";
+            const heightStyle =
+                computeLiHeightPx(LI_HEIGHT, data_batch.length) + "px";
+            batch_container.style.height = heightStyle;
+            batch_container.style.minHeight = heightStyle;
         }
     }
-
-    data_batches.push(data_batch);
 
     if (nextBatchSize > 0)
         storeBatches(results, endIdx, nextBatchSize, useContainers);
