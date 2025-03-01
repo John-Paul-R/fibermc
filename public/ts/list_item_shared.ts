@@ -25,10 +25,6 @@ var authorListPopup = (function createAuthorListDiv() {
     return contentDiv;
 })();
 
-/**
- *
- * @param {HTMLElement} node
- */
 function clearChildren(node: HTMLElement) {
     while (node.hasChildNodes()) {
         node.removeChild(node.firstChild!);
@@ -51,7 +47,7 @@ function showAuthorList(
     hoverTrigger?: {
         element: HTMLElement;
         listener: (e: MouseEvent) => void;
-    }
+    },
 ) {
     clearChildren(authorListPopup);
 
@@ -72,7 +68,7 @@ function showAuthorList(
     listDiv.classList.remove("hidden");
     hoverTrigger?.element.removeEventListener(
         "mouseover",
-        hoverTrigger.listener
+        hoverTrigger.listener,
     );
 
     const handleExit = () => {
@@ -80,7 +76,7 @@ function showAuthorList(
         listDiv.classList.add("hidden");
         hoverTrigger?.element.addEventListener(
             "mouseover",
-            hoverTrigger.listener
+            hoverTrigger.listener,
         );
         document.body.removeEventListener("click", handleExit);
     };
@@ -130,7 +126,7 @@ export function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                     {
                         element: authorDiv,
                         listener: hoverListener,
-                    }
+                    },
                 );
             };
             authorDiv.addEventListener("mouseover", hoverListener);
@@ -144,7 +140,7 @@ export function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                     authorListPopup,
                     modData.authors,
                     textRect.x,
-                    textRect.y
+                    textRect.y,
                 );
 
                 e.stopPropagation();

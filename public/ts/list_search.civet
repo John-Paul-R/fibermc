@@ -63,15 +63,14 @@ function createBatch(batchIdx: number, data_batches: Mod[][]): void {
 //     }
 // });
 
-loader.addCompletionFunc(() => {
+loader.addCompletionFunc(() =>
     setResultsListElement(getElementById("search_results_list"));
-}
 );
 
 var modCategoryElements: (() => Node)[];
 loader.addCompletionFunc(() => {
     modCategoryElements = CATEGORIES
-        .map((c) => { let ref;(ref = document.createElement("li")).textContent = c.name;return ref })
+        .map((c) => document.createElement("li") ||> .textContent = c.name)
         .map((c) => () => c.cloneNode(true));
 
     setModCategoryElements(modCategoryElements);

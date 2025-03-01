@@ -37,18 +37,16 @@ export function initMultiselectElement<TValue, TKey>({
     const root = _rootElement as FiberElement;
     const equals = (a: TValue, b: TValue) => (key ? key(a) == key(b) : a == b)
 
-    const toggleValue = (val: TValue, curValues: TValue[]) => {
-        return curValues.some((el) => equals(val, el))
+    const toggleValue = (val: TValue, curValues: TValue[]) =>
+        curValues.some((el) => equals(val, el))
             ? curValues.filter((el) => !equals(val, el))
             : [...curValues, val]
-    }
 
     _rootElement.style.maxHeight = "60vh";
     _rootElement.style.overflow = "auto";
 
-    for (const el of leadingChildren) {
-         root.appendChild(el);
-    }
+    for el of leadingChildren
+         root.appendChild el;
 
     function getOptionElements() {
         return [..._rootElement.children]
@@ -61,18 +59,19 @@ export function initMultiselectElement<TValue, TKey>({
                 "label"
             ) as MultiSelectValueElement<TValue>;
 
-            let ref;const check = element.appendChild(
-                ((ref = document.createElement("input")).type = "checkbox",ref)
+            const check = element.appendChild(
+                document.createElement("input")
+                ||> .type = "checkbox"
             );
 
-            let ref1;const labelTextSpan = element.appendChild(
-                ((ref1 = document.createElement("span")).textContent = (renderValue(optionValue) ?? "unknown"),ref1)
+            const labelTextSpan = element.appendChild(
+                document.createElement("span")
+                ||> .textContent = (renderValue(optionValue) ?? "unknown")
             );
 
             element._fibermc_optionValue = optionValue;
-            element._fibermc_setChecked = (checked: boolean) => {
+            element._fibermc_setChecked = (checked: boolean) =>
                 (check.checked = checked);
-            }
 
             //@ts-expect-error
             element._fibermc_onSelect = (e) => {
@@ -85,9 +84,8 @@ export function initMultiselectElement<TValue, TKey>({
                     return newValues;
                 });
                 getOptionElements().forEach((el) => {
-                    const isSelected = newValues.some((val) => {
-                        return equals(val, el._fibermc_optionValue)
-                    }
+                    const isSelected = newValues.some((val) =>
+                        equals(val, el._fibermc_optionValue)
                     );
                     el._fibermc_setChecked(isSelected);
                 });
@@ -103,9 +101,8 @@ export function initMultiselectElement<TValue, TKey>({
             return element;
         });
 
-    for (const el of optionElements) {
-        root.appendChild(el);
-    }
+    for el of optionElements
+        root.appendChild el;
 }
 
 export function MultiSelect<TValue, TKey>({
@@ -117,5 +114,5 @@ export function MultiSelect<TValue, TKey>({
     const rootElement = _rootElement as FiberElement;
     if (!rootElement._fibermc_initialized) {
         rootElement._fibermc_initialized = true;
-    };return
+    }
 }
