@@ -8,10 +8,10 @@ import {
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod, versionOrd } from "./mod_types.js";
 import { initMultiselectElement } from "./multiselect.js";
-import {  CATEGORY_NAMES, MOD_DATA, TOTAL_MOD_COUNT } from "./search_page_state"
+import {  MOD_DATA } from "./search_page_state"
 import { PGlite } from "@electric-sql/pglite";
 import { effect } from "./effect.js";
-import { CATEGORIES, initCategoriesSidebar, BoolMode, applyCategorySelections, getSelectedCategoryIds, updateCategoryModCounts } from "./initCategoriesSidebar.js";
+import { CATEGORIES, initCategoriesSidebar, BoolMode, getSelectedCategoryIds, updateFilteredCategoryModCounts } from "./initCategoriesSidebar.js";
 
 let prevTime = performance.now();
 function logtime(message: string) {
@@ -110,7 +110,7 @@ var localLoader = new AsyncDataResourceLoader({
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
-            CATEGORY_NAMES.set(jsonData);
+            CATEGORIES.NAMES.set(jsonData);
             console.log("categoryNames", jsonData);
         },
     ])
@@ -243,7 +243,7 @@ var loader = new AsyncDataResourceLoader({
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
-            CATEGORY_NAMES.set(jsonData);
+            CATEGORIES.NAMES.set(jsonData);
             console.log("categoryNames", jsonData);
         },
     ])
@@ -463,9 +463,9 @@ export type SearchOptions = Readonly<{
 // var searchOptions: SearchOptions;
 
 export function getSearchOptionsFromState(): SearchOptions {
-    const categories = CATEGORIES.get().map((cat) => ({
+    const categories = CATEGORIES.BY_ID.map((cat) => ({
         name: cat.name,
-        bool_mode: cat.htmlElement.bool_mode,
+        bool_mode: cat.boolMode,
     }));
     const categoryIncludes = categories
         .filter((cat) => cat.bool_mode === BoolMode.And)
@@ -578,22 +578,6 @@ export function getSearchOptionsFromUrl(): SearchOptions {
         // `|| undefined` to disallow empty string ('')
         versions: searchParams.get("versions")?.split("|") || undefined,
     };
-}
-
-export function selectCategories({
-    categoryIncludes,
-    categoryExcludes,
-}: SearchOptions): void {
-    const categories = CATEGORIES.get();
-    categoryIncludes?.forEach((element) => {
-        categories.find((cat) => cat.name === element)!.htmlElement.bool_mode =
-            BoolMode.And;
-    });
-    categoryExcludes?.forEach((element) => {
-        categories.find((cat) => cat.name === element)!.htmlElement.bool_mode =
-            BoolMode.Not;
-    });
-    applyCategorySelections();
 }
 
 function search(
@@ -715,7 +699,7 @@ export function searchTextChanged(value?: string, resultsPersist?: boolean) {
 
 function updateSearchResults(results: Mod[]) {
     updateSearchResultsListElement(results);
-    updateCategoryModCounts(results);
+    updateFilteredCategoryModCounts(results);
 }
 
 //=======

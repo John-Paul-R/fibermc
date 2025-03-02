@@ -1,6 +1,6 @@
 import { DefaultListElementRenderer } from "./list_elem_default.js";
 import { DetailedListElementRenderer } from "./list_elem_detailed.js";
-import { setModCategoryElements } from "./list_item_shared.js";
+import { setModCategoryElementFn } from "./list_item_shared.js";
 import {
     batch_containers,
     init,
@@ -12,7 +12,7 @@ import {
 } from "./mod_search_logic.js";
 import { Mod } from "./mod_types.js";
 import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
-import { CATEGORIES } from "./initCategoriesSidebar"
+import { CATEGORIES, CategoryEl } from "./initCategoriesSidebar"
 import { effect } from "./effect"
 
 type ListElementRenderFn = (modData: Mod) => HTMLLIElement;
@@ -69,18 +69,12 @@ const preInitializationCallbacks: (() => void)[] = [];
 preInitializationCallbacks.push(
     () => setResultsListElement(getElementById("search_results_list")))
 
-var modCategoryElements: (() => Node)[];
-preInitializationCallbacks.push(() => {
-    console.log("CREATE CATEGORY ELEMS", CATEGORIES.get())
-    effect(() => {
-        modCategoryElements = CATEGORIES.get()
-            .map((c) => document.createElement("li") ||> .textContent = c.name)
-            .map((c) => () => c.cloneNode(true));
-
-        setModCategoryElements(modCategoryElements);
-
-    })
-});
+setModCategoryElementFn(
+    (category: CategoryEl) => {
+        const templateEl = document.createElement("li") ||> .textContent = category.name;
+        return () => templateEl.cloneNode(true)
+    }
+)
 
 function getLiHeight() {
     const fmt = (val: string) => val.slice(0, val.length - 2)

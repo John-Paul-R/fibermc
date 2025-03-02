@@ -1,5 +1,5 @@
 import { ListElementRenderer } from "./list_elem_renderer.js";
-import { fillAuthorDiv, getElementForCategory } from "./list_item_shared.js";
+import { fillAuthorDiv } from "./list_item_shared.js";
 import { fabric_category_id } from "./initCategoriesSidebar.js";
 import { Mod } from "./mod_types.js";
 import { formatNumberCompact } from "./number_formatter.js";
@@ -136,7 +136,7 @@ class DetailedListElementRendererImpl extends ListElementRenderer<
                 // if not "Fabric"
                 if (category !== fabric_category_id) {
                     const catElem = document.createElement("li");
-                    catElem.textContent = CATEGORIES.get()[category].name;
+                    catElem.textContent = CATEGORIES.BY_ID[category].name;
                     categories.appendChild(catElem);
                 }
             }

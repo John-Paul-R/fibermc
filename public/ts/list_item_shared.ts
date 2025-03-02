@@ -1,17 +1,25 @@
+import { Signal } from "signal-polyfill";
 import { Author, Mod } from "./mod_types.js";
 import {
     createCurseAuthorIcon,
     createModrinthAuthorIcon,
 } from "./platform_links.js";
+import { CATEGORIES, CategoryEl } from "./initCategoriesSidebar.js";
 
-var modCategoryElements: (() => Node)[];
+type ModCategoryElementFn = (category: CategoryEl) => (() => Node);
+let modCategoryElementFn: ModCategoryElementFn;
 
-export function setModCategoryElements(renderers: (() => Node)[]) {
-    modCategoryElements = renderers;
+var modCategoryElements = new Signal.Computed<(() => Node)[]>(() => {
+    const categories = CATEGORIES.BY_ID;
+    return categories.map(modCategoryElementFn);
+});
+
+export function setModCategoryElementFn(fn: ModCategoryElementFn) {
+    modCategoryElementFn = fn;
 }
 
 export function getElementForCategory(categoryId: number): () => Node {
-    return modCategoryElements[categoryId];
+    return modCategoryElements.get()[categoryId];
 }
 
 // LIST ITEM AUTHORS LIST
