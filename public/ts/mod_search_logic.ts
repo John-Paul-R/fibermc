@@ -13,6 +13,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { effect } from "./effect.js";
 import { CATEGORIES, initCategoriesSidebar, BoolMode, getSelectedCategoryIds, updateFilteredCategoryModCounts } from "./initCategoriesSidebar.js";
 import { getDbModData, updateDatabase } from "./sql_loader.js";
+import { filterByVersion, initVersionsMultiSelect, SELECTED_VERSIONS } from "./versions_multiselect.js";
 
 let prevTime = performance.now();
 function logtime(message: string) {
@@ -126,7 +127,6 @@ var loader = new AsyncDataResourceLoader({
 configureModsLoader(loader);
 
 var timestamp: string;
-var currentSelectedVersions: [string, number][] = [];
 
 function registerOnLoad(fn: () => void): void {
     localLoader.addCompletionFunc(fn);
@@ -172,11 +172,12 @@ function configureModsLoader(loader: AsyncDataResourceLoader): void {
                     sortField: searchOptions.sortField,
                     sortDirection: searchOptions.sortDirection,
                 });
-                currentSelectedVersions =
+                SELECTED_VERSIONS.set(
                     searchOptions.versions?.map(
                         (str) => [str, versionOrd(str)] as [string, number]
-                    ) ?? [];
-                console.log(searchOptions, currentSelectedVersions);
+                    ) ?? []
+                );
+                console.log(searchOptions, SELECTED_VERSIONS.get());
                 searchTextChanged(undefined);
                 registerSortListener(({ sortMode: sortField, sortDirection }) => {
                     updateUrlFromSearchOptions({
@@ -187,90 +188,7 @@ function configureModsLoader(loader: AsyncDataResourceLoader): void {
                 });
             });
         })
-        .addCompletionFunc(() => {
-            const versionNums = new Set<number>();
-            const versions: [string, number][] = [];
-            for (let i = 0; i < mod_data.length; i++) {
-                const m = mod_data[i];
-                if (!versionNums.has(m.s_latestMCVersion)) {
-                    versions.push([m.latestMCVersion, m.s_latestMCVersion]);
-                }
-                versionNums.add(m.s_latestMCVersion);
-            }
-
-            versions.sort((a, b) => b[1] - a[1]); // descending
-            // var options = ["option a", "option b", "option c"];
-            getSearchOptionsFromUrl().versions;
-
-            const showSnapshotsLabel = document.createElement("label");
-            showSnapshotsLabel.textContent = "show snapshots";
-            showSnapshotsLabel.classList.add("button");
-            const showSnapshotsCheckbox = document.createElement("input");
-            showSnapshotsCheckbox.type = "checkbox";
-            showSnapshotsCheckbox.id = "snapshot_toggle";
-            const getSnapshotsLabel = () => {
-                showSnapshotsLabel.textContent = "show snapshots";
-                showSnapshotsLabel.appendChild(showSnapshotsCheckbox);
-                return showSnapshotsLabel;
-            };
-
-            const setSelectedVersions = (newVersions: [string, number][]) => {
-                currentSelectedVersions = newVersions;
-                searchTextChanged(undefined, true);
-                updateUrlFromSearchOptions({
-                    ...getSearchOptionsFromState(),
-                });
-
-                console.log(currentSelectedVersions);
-            };
-            const initVersionsMultiselect = (
-                versionsForMultiselect: [string, number][]
-            ) => {
-                initMultiselectElement({
-                    rootElement: getElementById("version_multiselect"),
-                    options: versionsForMultiselect,
-                    setSelectedValues: (setter) => {
-                        setSelectedVersions(setter(currentSelectedVersions));
-                    },
-                    currentValues: currentSelectedVersions,
-                    renderValue: (val) => val[0],
-                    key: (val) => val[1], // gets the version in num form,
-                    leadingChildren: [getSnapshotsLabel()],
-                });
-            };
-            const snapshotRegex = /[a-z]/i;
-            const anyAreSnapshots = (versionsToTest: [string, number][]) =>
-                versionsToTest.some((v) => !snapshotRegex.test(v[0]));
-            initVersionsMultiselect(
-                anyAreSnapshots(currentSelectedVersions)
-                    ? versions
-                    : versions.filter((v) => !snapshotRegex.test(v[0]))
-            );
-
-            showSnapshotsCheckbox.addEventListener("change", (e) => {
-                const shouldShowSnapshots = (e.target as HTMLInputElement)
-                    .checked;
-                clearInner(getElementById("version_multiselect"));
-
-                const versionsForMultiselect = shouldShowSnapshots
-                    ? versions
-                    : versions.filter((v) => !snapshotRegex.test(v[0]));
-
-                setSelectedVersions(
-                    shouldShowSnapshots
-                        ? currentSelectedVersions
-                        : currentSelectedVersions.filter(
-                              (v) => !snapshotRegex.test(v[0])
-                          )
-                );
-                initVersionsMultiselect(versionsForMultiselect);
-                console.log(
-                    shouldShowSnapshots,
-                    versionsForMultiselect,
-                    versions
-                );
-            });
-        });
+        .addCompletionFunc(() => initVersionsMultiSelect(mod_data));
 }
 
 function init() {
@@ -364,7 +282,7 @@ export function getSearchOptionsFromState(): SearchOptions {
         categoryExcludes,
         sortField: sortState.sortMode,
         sortDirection: sortState.sortDirection,
-        versions: currentSelectedVersions.map(([str, num]) => str),
+        versions: SELECTED_VERSIONS.get().map(([str, num]) => str),
     };
 }
 
@@ -375,67 +293,68 @@ const urlDecodeCategories = (urlEncString: string | undefined | null) =>
     urlEncString ? urlEncString.split(encodeURIComponent(",")) : undefined;
 
 export function updateUrlFromSearchOptions(options: SearchOptions) {
-    if ("URLSearchParams" in window) {
-        var searchParams = new URLSearchParams(window.location.search);
-
-        {
-            if (options.search) {
-                searchParams.set("search", options.search);
-            } else {
-                searchParams.delete("search");
-            }
-        }
-
-        {
-            if (
-                options.categoryIncludes &&
-                options.categoryIncludes.length > 0
-            ) {
-                searchParams.set(
-                    "categoryIncludes",
-                    urlFormatCategories(options.categoryIncludes)
-                );
-            } else {
-                searchParams.delete("categoryIncludes");
-            }
-
-            if (
-                options.categoryExcludes &&
-                options.categoryExcludes.length > 0
-            ) {
-                searchParams.set(
-                    "categoryExcludes",
-                    urlFormatCategories(options.categoryExcludes)
-                );
-            } else {
-                searchParams.delete("categoryExcludes");
-            }
-        }
-
-        {
-            if (options.sortField && options.sortDirection) {
-                searchParams.set("sortField", options.sortField);
-                searchParams.set("sortDirection", options.sortDirection);
-            } else {
-                searchParams.delete("sortField");
-                searchParams.delete("sortDirection");
-            }
-        }
-
-        {
-            if (options.versions && options.versions.length > 0) {
-                searchParams.set("versions", options.versions.join("|"));
-            } else {
-                searchParams.delete("versions");
-            }
-        }
-
-        const queryAsText = searchParams.toString();
-        const newRelativePathQuery =
-            window.location.pathname +
-            (queryAsText.length > 0 ? "?" + queryAsText : "");
-        history.replaceState(null, "", newRelativePathQuery);
+    if (!("URLSearchParams" in window)) {
+        return;
     }
+    var searchParams = new URLSearchParams(window.location.search);
+
+    { // SEARCH
+        if (options.search) {
+            searchParams.set("search", options.search);
+        } else {
+            searchParams.delete("search");
+        }
+    }
+
+    { // CATEGORIES
+        if (
+            options.categoryIncludes &&
+            options.categoryIncludes.length > 0
+        ) {
+            searchParams.set(
+                "categoryIncludes",
+                urlFormatCategories(options.categoryIncludes)
+            );
+        } else {
+            searchParams.delete("categoryIncludes");
+        }
+
+        if (
+            options.categoryExcludes &&
+            options.categoryExcludes.length > 0
+        ) {
+            searchParams.set(
+                "categoryExcludes",
+                urlFormatCategories(options.categoryExcludes)
+            );
+        } else {
+            searchParams.delete("categoryExcludes");
+        }
+    }
+
+    { // SORTING
+        if (options.sortField && options.sortDirection) {
+            searchParams.set("sortField", options.sortField);
+            searchParams.set("sortDirection", options.sortDirection);
+        } else {
+            searchParams.delete("sortField");
+            searchParams.delete("sortDirection");
+        }
+    }
+
+    { // VERSIONS FILTER
+        if (options.versions && options.versions.length > 0) {
+            searchParams.set("versions", options.versions.join("|"));
+        } else {
+            searchParams.delete("versions");
+        }
+    }
+
+    const queryAsText = searchParams.toString();
+    const newRelativePathQuery =
+        window.location.pathname +
+        (queryAsText.length > 0 ? "?" + queryAsText : "");
+    history.replaceState(null, "", newRelativePathQuery);
 }
 
 function getUrlSearchValue(): string | undefined {
@@ -510,36 +429,6 @@ function search(
 }
 
 registerSortListener(() => searchTextChanged(undefined, true));
-
-const filterByVersion = (results: Mod[]) => {
-    if (currentSelectedVersions && currentSelectedVersions.length > 0) {
-        const selectedVersionStrings = currentSelectedVersions.map(
-            ([str, num]) => str
-        );
-
-        switch ((window as any).fiberVersionFilterMode) {
-            case "allMatch":
-                return results.filter((mod) =>
-                    mod.mc_versions.every((val) =>
-                        selectedVersionStrings.includes(val)
-                    )
-                );
-            case "noneMatch":
-                return results.filter((mod) =>
-                    mod.mc_versions.every(
-                        (val) => !selectedVersionStrings.includes(val)
-                    )
-                );
-            default:
-                return results.filter((mod) =>
-                    mod.mc_versions.some((val) =>
-                        selectedVersionStrings.includes(val)
-                    )
-                );
-        }
-    }
-    return results;
-};
 
 //================
 // Input Handling
@@ -968,21 +857,6 @@ function createStyleSheet(id: string, media?: string) {
         throw new Error("el.sheet was null in `createStyleSheet`.");
     }
     return el.sheet;
-}
-/**
- *
- * @param {HTMLElement} node
- */
-function clearInner(node: HTMLElement) {
-    while (node.hasChildNodes()) {
-        clear(node.firstChild!);
-    }
-}
-function clear(node: Node) {
-    while (node.hasChildNodes()) {
-        clear(node.firstChild!);
-    }
-    node.parentNode?.removeChild(node);
 }
 
 function clearShallow(node: HTMLElement) {
