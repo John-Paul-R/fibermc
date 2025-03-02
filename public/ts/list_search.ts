@@ -10,9 +10,10 @@ import {
     resultsListElement,
     setLiHeight,
     setResultsListElement,
-} from "./mod_search_logic";
+} from "./mod_search_logic.js";
 import { Mod } from "./mod_types.js";
 import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
+import {IdempotentComponent} from "./idempotent_component"
 
 type ListElementRenderFn = (modData: Mod) => HTMLLIElement;
 
@@ -62,13 +63,14 @@ function createBatch(batchIdx: number, data_batches: Mod[][]): void {
 //         }
 //     }
 // });
+
 const preInitializationCallbacks: (() => void)[] = [];
 
 preInitializationCallbacks.push(
     () => setResultsListElement(getElementById("search_results_list")))
 
 var modCategoryElements: (() => Node)[];
-registerOnLoad(() => {
+preInitializationCallbacks.push(() => {
     modCategoryElements = CATEGORIES
         .map((c) => { let ref;(ref = document.createElement("li")).textContent = c.name;return ref })
         .map((c) => () => c.cloneNode(true));
@@ -122,7 +124,6 @@ executeIfWhenDOMContentLoaded(() => {
     );
 });
 
-preInitializationCallbacks.push
 initSearch({
     results_persist: true,
     batchCreationFunc: createBatch,
@@ -131,9 +132,8 @@ initSearch({
     li_height: modeLiHeights[currentViewIdx],
     preInitializationCallbacks
 });
-
-registerOnLoad(() => {
-    updateViewModes();
-});
+registerOnLoad(() =>( {
+    updateViewModes() {; }
+}));
 
 init();

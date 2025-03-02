@@ -16,10 +16,10 @@ function logtime(message: string) {
     prevTime = performance.now();
 }
 
-logtime("start file")
+logtime("start file");
 const db = new PGlite("idb://fibermc");
-await db.waitReady
-logtime("Database Ready!")
+await db.waitReady;
+logtime("Database Ready!");
 
 export {
     init,
@@ -76,21 +76,21 @@ const apiUrl = `https://${
     "dev.fibermc.com"
 }/api/v1.0`;
 
-
 var localLoader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
-}).addResourceFn<Mod[] | undefined>(async () => {
-    logtime("Start local db query")
-    if (!db) {
-        return undefined;
-    }
-    console.log("HAVE DB");
-    // const res = await db.query("SELECT COUNT(*) FROM mod_data;");
-    // // @ts-ignore
-    // console.log("CHECK DB RES", res, res.rows[0].count);
+})
+    .addResourceFn<Mod[] | undefined>(async () => {
+        logtime("Start local db query");
+        if (!db) {
+            return undefined;
+        }
+        console.log("HAVE DB");
+        // const res = await db.query("SELECT COUNT(*) FROM mod_data;");
+        // // @ts-ignore
+        // console.log("CHECK DB RES", res, res.rows[0].count);
 
-    // @ts-ignore
-    // if (res.rows[0].count) {
+        // @ts-ignore
+        // if (res.rows[0].count) {
         console.log("HAVE ROWS");
 
         const temp_mod_data = await db.query(
@@ -111,27 +111,27 @@ var localLoader = new AsyncDataResourceLoader({
             FROM mod_data ORDER BY download_count DESC LIMIT 100;
             `
         );
-        logtime("Start local db query...done!")
+        logtime("Start local db query...done!");
         return temp_mod_data.rows as Mod[];
-    // }
-}, [
-    async (temp_mod_data) => {
-        if (!temp_mod_data) {
-            return;
-        }
-        console.log("SET ROWS", temp_mod_data);
+        // }
+    }, [
+        async (temp_mod_data) => {
+            if (!temp_mod_data) {
+                return;
+            }
+            console.log("SET ROWS", temp_mod_data);
 
-        setModData(temp_mod_data);
-        mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
-    },
-])
-.addResource<string[]>(`${apiUrl}/Categories`, [
-    (jsonData) => {
-        categoryNames = jsonData;
-        console.log("categoryNames", categoryNames);
-    },
-])
-.addCompletionFunc(initCategoriesSidebar);
+            setModData(temp_mod_data);
+            mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
+        },
+    ])
+    .addResource<string[]>(`${apiUrl}/Categories`, [
+        (jsonData) => {
+            categoryNames = jsonData;
+            console.log("categoryNames", categoryNames);
+        },
+    ])
+    .addCompletionFunc(initCategoriesSidebar);
 
 configureModsLoader(localLoader);
 
@@ -144,29 +144,12 @@ var loader = new AsyncDataResourceLoader({
             setModData(jsonData.map(baseModToMod));
             // Sort descending
             mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
-            logtime("api data loaded")
+            logtime("api data loaded");
             console.log("mod_data", mod_data);
-            await db.exec(`
-CREATE TABLE IF NOT EXISTS mod_data (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    mr_slug TEXT,
-    cf_slug TEXT,
-    summary TEXT,
-    categories TEXT[], -- Using array type for categories
-    authors JSONB, -- Using JSONB for authors array
-    date_released TIMESTAMP,
-    date_modified TIMESTAMP,
-    download_count BIGINT,
-    mc_versions TEXT[], -- Using array type for versions
-    s_name TEXT,
-    s_latest_mc_version NUMERIC,
-    s_date_modified BIGINT,
-    latest_mc_version TEXT,
-    s_author TEXT
-);
-        `);
             console.log("TABLE CREATED IF NEEDED");
+
+            //-- DROP TABLE IF EXISTS mod_data;
+            //
             // First create the table if it doesn't exist
             await db.exec(`
         CREATE TABLE IF NOT EXISTS mod_data (
@@ -175,73 +158,100 @@ CREATE TABLE IF NOT EXISTS mod_data (
             mr_slug TEXT,
             cf_slug TEXT,
             summary TEXT,
-            categories TEXT[],
-            authors JSONB,
+            categories INT4[], -- Text array for categories
+            authors JSONB,     -- JSONB for authors
             date_released TIMESTAMP,
             date_modified TIMESTAMP,
             download_count BIGINT,
-            mc_versions TEXT[],
+            mc_versions TEXT[], -- Text array for versions
             s_name TEXT,
             s_latest_mc_version NUMERIC,
             s_date_modified BIGINT,
             latest_mc_version TEXT,
             s_author TEXT
         );
-    `);
+                    `);
 
-            // Now insert or update each mod individually with parameterized queries
-            for (const mod of mod_data){//.slice(0, 5)) {
-                console.log("INSERTING MOD", mod);
-                await db.query(
-                    `
-            INSERT INTO mod_data (
-                id, name, mr_slug, cf_slug, summary, categories, authors,
-                date_released, date_modified, download_count, mc_versions,
-                s_name, s_latest_mc_version, s_date_modified, latest_mc_version, s_author
-            )
-            VALUES (
-                $1, $2, $3, $4, $5, $6, $7, 
-                $8, $9, $10, $11,
-                $12, $13, $14, $15, $16
-            )
-            ON CONFLICT (id) 
-            DO UPDATE SET
-                name = $2,
-                mr_slug = $3,
-                cf_slug = $4,
-                summary = $5,
-                categories = $6,
-                authors = $7,
-                date_released = $8,
-                date_modified = $9,
-                download_count = $10,
-                mc_versions = $11,
-                s_name = $12,
-                s_latest_mc_version = $13,
-                s_date_modified = $14,
-                latest_mc_version = $15,
-                s_author = $16
-        `,
-                    [
-                        mod.id,
-                        mod.name,
-                        mod.mr_slug,
-                        mod.cf_slug,
-                        mod.summary,
-                        mod.categories, // This assumes the library can handle array parameters
-                        JSON.stringify(mod.authors), // Convert authors array to JSON string
-                        mod.dateReleased,
-                        mod.dateModified,
-                        mod.downloadCount,
-                        mod.mc_versions, // This assumes the library can handle array parameters
-                        mod.s_name,
-                        mod.s_latestMCVersion,
-                        mod.s_dateModified,
-                        mod.latestMCVersion,
-                        mod.s_author,
-                    ]
-                );
-            }
+            // Batch processing using PGlite's transaction feature
+            await db.transaction(async (tx) => {
+                // Process in batches to avoid memory issues
+                const BATCH_SIZE = 500;
+
+                for (let i = 0; i < mod_data.length; i += BATCH_SIZE) {
+                    const batch = mod_data.slice(i, i + BATCH_SIZE);
+                    console.log(
+                        `Processing batch ${
+                            Math.floor(i / BATCH_SIZE) + 1
+                        } of ${Math.ceil(mod_data.length / BATCH_SIZE)}`
+                    );
+
+                    // Create a large multi-value INSERT statement
+                    let valuesSql = [];
+                    let params = [];
+                    let paramIndex = 1;
+
+                    for (const mod of batch) {
+                        // Add placeholders for this row
+                        valuesSql.push(`($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, 
+                        $${paramIndex++}::INT4[], $${paramIndex++}::jsonb, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, 
+                        $${paramIndex++}::text[], $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, 
+                        $${paramIndex++})`);
+
+                        // Add values to params array
+                        params.push(
+                            mod.id,
+                            mod.name,
+                            mod.mr_slug,
+                            mod.cf_slug,
+                            mod.summary,
+                            mod.categories,
+                            JSON.stringify(mod.authors),
+                            mod.dateReleased,
+                            mod.dateModified,
+                            mod.downloadCount,
+                            mod.mc_versions,
+                            mod.s_name,
+                            mod.s_latestMCVersion,
+                            mod.s_dateModified,
+                            mod.latestMCVersion,
+                            mod.s_author
+                        );
+                    }
+
+                    // Build the complete query with all batch values
+                    const query = `
+        INSERT INTO mod_data (
+          id, name, mr_slug, cf_slug, summary, categories, authors,
+          date_released, date_modified, download_count, mc_versions,
+          s_name, s_latest_mc_version, s_date_modified, latest_mc_version, s_author
+        )
+        VALUES ${valuesSql.join(",")}
+        ON CONFLICT (id) 
+        DO UPDATE SET
+          name = EXCLUDED.name,
+          mr_slug = EXCLUDED.mr_slug,
+          cf_slug = EXCLUDED.cf_slug,
+          summary = EXCLUDED.summary,
+          categories = EXCLUDED.categories,
+          authors = EXCLUDED.authors,
+          date_released = EXCLUDED.date_released,
+          date_modified = EXCLUDED.date_modified,
+          download_count = EXCLUDED.download_count,
+          mc_versions = EXCLUDED.mc_versions,
+          s_name = EXCLUDED.s_name,
+          s_latest_mc_version = EXCLUDED.s_latest_mc_version,
+          s_date_modified = EXCLUDED.s_date_modified,
+          latest_mc_version = EXCLUDED.latest_mc_version,
+          s_author = EXCLUDED.s_author
+      `;
+
+                    await tx.query(query, params);
+                }
+            });
+            console.log(
+                "DONE SETUP",
+                await db.query("SELECT * FROM mod_data;")
+            );
         },
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
@@ -263,6 +273,11 @@ function registerOnLoad(fn: () => void): void {
 
 function configureModsLoader(loader: AsyncDataResourceLoader): void {
     loader
+        .addCompletionFunc(() => {
+            GLOBAL_SEARCH_OPTIONS.preInitializationCallbacks.forEach((fn) =>
+                fn()
+            );
+        })
         .addCompletionFunc(() => {
             initSearchInternal();
         })
@@ -1016,7 +1031,7 @@ type InitSearchOptions = {
     /**
      * pre-initialization callbacks, because order matters
      */
-    preInitializationCallbacks: (() => void)[]
+    preInitializationCallbacks: (() => void)[];
 };
 var GLOBAL_SEARCH_OPTIONS: InitSearchOptions;
 function initSearch(options: InitSearchOptions) {
@@ -1024,7 +1039,7 @@ function initSearch(options: InitSearchOptions) {
 }
 function initSearchInternal() {
     const options = GLOBAL_SEARCH_OPTIONS;
-    options.preInitializationCallbacks.forEach(fn => fn())
+    // options.preInitializationCallbacks.forEach((fn) => fn());
 
     results_persist = options.results_persist;
     const defaultOptions = {
