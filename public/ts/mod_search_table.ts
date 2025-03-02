@@ -2,22 +2,17 @@ import { createLoadbar, LoadbarResult } from "./loadbar.js";
 import {
     init,
     initSearch,
-    initCategoriesSidebar,
-    fabric_category_id,
-    loader,
     mod_data,
-    setModData,
-    CATEGORIES,
-    setCategories,
     resultsListElement,
     setResultsListElement,
     storeBatches,
     runBatches,
     resetBatches,
-    pxAboveTop,
     pxBelowBottom,
     data_batches as dataBatches,
-} from "./mod_search_logic.js";
+    registerOnLoad,
+} from "./mod_search_logic";
+import { CATEGORIES, fabric_category_id } from "./initCategoriesSidebar.js";
 import { getElementById } from "./util.js";
 import {
     Mod,
@@ -72,11 +67,12 @@ function createListElement(modData: Mod) {
 
     const categories = document.createElement("td");
     categories.setAttribute("class", "item_categories");
+    const categoriesData = CATEGORIES.get();
     for (const category of modData.categories) {
         // if not "Fabric"
         if (category !== fabric_category_id) {
             const catElem = document.createElement("li");
-            catElem.textContent = CATEGORIES[category].name;
+            catElem.textContent = categoriesData[category].name;
             categories.appendChild(catElem);
         }
     }
@@ -208,7 +204,7 @@ type ModWithElem = Mod & {
     elem: HTMLTableRowElement;
 };
 
-loader.addCompletionFunc(() => {
+registerOnLoad(() => {
     loadbar = createLoadbar({
         parentElement: getElementById("content_main"),
         hideOnComplete: true,
@@ -228,18 +224,17 @@ loader.addCompletionFunc(() => {
         }
     }
 });
-loader.addCompletionFunc(() =>
-    setResultsListElement(getElementById("search_results_content"))
-);
-loader.addCompletionFunc(() =>
-    initSearch({
-        results_persist: true,
-        listElemCreationFunc: createListElement,
-        batchCreationFunc: createBatch,
-        listCreationFunc: buildTableBatched,
-        lazyLoadBatches: lazyLoadBatches,
-        batch_size: BATCH_SIZE,
-    })
-);
+
+initSearch({
+    results_persist: true,
+    listElemCreationFunc: createListElement,
+    batchCreationFunc: createBatch,
+    listCreationFunc: buildTableBatched,
+    lazyLoadBatches: lazyLoadBatches,
+    batch_size: BATCH_SIZE,
+    preInitializationCallbacks: [
+        () => setResultsListElement(getElementById("search_results_content"))
+    ]
+})
 
 init();

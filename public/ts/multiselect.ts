@@ -31,41 +31,48 @@ export function initMultiselectElement<TValue, TKey>({
     currentValues,
     renderValue,
     key,
-    leadingChildren
-}: MultiSelectProps<TValue, TKey>) {
+    leadingChildren = []
+}: MultiSelectProps<TValue, TKey>): void {
+    leadingChildren ??= [];
     const root = _rootElement as FiberElement;
-    const equals = (a: TValue, b: TValue) => (key ? key(a) == key(b) : a == b);
+    const equals = (a: TValue, b: TValue) => (key ? key(a) == key(b) : a == b)
 
-    const toggleValue = (val: TValue, curValues: TValue[]) =>
-        curValues.some((el) => equals(val, el))
+    const toggleValue = (val: TValue, curValues: TValue[]) => {
+        return curValues.some((el) => equals(val, el))
             ? curValues.filter((el) => !equals(val, el))
-            : [...curValues, val];
+            : [...curValues, val]
+    }
 
     _rootElement.style.maxHeight = "60vh";
     _rootElement.style.overflow = "auto";
 
-    leadingChildren?.forEach(el => root.appendChild(el));
-    const getOptionElements = () => [
-        ..._rootElement.children,
-    ].slice(leadingChildren?.length ?? 0) as MultiSelectValueElement<TValue>[];
+    for (const el of leadingChildren) {
+         root.appendChild(el);
+    }
 
-    options
+    function getOptionElements() {
+        return [..._rootElement.children]
+            .slice(leadingChildren.length) as MultiSelectValueElement<TValue>[];
+    } 
+
+    const optionElements = options
         .map((optionValue) => {
             const element = document.createElement(
                 "label"
             ) as MultiSelectValueElement<TValue>;
 
-            const check = document.createElement("input");
-            check.type = "checkbox";
-            element.appendChild(check);
+            let ref;const check = element.appendChild(
+                ((ref = document.createElement("input")).type = "checkbox",ref)
+            );
 
-            const labelTextSpan = document.createElement("span");
-            labelTextSpan.textContent = renderValue(optionValue) ?? "unknown";
-            element.appendChild(labelTextSpan);
+            let ref1;const labelTextSpan = element.appendChild(
+                ((ref1 = document.createElement("span")).textContent = (renderValue(optionValue) ?? "unknown"),ref1)
+            );
 
             element._fibermc_optionValue = optionValue;
-            element._fibermc_setChecked = (checked: boolean) =>
+            element._fibermc_setChecked = (checked: boolean) => {
                 (check.checked = checked);
+            }
 
             //@ts-expect-error
             element._fibermc_onSelect = (e) => {
@@ -78,8 +85,9 @@ export function initMultiselectElement<TValue, TKey>({
                     return newValues;
                 });
                 getOptionElements().forEach((el) => {
-                    const isSelected = newValues.some((val) =>
-                        equals(val, el._fibermc_optionValue)
+                    const isSelected = newValues.some((val) => {
+                        return equals(val, el._fibermc_optionValue)
+                    }
                     );
                     el._fibermc_setChecked(isSelected);
                 });
@@ -93,8 +101,11 @@ export function initMultiselectElement<TValue, TKey>({
 
             element.classList.add("button");
             return element;
-        })
-        .forEach((el) => root.appendChild(el));
+        });
+
+    for (const el of optionElements) {
+        root.appendChild(el);
+    }
 }
 
 export function MultiSelect<TValue, TKey>({
@@ -106,5 +117,5 @@ export function MultiSelect<TValue, TKey>({
     const rootElement = _rootElement as FiberElement;
     if (!rootElement._fibermc_initialized) {
         rootElement._fibermc_initialized = true;
-    }
+    };return
 }

@@ -1,5 +1,5 @@
 import { setHidden, getElementById } from "./util.js";
-import { AsyncDataResourceLoader } from "./resource_loader.js";
+import { AsyncDataResourceLoader } from "./resource_loader";
 import {
     getSortFunc,
     getSortState,
@@ -8,17 +8,26 @@ import {
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod, versionOrd } from "./mod_types.js";
 import { initMultiselectElement } from "./multiselect.js";
+import {  MOD_DATA } from "./search_page_state"
+import { PGlite } from "@electric-sql/pglite";
+import { effect } from "./effect.js";
+import { CATEGORIES, initCategoriesSidebar, BoolMode, getSelectedCategoryIds, updateFilteredCategoryModCounts } from "./initCategoriesSidebar.js";
+import { createLocalLoader, getDbModData, updateDatabase } from "./sql_loader.js";
+import { filterByVersion, initVersionsMultiSelect, SELECTED_VERSIONS } from "./versions_multiselect.js";
+
+let prevTime = performance.now();
+function logtime(message: string) {
+    console.log("PERF: " + message, performance.now() - prevTime);
+    prevTime = performance.now();
+}
+
+logtime("start file");
 
 export {
     init,
     initSearch,
-    initCategoriesSidebar,
-    fabric_category_id,
-    loader,
     mod_data,
     setModData,
-    CATEGORIES,
-    setCategories,
     resultsListElement,
     setResultsListElement,
     storeBatches,
@@ -33,58 +42,82 @@ export {
     LI_HEIGHT,
     BATCH_SIZE,
     setLiHeight,
+    registerOnLoad,
 };
 
-type CategoryElement = HTMLButtonElement & {
-    bool_mode: number | undefined;
-    cat_id: number;
-    selected: boolean | undefined;
-};
-
-const isCategoryElement = (el: any): el is CategoryElement =>
-    el.cat_id !== undefined;
-
-type Category = {
-    htmlElement: CategoryElement;
-    renderCount: () => void;
-    name: string;
-    modCount: number;
-    filteredModCount: number | null;
-};
+console.log("PROOF OF ALIVE");
 
 //==============
 // DATA LOADING
 //==============
 console.log("hostname", window.location.hostname);
 const apiUrl = `https://${
-    window.location.hostname === "localhost"
-        ? "localhost:5001"
-        : window.location.hostname
-    // "dev.fibermc.com"
+    // window.location.hostname === "localhost"
+    //     ? "localhost:5001"
+    //     : window.location.hostname
+    "dev.fibermc.com"
 }/api/v1.0`;
+
+const localLoader = createLocalLoader(logtime)
+configureModsLoader(localLoader);
+
+var categoriesLoader = new AsyncDataResourceLoader({
+    completionWaitForDCL: true,
+})
+    .addResource<string[]>(`${apiUrl}/Categories`, [
+        (jsonData) => {
+            CATEGORIES.NAMES.set(jsonData);
+            console.log("categoryNames", jsonData);
+        },
+    ])
+    .addCompletionFunc(() => {
+        effect(() => {
+            initCategoriesSidebar();
+        })
+    });
+
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
     completionWaitForDCL: true,
 })
     .addResource<BaseMod[]>(`${apiUrl}/Mods`, [
-        (jsonData) => {
+        async (jsonData) => {
             setModData(jsonData.map(baseModToMod));
             // Sort descending
             mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
+            logtime("api data loaded");
             console.log("mod_data", mod_data);
+            console.log("TABLE CREATED IF NEEDED");
+
+            await updateDatabase(mod_data)
         },
-    ])
-    .addResource<string[]>(`${apiUrl}/Categories`, [
-        (jsonData) => {
-            categoryNames = jsonData;
-            console.log("categoryNames", categoryNames);
-        },
-    ])
-    .addCompletionFunc(initCategoriesSidebar);
+    ]);
+configureModsLoader(loader);
+
 var timestamp: string;
-var currentSelectedVersions: [string, number][] = [];
-function init() {
+
+function registerOnLoad(fn: () => void): void {
+    localLoader.addCompletionFunc(fn);
+    loader.addCompletionFunc(fn);
+}
+
+const hasRunKeys = new Set<string>();
+function runOnce(key: string, fn: (() => void) | (() => Promise<void>)) {
+    if (!hasRunKeys.has(key)) {
+        hasRunKeys.add(key);
+        fn();
+    }
+}
+function configureModsLoader(loader: AsyncDataResourceLoader): void {
     loader
+        .addCompletionFunc(() => {
+            GLOBAL_SEARCH_OPTIONS.preInitializationCallbacks.forEach((fn) =>
+                fn()
+            );
+        })
+        .addCompletionFunc(() => {
+            initSearchInternal();
+        })
         .addCompletionFunc(() => {
             defaultSearchInput.value = getUrlSearchValue() ?? "";
             searchTextChanged(getUrlSearchValue());
@@ -100,110 +133,36 @@ function init() {
             )
         )
         .addCompletionFunc(() => {
-            const searchOptions = getSearchOptionsFromUrl();
-            setSortMode({
-                sortField: searchOptions.sortField,
-                sortDirection: searchOptions.sortDirection,
-            });
-            currentSelectedVersions =
-                searchOptions.versions?.map(
-                    (str) => [str, versionOrd(str)] as [string, number]
-                ) ?? [];
-            console.log(searchOptions, currentSelectedVersions);
-            searchTextChanged(undefined);
-            registerSortListener(({ sortMode: sortField, sortDirection }) => {
-                updateUrlFromSearchOptions({
-                    ...getSearchOptionsFromState(),
-                    sortField,
-                    sortDirection,
+            runOnce("URL State", () => {
+                // sync state to/from URL
+                const searchOptions = getSearchOptionsFromUrl();
+                setSortMode({
+                    sortField: searchOptions.sortField,
+                    sortDirection: searchOptions.sortDirection,
+                });
+                SELECTED_VERSIONS.set(
+                    searchOptions.versions?.map(
+                        (str) => [str, versionOrd(str)] as [string, number]
+                    ) ?? []
+                );
+                console.log(searchOptions, SELECTED_VERSIONS.get());
+                searchTextChanged(undefined);
+                registerSortListener(({ sortMode: sortField, sortDirection }) => {
+                    updateUrlFromSearchOptions({
+                        ...getSearchOptionsFromState(),
+                        sortField,
+                        sortDirection,
+                    });
                 });
             });
         })
-        .addCompletionFunc(() => {
-            const versionNums = new Set<number>();
-            const versions: [string, number][] = [];
-            for (let i = 0; i < mod_data.length; i++) {
-                const m = mod_data[i];
-                if (!versionNums.has(m.s_latestMCVersion)) {
-                    versions.push([m.latestMCVersion, m.s_latestMCVersion]);
-                }
-                versionNums.add(m.s_latestMCVersion);
-            }
+        .addCompletionFunc(() => initVersionsMultiSelect(mod_data));
+}
 
-            versions.sort((a, b) => b[1] - a[1]); // descending
-            // var options = ["option a", "option b", "option c"];
-            getSearchOptionsFromUrl().versions;
-
-            const showSnapshotsLabel = document.createElement("label");
-            showSnapshotsLabel.textContent = "show snapshots";
-            showSnapshotsLabel.classList.add("button");
-            const showSnapshotsCheckbox = document.createElement("input");
-            showSnapshotsCheckbox.type = "checkbox";
-            showSnapshotsCheckbox.id = "snapshot_toggle";
-            const getSnapshotsLabel = () => {
-                showSnapshotsLabel.textContent = "show snapshots";
-                showSnapshotsLabel.appendChild(showSnapshotsCheckbox);
-                return showSnapshotsLabel;
-            };
-
-            const setSelectedVersions = (newVersions: [string, number][]) => {
-                currentSelectedVersions = newVersions;
-                searchTextChanged(undefined, true);
-                updateUrlFromSearchOptions({
-                    ...getSearchOptionsFromState(),
-                });
-
-                console.log(currentSelectedVersions);
-            };
-            const initVersionsMultiselect = (
-                versionsForMultiselect: [string, number][]
-            ) => {
-                initMultiselectElement({
-                    rootElement: getElementById("version_multiselect"),
-                    options: versionsForMultiselect,
-                    setSelectedValues: (setter) => {
-                        setSelectedVersions(setter(currentSelectedVersions));
-                    },
-                    currentValues: currentSelectedVersions,
-                    renderValue: (val) => val[0],
-                    key: (val) => val[1], // gets the version in num form,
-                    leadingChildren: [getSnapshotsLabel()],
-                });
-            };
-            const snapshotRegex = /[a-z]/i;
-            const anyAreSnapshots = (versionsToTest: [string, number][]) =>
-                versionsToTest.some((v) => !snapshotRegex.test(v[0]));
-            initVersionsMultiselect(
-                anyAreSnapshots(currentSelectedVersions)
-                    ? versions
-                    : versions.filter((v) => !snapshotRegex.test(v[0]))
-            );
-
-            showSnapshotsCheckbox.addEventListener("change", (e) => {
-                const shouldShowSnapshots = (e.target as HTMLInputElement)
-                    .checked;
-                clearInner(getElementById("version_multiselect"));
-
-                const versionsForMultiselect = shouldShowSnapshots
-                    ? versions
-                    : versions.filter((v) => !snapshotRegex.test(v[0]));
-
-                setSelectedVersions(
-                    shouldShowSnapshots
-                        ? currentSelectedVersions
-                        : currentSelectedVersions.filter(
-                              (v) => !snapshotRegex.test(v[0])
-                          )
-                );
-                initVersionsMultiselect(versionsForMultiselect);
-                console.log(
-                    shouldShowSnapshots,
-                    versionsForMultiselect,
-                    versions
-                );
-            });
-        })
-        .fetchResources();
+function init() {
+    categoriesLoader.fetchResources();
+    // localLoader.fetchResources();
+    loader.fetchResources();
 }
 
 function formatDate(date: string | number | Date) {
@@ -222,36 +181,13 @@ function updateTimestamp(timestamp: Date) {
 var mod_data: Mod[];
 function setModData(n_mod_data: Mod[]) {
     mod_data = n_mod_data;
-}
-
-var categoryNames: string[];
-var CATEGORIES: Category[];
-function setCategories(n_categories: Category[]) {
-    CATEGORIES = n_categories;
+    MOD_DATA.set(n_mod_data)
 }
 
 //====================
 // Filter Search Data
 //====================
-function getSelectedCategoryIds() {
-    const selected_cat_ids: {
-        and: number[];
-        not: number[];
-    } = {
-        and: [],
-        not: [],
-    };
 
-    for (const category of CATEGORIES) {
-        const cat_elem = category.htmlElement;
-        if (cat_elem.bool_mode == 1) {
-            selected_cat_ids.and.push(cat_elem.cat_id);
-        } else if (cat_elem.bool_mode == 2) {
-            selected_cat_ids.not.push(cat_elem.cat_id);
-        }
-    }
-    return selected_cat_ids;
-}
 // Apply filter to search data (based on user selections)
 function getFilteredList() {
     const selected_cat_ids = getSelectedCategoryIds();
@@ -275,212 +211,6 @@ function getFilteredList() {
     }
     return search_objs;
 }
-var fabric_category_id: number;
-var categories_sidebar_elem: HTMLElement;
-function applyCategorySelection(cat_elem: CategoryElement) {
-    if (cat_elem.bool_mode == BoolMode.And) {
-        cat_elem.classList.add("and");
-    } else {
-        cat_elem.classList.remove("and"); //.border = '2px solid var(--color-element-1)';
-    }
-    if (cat_elem.bool_mode == BoolMode.Not) {
-        cat_elem.classList.add("not");
-    } else {
-        cat_elem.classList.remove("not"); //.border = '2px solid var(--color-element-1)';
-    }
-}
-
-function applyCategorySelections() {
-    CATEGORIES.map((cat) => cat.htmlElement).forEach(applyCategorySelection);
-}
-
-const buildCategoryCountStr = (
-    totalModCount: number,
-    filteredModCount: number | null
-) => {
-    return filteredModCount !== null
-        ? `${filteredModCount} / ${totalModCount}`
-        : totalModCount.toString();
-};
-var setTotalModCount: (count: number | null) => void;
-
-function initCategoryModCounts(mods: Mod[]) {
-    for (const category of CATEGORIES) {
-        category.modCount = 0;
-    }
-    // Mod Counts
-    for (const mod of mods) {
-        for (const cat_id of mod.categories) {
-            CATEGORIES[cat_id].modCount += 1;
-        }
-    }
-    updateCategoryModCounts(mod_data);
-}
-
-function updateCategoryModCounts(mods: Mod[]) {
-    const selectedCategories = getSelectedCategoryIds();
-    const isFiltering =
-        mod_data.length !== mods.length ||
-        selectedCategories.and.length > 0 ||
-        selectedCategories.not.length > 0;
-    if (isFiltering) {
-        for (const category of CATEGORIES) {
-            category.filteredModCount = 0;
-        }
-        // Mod Counts
-        for (const mod of mods) {
-            for (const cat_id of mod.categories) {
-                CATEGORIES[cat_id].filteredModCount! += 1;
-            }
-        }
-    } else {
-        for (const category of CATEGORIES) {
-            category.filteredModCount = null;
-        }
-    }
-
-    setTotalModCount(isFiltering ? mods.length : null);
-    for (const category of CATEGORIES) {
-        category.renderCount();
-    }
-}
-
-function initCategoriesSidebar() {
-    //TODO Group "Selected" items?
-    //TODO "select multiple" toggle
-    //TODO Option to sort categories by name or by num mods in category
-    //TODO Display "searching in these categories" under searchbar. With option to click them to remove.
-
-    const getCategoriesSidebarElem = () => {
-        const elem = document.getElementById("categories_list");
-        if (!elem) {
-            throw new Error(
-                "Could not find 'categories_sidebar_elem' (Element Id: 'categories_list')"
-            );
-        }
-        return elem;
-    };
-    categories_sidebar_elem = getCategoriesSidebarElem();
-
-    const createAllModsElement = () => {
-        const elem = document.createElement("button") as CategoryElement;
-
-        elem.classList.add("reset_button");
-        elem.cat_id = -1;
-        const title = "All mods (reset)";
-
-        elem.textContent = title + " ";
-        const mod_count = document.createElement("span");
-        mod_count.textContent = mod_data.length.toFixed(0);
-        elem.appendChild(mod_count);
-        elem.addEventListener("click", clearFilters);
-        categories_sidebar_elem.appendChild(elem);
-
-        elem.classList.add("reset_categories_button");
-
-        return {
-            setTotalModCount: (count: number | null) => {
-                mod_count.textContent = buildCategoryCountStr(
-                    mod_data.length,
-                    count
-                );
-            },
-        };
-    };
-    const allModsElementRet = createAllModsElement();
-    setTotalModCount = allModsElementRet.setTotalModCount;
-
-    const createCategoryElement = (categoryId: number): CategoryElement => {
-        const cat_elem = document.createElement("button") as CategoryElement;
-        cat_elem.classList.add("reset_button");
-        cat_elem.cat_id = categoryId; //category.categoryId;
-        return cat_elem;
-    };
-
-    {
-        // Init CATEGORIES
-        setCategories(
-            categoryNames.map((name, idx) => {
-                const categoryElement = createCategoryElement(idx);
-                const countElement = document.createElement("span");
-                categoryElement.textContent = name + " ";
-                categoryElement.appendChild(countElement);
-
-                return {
-                    name: name,
-                    modCount: 0,
-                    filteredModCount: null,
-                    renderCount() {
-                        countElement.textContent = buildCategoryCountStr(
-                            this.modCount,
-                            this.filteredModCount
-                        );
-                    },
-                    htmlElement: categoryElement,
-                };
-            })
-        );
-        initCategoryModCounts(mod_data);
-    }
-
-    for (let i = 0; i < CATEGORIES.length; i++) {
-        if (CATEGORIES[i].name.toUpperCase() === "FABRIC") {
-            fabric_category_id = i;
-            break;
-        }
-    }
-    // TODO Restructure this, jfc
-    for (let i = 0; i < CATEGORIES.length; i++) {}
-    const sorted_CATEGORIES = CATEGORIES.slice().sort(function (a, b) {
-        return b.modCount - a.modCount;
-    });
-    for (let i = 0; i < sorted_CATEGORIES.length; i++) {
-        const category = sorted_CATEGORIES[i];
-        if (category.modCount === 0) {
-            continue;
-        }
-        const cat_elem = category.htmlElement;
-        cat_elem.selected = false;
-        applyCategorySelection(cat_elem);
-        cat_elem.addEventListener("click", onClick);
-        categories_sidebar_elem.appendChild(cat_elem);
-    }
-
-    // 0=none, 1=AND, 2=NOT | OR??
-    const NUM_BOOL_OPS = 2;
-    function onClick(e: Event) {
-        const cat_elem = e.target;
-        if (!isCategoryElement(cat_elem)) {
-            throw new Error(
-                "Category click listener was applied to an element without CategoryElement metadata."
-            );
-        }
-        const bool_mode = cat_elem.bool_mode ?? BoolMode.None;
-        cat_elem.bool_mode =
-            bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : BoolMode.None;
-        applyCategorySelection(cat_elem);
-        updateUrlFromSearchOptions(getSearchOptionsFromState());
-        searchTextChanged(undefined, true);
-    }
-    function clearFilters() {
-        for (const cat of CATEGORIES) {
-            const cat_elem = cat.htmlElement;
-            cat_elem.classList.remove("and");
-            cat_elem.classList.remove("not");
-            cat_elem.bool_mode = BoolMode.None;
-        }
-        applyCategorySelections();
-        updateUrlFromSearchOptions(getSearchOptionsFromState());
-        searchTextChanged(undefined, true);
-    }
-    selectCategories(getSearchOptionsFromUrl());
-}
-
-enum BoolMode {
-    None = 0,
-    And = 1,
-    Not = 2,
-}
 
 //==============
 // Search Logic
@@ -500,10 +230,10 @@ export type SearchOptions = Readonly<{
 
 // var searchOptions: SearchOptions;
 
-function getSearchOptionsFromState(): SearchOptions {
-    const categories = CATEGORIES.map((cat) => ({
+export function getSearchOptionsFromState(): SearchOptions {
+    const categories = CATEGORIES.BY_ID.map((cat) => ({
         name: cat.name,
-        bool_mode: cat.htmlElement.bool_mode,
+        bool_mode: cat.boolMode,
     }));
     const categoryIncludes = categories
         .filter((cat) => cat.bool_mode === BoolMode.And)
@@ -520,7 +250,7 @@ function getSearchOptionsFromState(): SearchOptions {
         categoryExcludes,
         sortField: sortState.sortMode,
         sortDirection: sortState.sortDirection,
-        versions: currentSelectedVersions.map(([str, num]) => str),
+        versions: SELECTED_VERSIONS.get().map(([str, num]) => str),
     };
 }
 
@@ -530,68 +260,69 @@ const urlFormatCategories = (categories: string[]) =>
 const urlDecodeCategories = (urlEncString: string | undefined | null) =>
     urlEncString ? urlEncString.split(encodeURIComponent(",")) : undefined;
 
-function updateUrlFromSearchOptions(options: SearchOptions) {
-    if ("URLSearchParams" in window) {
-        var searchParams = new URLSearchParams(window.location.search);
-
-        {
-            if (options.search) {
-                searchParams.set("search", options.search);
-            } else {
-                searchParams.delete("search");
-            }
-        }
-
-        {
-            if (
-                options.categoryIncludes &&
-                options.categoryIncludes.length > 0
-            ) {
-                searchParams.set(
-                    "categoryIncludes",
-                    urlFormatCategories(options.categoryIncludes)
-                );
-            } else {
-                searchParams.delete("categoryIncludes");
-            }
-
-            if (
-                options.categoryExcludes &&
-                options.categoryExcludes.length > 0
-            ) {
-                searchParams.set(
-                    "categoryExcludes",
-                    urlFormatCategories(options.categoryExcludes)
-                );
-            } else {
-                searchParams.delete("categoryExcludes");
-            }
-        }
-
-        {
-            if (options.sortField && options.sortDirection) {
-                searchParams.set("sortField", options.sortField);
-                searchParams.set("sortDirection", options.sortDirection);
-            } else {
-                searchParams.delete("sortField");
-                searchParams.delete("sortDirection");
-            }
-        }
-
-        {
-            if (options.versions && options.versions.length > 0) {
-                searchParams.set("versions", options.versions.join("|"));
-            } else {
-                searchParams.delete("versions");
-            }
-        }
-
-        const queryAsText = searchParams.toString();
-        const newRelativePathQuery =
-            window.location.pathname +
-            (queryAsText.length > 0 ? "?" + queryAsText : "");
-        history.replaceState(null, "", newRelativePathQuery);
+export function updateUrlFromSearchOptions(options: SearchOptions) {
+    if (!("URLSearchParams" in window)) {
+        return;
     }
+    var searchParams = new URLSearchParams(window.location.search);
+
+    { // SEARCH
+        if (options.search) {
+            searchParams.set("search", options.search);
+        } else {
+            searchParams.delete("search");
+        }
+    }
+
+    { // CATEGORIES
+        if (
+            options.categoryIncludes &&
+            options.categoryIncludes.length > 0
+        ) {
+            searchParams.set(
+                "categoryIncludes",
+                urlFormatCategories(options.categoryIncludes)
+            );
+        } else {
+            searchParams.delete("categoryIncludes");
+        }
+
+        if (
+            options.categoryExcludes &&
+            options.categoryExcludes.length > 0
+        ) {
+            searchParams.set(
+                "categoryExcludes",
+                urlFormatCategories(options.categoryExcludes)
+            );
+        } else {
+            searchParams.delete("categoryExcludes");
+        }
+    }
+
+    { // SORTING
+        if (options.sortField && options.sortDirection) {
+            searchParams.set("sortField", options.sortField);
+            searchParams.set("sortDirection", options.sortDirection);
+        } else {
+            searchParams.delete("sortField");
+            searchParams.delete("sortDirection");
+        }
+    }
+
+    { // VERSIONS FILTER
+        if (options.versions && options.versions.length > 0) {
+            searchParams.set("versions", options.versions.join("|"));
+        } else {
+            searchParams.delete("versions");
+        }
+    }
+
+    const queryAsText = searchParams.toString();
+    const newRelativePathQuery =
+        window.location.pathname +
+        (queryAsText.length > 0 ? "?" + queryAsText : "");
+    history.replaceState(null, "", newRelativePathQuery);
 }
 
 function getUrlSearchValue(): string | undefined {
@@ -599,7 +330,7 @@ function getUrlSearchValue(): string | undefined {
     return searchParams.get("search") ?? undefined;
 }
 
-function getSearchOptionsFromUrl(): SearchOptions {
+export function getSearchOptionsFromUrl(): SearchOptions {
     var searchParams = new URLSearchParams(window.location.search);
     return {
         search: searchParams.get("search") ?? undefined,
@@ -616,21 +347,6 @@ function getSearchOptionsFromUrl(): SearchOptions {
         // `|| undefined` to disallow empty string ('')
         versions: searchParams.get("versions")?.split("|") || undefined,
     };
-}
-
-function selectCategories({
-    categoryIncludes,
-    categoryExcludes,
-}: SearchOptions): void {
-    categoryIncludes?.forEach((element) => {
-        CATEGORIES.find((cat) => cat.name === element)!.htmlElement.bool_mode =
-            BoolMode.And;
-    });
-    categoryExcludes?.forEach((element) => {
-        CATEGORIES.find((cat) => cat.name === element)!.htmlElement.bool_mode =
-            BoolMode.Not;
-    });
-    applyCategorySelections();
 }
 
 function search(
@@ -682,40 +398,10 @@ function search(
 
 registerSortListener(() => searchTextChanged(undefined, true));
 
-const filterByVersion = (results: Mod[]) => {
-    if (currentSelectedVersions && currentSelectedVersions.length > 0) {
-        const selectedVersionStrings = currentSelectedVersions.map(
-            ([str, num]) => str
-        );
-
-        switch ((window as any).fiberVersionFilterMode) {
-            case "allMatch":
-                return results.filter((mod) =>
-                    mod.mc_versions.every((val) =>
-                        selectedVersionStrings.includes(val)
-                    )
-                );
-            case "noneMatch":
-                return results.filter((mod) =>
-                    mod.mc_versions.every(
-                        (val) => !selectedVersionStrings.includes(val)
-                    )
-                );
-            default:
-                return results.filter((mod) =>
-                    mod.mc_versions.some((val) =>
-                        selectedVersionStrings.includes(val)
-                    )
-                );
-        }
-    }
-    return results;
-};
-
 //================
 // Input Handling
 //================
-function searchTextChanged(value?: string, resultsPersist?: boolean) {
+export function searchTextChanged(value?: string, resultsPersist?: boolean) {
     const search_objects = getFilteredList();
     const searchValue = value ?? defaultSearchInput.value;
 
@@ -752,7 +438,7 @@ function searchTextChanged(value?: string, resultsPersist?: boolean) {
 
 function updateSearchResults(results: Mod[]) {
     updateSearchResultsListElement(results);
-    updateCategoryModCounts(results);
+    updateFilteredCategoryModCounts(results);
 }
 
 //=======
@@ -803,10 +489,14 @@ var results_persist = false;
 var LI_HEIGHT: number, BATCH_SIZE: number;
 // Add Stylesheet
 var sheet = createStyleSheet("mod-list-constructed");
+var computeLiHeightPx = (liHeight: number, batchSize: number) => {
+    const gap = 4;
+    return liHeight * batchSize + gap * (batchSize - 1);
+};
 function setLiHeight(liHeight: number) {
     LI_HEIGHT = liHeight;
     const gap = 4;
-    const height = LI_HEIGHT * BATCH_SIZE + gap * (BATCH_SIZE - 1);
+    const height = computeLiHeightPx(LI_HEIGHT, BATCH_SIZE);
     if (sheet.cssRules.length > 0) sheet.removeRule();
     sheet.insertRule(`.item_batch {
         height: ${height}px;
@@ -818,14 +508,25 @@ function setLiHeight(liHeight: number) {
 var defaultSearchInput: HTMLInputElement;
 type InitSearchOptions = {
     results_persist: boolean;
-    li_height?: number;
+    li_height?: () => number;
     batch_size?: number;
     listElemCreationFunc?: (modData: Mod) => HTMLElement;
     batchCreationFunc: BatchCreationFunc;
     listCreationFunc?: ListBuilderFunc;
     lazyLoadBatches?: (() => void) | boolean;
+    /**
+     * pre-initialization callbacks, because order matters
+     */
+    preInitializationCallbacks: (() => void)[];
 };
+var GLOBAL_SEARCH_OPTIONS: InitSearchOptions;
 function initSearch(options: InitSearchOptions) {
+    GLOBAL_SEARCH_OPTIONS = options;
+}
+function initSearchInternal() {
+    const options = GLOBAL_SEARCH_OPTIONS;
+    // options.preInitializationCallbacks.forEach((fn) => fn());
+
     results_persist = options.results_persist;
     const defaultOptions = {
         results_persist: false,
@@ -837,7 +538,8 @@ function initSearch(options: InitSearchOptions) {
         lazyLoadBatches: true,
     };
 
-    LI_HEIGHT = options.li_height ?? defaultOptions.li_height;
+    LI_HEIGHT = options.li_height?.() ?? defaultOptions.li_height;
+    console.log("LI_HEIGHT", LI_HEIGHT)
     BATCH_SIZE = options.batch_size ?? defaultOptions.batch_size;
     function resultsViewBuilder(options: InitSearchOptions) {
         if (options.listElemCreationFunc) {
@@ -1006,27 +708,29 @@ const storeBatches = (
     useContainers = true
 ) => {
     const endIdx = startIdx + batchSize;
-    const data_batch = [];
+
+    const data_batch: Mod[] = results.slice(
+        startIdx,
+        Math.min(endIdx, results.length)
+    );
+    data_batches.push(data_batch);
+
     const nextBatchSize = Math.min(batchSize, results.length - endIdx);
+
     if (useContainers) {
         const batch_container = document.createElement("div");
         batch_container.setAttribute("class", "item_batch");
-        // batch_container.style.height = LI_HEIGHT*batchSize+'px';
-        // batch_container.style.minHeight = LI_HEIGHT*batchSize+'px';
 
         batch_containers.push(batch_container);
         resultsListElement.appendChild(batch_container);
+
         if (nextBatchSize <= 0) {
-            batch_container.style.height = data_batch.length * LI_HEIGHT + "px";
-            batch_container.style.minHeight =
-                data_batch.length * LI_HEIGHT + "px";
+            const heightStyle =
+                computeLiHeightPx(LI_HEIGHT, data_batch.length) + "px";
+            batch_container.style.height = heightStyle;
+            batch_container.style.minHeight = heightStyle;
         }
     }
-
-    for (let i = startIdx; i < endIdx; i++) {
-        data_batch.push(results[i]);
-    }
-    data_batches.push(data_batch);
 
     if (nextBatchSize > 0)
         storeBatches(results, endIdx, nextBatchSize, useContainers);
@@ -1122,21 +826,6 @@ function createStyleSheet(id: string, media?: string) {
         throw new Error("el.sheet was null in `createStyleSheet`.");
     }
     return el.sheet;
-}
-/**
- *
- * @param {HTMLElement} node
- */
-function clearInner(node: HTMLElement) {
-    while (node.hasChildNodes()) {
-        clear(node.firstChild!);
-    }
-}
-function clear(node: Node) {
-    while (node.hasChildNodes()) {
-        clear(node.firstChild!);
-    }
-    node.parentNode?.removeChild(node);
 }
 
 function clearShallow(node: HTMLElement) {

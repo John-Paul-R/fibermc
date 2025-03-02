@@ -1,17 +1,25 @@
+import { Signal } from "signal-polyfill";
 import { Author, Mod } from "./mod_types.js";
 import {
     createCurseAuthorIcon,
     createModrinthAuthorIcon,
 } from "./platform_links.js";
+import { CATEGORIES, CategoryEl } from "./initCategoriesSidebar.js";
 
-var modCategoryElements: (() => Node)[];
+type ModCategoryElementFn = (category: CategoryEl) => (() => Node);
+let modCategoryElementFn: ModCategoryElementFn;
 
-export function setModCategoryElements(renderers: (() => Node)[]) {
-    modCategoryElements = renderers;
+var modCategoryElements = new Signal.Computed<(() => Node)[]>(() => {
+    const categories = CATEGORIES.BY_ID;
+    return categories.map(modCategoryElementFn);
+});
+
+export function setModCategoryElementFn(fn: ModCategoryElementFn) {
+    modCategoryElementFn = fn;
 }
 
 export function getElementForCategory(categoryId: number): () => Node {
-    return modCategoryElements[categoryId];
+    return modCategoryElements.get()[categoryId];
 }
 
 // LIST ITEM AUTHORS LIST
@@ -25,10 +33,6 @@ var authorListPopup = (function createAuthorListDiv() {
     return contentDiv;
 })();
 
-/**
- *
- * @param {HTMLElement} node
- */
 function clearChildren(node: HTMLElement) {
     while (node.hasChildNodes()) {
         node.removeChild(node.firstChild!);
@@ -51,7 +55,7 @@ function showAuthorList(
     hoverTrigger?: {
         element: HTMLElement;
         listener: (e: MouseEvent) => void;
-    }
+    },
 ) {
     clearChildren(authorListPopup);
 
@@ -72,7 +76,7 @@ function showAuthorList(
     listDiv.classList.remove("hidden");
     hoverTrigger?.element.removeEventListener(
         "mouseover",
-        hoverTrigger.listener
+        hoverTrigger.listener,
     );
 
     const handleExit = () => {
@@ -80,7 +84,7 @@ function showAuthorList(
         listDiv.classList.add("hidden");
         hoverTrigger?.element.addEventListener(
             "mouseover",
-            hoverTrigger.listener
+            hoverTrigger.listener,
         );
         document.body.removeEventListener("click", handleExit);
     };
@@ -130,7 +134,7 @@ export function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                     {
                         element: authorDiv,
                         listener: hoverListener,
-                    }
+                    },
                 );
             };
             authorDiv.addEventListener("mouseover", hoverListener);
@@ -144,7 +148,7 @@ export function fillAuthorDiv(authorDiv: HTMLDivElement, modData: Mod) {
                     authorListPopup,
                     modData.authors,
                     textRect.x,
-                    textRect.y
+                    textRect.y,
                 );
 
                 e.stopPropagation();

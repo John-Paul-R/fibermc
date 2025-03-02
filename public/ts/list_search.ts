@@ -1,18 +1,19 @@
 import { DefaultListElementRenderer } from "./list_elem_default.js";
 import { DetailedListElementRenderer } from "./list_elem_detailed.js";
-import { setModCategoryElements } from "./list_item_shared.js";
+import { setModCategoryElementFn } from "./list_item_shared.js";
 import {
-    CATEGORIES,
     batch_containers,
     init,
     initSearch,
-    loader,
+    registerOnLoad,
     resultsListElement,
     setLiHeight,
     setResultsListElement,
 } from "./mod_search_logic.js";
 import { Mod } from "./mod_types.js";
 import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
+import { CATEGORIES, CategoryEl } from "./initCategoriesSidebar"
+import { effect } from "./effect"
 
 type ListElementRenderFn = (modData: Mod) => HTMLLIElement;
 
@@ -21,11 +22,11 @@ const createListElement: ListElementRenderFn = DefaultListElementRenderer();
 const createListElementDetailed: ListElementRenderFn =
     DetailedListElementRenderer();
 
-var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
+function createBatch(batchIdx: number, data_batches: Mod[][]): void {
     for (const result_data of data_batches[batchIdx]) {
         try {
             batch_containers[batchIdx].appendChild(
-                currentListCreationFunc(result_data)
+                currentListCreationFunc(result_data),
             );
         } catch (err) {
             batch_containers[batchIdx]
@@ -35,8 +36,8 @@ var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
             console.warn(err);
             console.warn(result_data);
         }
-    }
-};
+    };
+}
 
 // // Logic createListElement, true, LI_HEIGHT, BATCH_SIZE, createBatch
 // type ModWithElem = Mod & {
@@ -63,31 +64,27 @@ var createBatch = (batchIdx: number, data_batches: Mod[][]) => {
 //     }
 // });
 
-loader.addCompletionFunc(() =>
-    setResultsListElement(getElementById("search_results_list"))
-);
+const preInitializationCallbacks: (() => void)[] = [];
 
-var modCategoryElements: (() => Node)[];
-loader.addCompletionFunc(() => {
-    modCategoryElements = (() => {
-        const categoryReferenceElements = CATEGORIES.map((c) => {
-            const catElem = document.createElement("li");
-            catElem.textContent = c.name;
-            return catElem;
-        });
-        return categoryReferenceElements.map((c) => () => c.cloneNode(true));
-    })();
-    setModCategoryElements(modCategoryElements);
-});
+preInitializationCallbacks.push(
+    () => setResultsListElement(getElementById("search_results_list")))
+
+setModCategoryElementFn(
+    (category: CategoryEl) => {
+        const templateEl = document.createElement("li");
+        templateEl.textContent = category.name;
+        return () => templateEl.cloneNode(true)
+    }
+)
 
 function getLiHeight() {
-    const fmt = (val: string) => val.slice(0, val.length - 2);
+    const fmt = (val: string) => val.slice(0, val.length - 2)
     const style = getComputedStyle(resultsListElement);
     return parseInt(fmt(style.getPropertyValue("--item-height"))) + 2;
 }
 
 function getLiHeightDetailed() {
-    const fmt = (val: string) => val.slice(0, val.length - 2);
+    const fmt = (val: string) => val.slice(0, val.length - 2)
     const style = getComputedStyle(resultsListElement);
 
     return parseInt(fmt(style.getPropertyValue("--item-height"))) + 36 + 8 + 2;
@@ -110,7 +107,7 @@ function cycleListViewModes() {
     }
     window.localStorage.setItem(
         CURRENT_LIST_VIEW_IDX_STORAGE_KEY,
-        currentViewIdx.toString()
+        currentViewIdx.toString(),
     );
     updateViewModes();
 }
@@ -122,19 +119,21 @@ window.matchMedia("only screen and (max-width: 1000px)").onchange = () => {
 executeIfWhenDOMContentLoaded(() => {
     getElementById("list_view_cycle_button").addEventListener(
         "click",
-        cycleListViewModes
+        cycleListViewModes,
     );
 });
 
-loader.addCompletionFunc(() => {
-    initSearch({
-        results_persist: true,
-        batchCreationFunc: createBatch,
-        lazyLoadBatches: true,
-        batch_size: 20,
-        li_height: modeLiHeights[currentViewIdx](),
-    });
-    updateViewModes();
+initSearch({
+    results_persist: true,
+    listElemCreationFunc: createListElement,
+    batchCreationFunc: createBatch,
+    lazyLoadBatches: true,
+    batch_size: 20,
+    li_height: modeLiHeights[currentViewIdx],
+    preInitializationCallbacks
+});
+registerOnLoad(() => {
+    updateViewModes()
 });
 
 init();

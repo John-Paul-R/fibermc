@@ -1,6 +1,6 @@
 import { ListElementRenderer } from "./list_elem_renderer.js";
 import { fillAuthorDiv, getElementForCategory } from "./list_item_shared.js";
-import { fabric_category_id } from "./mod_search_logic.js";
+import { fabric_category_id } from "./initCategoriesSidebar.js";
 import { Mod } from "./mod_types.js";
 import { formatNumberCompact } from "./number_formatter.js";
 import {
@@ -113,11 +113,20 @@ class DefaultListElementRendererImpl extends ListElementRenderer<
 
             fillAuthorDiv(authorDiv, modData);
 
-            for (const category of modData.categories) {
-                // if not "Fabric"
-                if (category !== fabric_category_id) {
-                    categories.appendChild(getElementForCategory(category)());
+            try {
+                for (const category of modData.categories) {
+                    // if not "Fabric"
+                    if (category !== fabric_category_id) {
+                        categories.appendChild(getElementForCategory(category)());
+                    }
                 }
+    
+            } catch (err) {
+                console.group();
+                console.warn("Failed to fill mod categories info.");
+                console.warn(err);
+                console.warn(modData);
+                console.groupEnd();    
             }
             desc.textContent = modData.summary;
 

@@ -1,0 +1,22 @@
+{
+    "name": "public",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "dev": "rsbuild dev"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@rsbuild/core": "^1.2.14",
+        "typescript": "^5.8.2"
+    },
+    "dependencies": {
+        "@electric-sql/pglite": "^0.2.17",
+        "signal-polyfill": "^0.2.2"
+    }
+}

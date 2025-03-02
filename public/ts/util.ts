@@ -147,3 +147,19 @@ export const getElementById = (id: string) => {
     }
     return elem;
 };
+
+/**
+ *
+ * @param {HTMLElement} node
+ */
+export function clearInner(node: HTMLElement) {
+    while (node.hasChildNodes()) {
+        clear(node.firstChild!);
+    }
+}
+export function clear(node: Node) {
+    while (node.hasChildNodes()) {
+        clear(node.firstChild!);
+    }
+    node.parentNode?.removeChild(node);
+}
