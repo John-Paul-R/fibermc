@@ -1,8 +1,16 @@
 import { PGlite, Transaction } from "@electric-sql/pglite";
 import { Mod } from "./mod_types";
+import { AsyncDataResourceLoader } from "./resource_loader";
+import { mod_data, setModData } from "./mod_search_logic";
+
+const USE_LOCAL_LOADER = false;
+const db = USE_LOCAL_LOADER ? new PGlite("idb://fibermc") : undefined;
 
 // Process large data sets without freezing the UI
-async function processBatchesNonBlocking(db: PGlite, mod_data: Mod[]) {
+async function processBatchesNonBlocking(mod_data: Mod[]) {
+    if (!db) {
+        return;
+    }
     const BATCH_SIZE = 500;
     const totalBatches = Math.ceil(mod_data.length / BATCH_SIZE);
 
@@ -131,7 +139,10 @@ async function processSingleBatch(tx: Transaction, batch: Mod[]) {
     await tx.query(query, params);
 }
 
-export async function updateDatabase(db: PGlite, mod_data: Mod[]) {
+export async function updateDatabase(mod_data: Mod[]) {
+    if (!db) {
+        return;
+    }
     try {
         setLoadingState(true);
         await db.exec(`
@@ -155,7 +166,7 @@ export async function updateDatabase(db: PGlite, mod_data: Mod[]) {
             );
         `);
 
-        await processBatchesNonBlocking(db, mod_data);
+        await processBatchesNonBlocking(mod_data);
     } catch (error) {
         console.error("Error updating database:", error);
     } finally {
@@ -190,4 +201,33 @@ export async function getDbModData(db: PGlite, count: number): Promise<Mod[]> {
         `
     );
     return temp_mod_data.rows as Mod[];
+}
+
+export function createLocalLoader(logtime: (msg: string) => void) {
+    return new AsyncDataResourceLoader({
+        completionWaitForDCL: true,
+    }).addResourceFn<Mod[] | undefined>(async () => {
+        logtime("Start local db query");
+        if (!db) {
+            return undefined;
+        }
+        console.log("HAVE DB");
+        await db.waitReady;
+        logtime("Database Ready!");
+
+        const temp_mod_data = await getDbModData(db, 100);
+        logtime("Start local db query...done!");
+
+        return temp_mod_data;
+    }, [
+        async (temp_mod_data) => {
+            if (!temp_mod_data) {
+                return;
+            }
+            console.log("SET ROWS", temp_mod_data);
+
+            setModData(temp_mod_data);
+            mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
+        },
+    ]);
 }

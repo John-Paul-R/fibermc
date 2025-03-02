@@ -12,7 +12,7 @@ import {  MOD_DATA } from "./search_page_state"
 import { PGlite } from "@electric-sql/pglite";
 import { effect } from "./effect.js";
 import { CATEGORIES, initCategoriesSidebar, BoolMode, getSelectedCategoryIds, updateFilteredCategoryModCounts } from "./initCategoriesSidebar.js";
-import { getDbModData, updateDatabase } from "./sql_loader.js";
+import { createLocalLoader, getDbModData, updateDatabase } from "./sql_loader.js";
 import { filterByVersion, initVersionsMultiSelect, SELECTED_VERSIONS } from "./versions_multiselect.js";
 
 let prevTime = performance.now();
@@ -22,9 +22,6 @@ function logtime(message: string) {
 }
 
 logtime("start file");
-const db = new PGlite("idb://fibermc");
-await db.waitReady;
-logtime("Database Ready!");
 
 export {
     init,
@@ -61,32 +58,7 @@ const apiUrl = `https://${
     "dev.fibermc.com"
 }/api/v1.0`;
 
-var localLoader = new AsyncDataResourceLoader({
-    completionWaitForDCL: true,
-})
-    .addResourceFn<Mod[] | undefined>(async () => {
-        logtime("Start local db query");
-        if (!db) {
-            return undefined;
-        }
-        console.log("HAVE DB");
-
-        const temp_mod_data = await getDbModData(db, 100);
-        logtime("Start local db query...done!");
-
-        return temp_mod_data;
-    }, [
-        async (temp_mod_data) => {
-            if (!temp_mod_data) {
-                return;
-            }
-            console.log("SET ROWS", temp_mod_data);
-
-            setModData(temp_mod_data);
-            mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
-        },
-    ]);
-
+const localLoader = createLocalLoader(logtime)
 configureModsLoader(localLoader);
 
 var categoriesLoader = new AsyncDataResourceLoader({
@@ -117,11 +89,7 @@ var loader = new AsyncDataResourceLoader({
             console.log("mod_data", mod_data);
             console.log("TABLE CREATED IF NEEDED");
 
-            await updateDatabase(db, mod_data)
-            console.log(
-                "DONE SETUP",
-                await db.query("SELECT * FROM mod_data;")
-            );
+            await updateDatabase(mod_data)
         },
     ]);
 configureModsLoader(loader);
