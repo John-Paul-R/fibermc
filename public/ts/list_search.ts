@@ -71,7 +71,8 @@ preInitializationCallbacks.push(
 
 setModCategoryElementFn(
     (category: CategoryEl) => {
-        let ref;const templateEl =( (ref = document.createElement("li")).textContent = category.name,ref);
+        const templateEl = document.createElement("li");
+        templateEl.textContent = category.name;
         return () => templateEl.cloneNode(true)
     }
 )
@@ -124,14 +125,15 @@ executeIfWhenDOMContentLoaded(() => {
 
 initSearch({
     results_persist: true,
+    listElemCreationFunc: createListElement,
     batchCreationFunc: createBatch,
     lazyLoadBatches: true,
     batch_size: 20,
     li_height: modeLiHeights[currentViewIdx],
     preInitializationCallbacks
 });
-registerOnLoad(() =>( {
-    updateViewModes() {; }
-}));
+registerOnLoad(() => {
+    updateViewModes()
+});
 
 init();

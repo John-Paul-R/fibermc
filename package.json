@@ -5,16 +5,13 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "civet": "civet -c public/ts/*.civet -o .ts",
         "build": "tsc",
-        "__build:civet": "tsc && civet --js -c public/ts/*.civet -o ./public/ts-compiled/.js",
         "dev": "rsbuild dev"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@danielx/civet": "^0.9.7",
         "@rsbuild/core": "^1.2.14",
         "typescript": "^5.8.2"
     },

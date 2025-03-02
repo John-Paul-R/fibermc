@@ -193,7 +193,7 @@ function configureModsLoader(loader: AsyncDataResourceLoader): void {
 
 function init() {
     categoriesLoader.fetchResources();
-    localLoader.fetchResources();
+    // localLoader.fetchResources();
     loader.fetchResources();
 }
 
@@ -571,6 +571,7 @@ function initSearchInternal() {
     };
 
     LI_HEIGHT = options.li_height?.() ?? defaultOptions.li_height;
+    console.log("LI_HEIGHT", LI_HEIGHT)
     BATCH_SIZE = options.batch_size ?? defaultOptions.batch_size;
     function resultsViewBuilder(options: InitSearchOptions) {
         if (options.listElemCreationFunc) {
