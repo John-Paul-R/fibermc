@@ -12,6 +12,7 @@ import {  MOD_DATA } from "./search_page_state"
 import { PGlite } from "@electric-sql/pglite";
 import { effect } from "./effect.js";
 import { CATEGORIES, initCategoriesSidebar, BoolMode, getSelectedCategoryIds, updateFilteredCategoryModCounts } from "./initCategoriesSidebar.js";
+import { getDbModData, updateDatabase } from "./sql_loader.js";
 
 let prevTime = performance.now();
 function logtime(message: string) {
@@ -68,35 +69,11 @@ var localLoader = new AsyncDataResourceLoader({
             return undefined;
         }
         console.log("HAVE DB");
-        // const res = await db.query("SELECT COUNT(*) FROM mod_data;");
-        // // @ts-ignore
-        // console.log("CHECK DB RES", res, res.rows[0].count);
 
-        // @ts-ignore
-        // if (res.rows[0].count) {
-        console.log("HAVE ROWS");
-
-        const temp_mod_data = await db.query(
-            `SELECT
-                id,
-                name,
-                mr_slug,
-                cf_slug,
-                summary,
-                categories,
-                authors,
-                date_released as "dateReleased",
-                date_modified as "dateModified",
-                download_count as "downloadCount",
-                mc_versions,
-                s_name,
-                s_latest_mc_version as "s_latestMCVersion"
-            FROM mod_data ORDER BY download_count DESC LIMIT 100;
-            `
-        );
+        const temp_mod_data = await getDbModData(db, 100);
         logtime("Start local db query...done!");
-        return temp_mod_data.rows as Mod[];
-        // }
+
+        return temp_mod_data;
     }, [
         async (temp_mod_data) => {
             if (!temp_mod_data) {
@@ -107,7 +84,13 @@ var localLoader = new AsyncDataResourceLoader({
             setModData(temp_mod_data);
             mod_data.sort((a, b) => b.downloadCount - a.downloadCount);
         },
-    ])
+    ]);
+
+configureModsLoader(localLoader);
+
+var categoriesLoader = new AsyncDataResourceLoader({
+    completionWaitForDCL: true,
+})
     .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
             CATEGORIES.NAMES.set(jsonData);
@@ -117,10 +100,8 @@ var localLoader = new AsyncDataResourceLoader({
     .addCompletionFunc(() => {
         effect(() => {
             initCategoriesSidebar();
-        })        
+        })
     });
-
-configureModsLoader(localLoader);
 
 // Load mod data from external file
 var loader = new AsyncDataResourceLoader({
@@ -135,123 +116,13 @@ var loader = new AsyncDataResourceLoader({
             console.log("mod_data", mod_data);
             console.log("TABLE CREATED IF NEEDED");
 
-            //-- DROP TABLE IF EXISTS mod_data;
-            //
-            // First create the table if it doesn't exist
-            await db.exec(`
-        CREATE TABLE IF NOT EXISTS mod_data (
-            id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            mr_slug TEXT,
-            cf_slug TEXT,
-            summary TEXT,
-            categories INT4[], -- Text array for categories
-            authors JSONB,     -- JSONB for authors
-            date_released TIMESTAMP,
-            date_modified TIMESTAMP,
-            download_count BIGINT,
-            mc_versions TEXT[], -- Text array for versions
-            s_name TEXT,
-            s_latest_mc_version NUMERIC,
-            s_date_modified BIGINT,
-            latest_mc_version TEXT,
-            s_author TEXT
-        );
-                    `);
-
-            // Batch processing using PGlite's transaction feature
-            await db.transaction(async (tx) => {
-                // Process in batches to avoid memory issues
-                const BATCH_SIZE = 500;
-
-                for (let i = 0; i < mod_data.length; i += BATCH_SIZE) {
-                    const batch = mod_data.slice(i, i + BATCH_SIZE);
-                    console.log(
-                        `Processing batch ${
-                            Math.floor(i / BATCH_SIZE) + 1
-                        } of ${Math.ceil(mod_data.length / BATCH_SIZE)}`
-                    );
-
-                    // Create a large multi-value INSERT statement
-                    let valuesSql = [];
-                    let params = [];
-                    let paramIndex = 1;
-
-                    for (const mod of batch) {
-                        // Add placeholders for this row
-                        valuesSql.push(`($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, 
-                        $${paramIndex++}::INT4[], $${paramIndex++}::jsonb, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, 
-                        $${paramIndex++}::text[], $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, 
-                        $${paramIndex++})`);
-
-                        // Add values to params array
-                        params.push(
-                            mod.id,
-                            mod.name,
-                            mod.mr_slug,
-                            mod.cf_slug,
-                            mod.summary,
-                            mod.categories,
-                            JSON.stringify(mod.authors),
-                            mod.dateReleased,
-                            mod.dateModified,
-                            mod.downloadCount,
-                            mod.mc_versions,
-                            mod.s_name,
-                            mod.s_latestMCVersion,
-                            mod.s_dateModified,
-                            mod.latestMCVersion,
-                            mod.s_author
-                        );
-                    }
-
-                    // Build the complete query with all batch values
-                    const query = `
-        INSERT INTO mod_data (
-          id, name, mr_slug, cf_slug, summary, categories, authors,
-          date_released, date_modified, download_count, mc_versions,
-          s_name, s_latest_mc_version, s_date_modified, latest_mc_version, s_author
-        )
-        VALUES ${valuesSql.join(",")}
-        ON CONFLICT (id) 
-        DO UPDATE SET
-          name = EXCLUDED.name,
-          mr_slug = EXCLUDED.mr_slug,
-          cf_slug = EXCLUDED.cf_slug,
-          summary = EXCLUDED.summary,
-          categories = EXCLUDED.categories,
-          authors = EXCLUDED.authors,
-          date_released = EXCLUDED.date_released,
-          date_modified = EXCLUDED.date_modified,
-          download_count = EXCLUDED.download_count,
-          mc_versions = EXCLUDED.mc_versions,
-          s_name = EXCLUDED.s_name,
-          s_latest_mc_version = EXCLUDED.s_latest_mc_version,
-          s_date_modified = EXCLUDED.s_date_modified,
-          latest_mc_version = EXCLUDED.latest_mc_version,
-          s_author = EXCLUDED.s_author
-      `;
-
-                    await tx.query(query, params);
-                }
-            });
+            await updateDatabase(db, mod_data)
             console.log(
                 "DONE SETUP",
                 await db.query("SELECT * FROM mod_data;")
             );
         },
-    ])
-    .addResource<string[]>(`${apiUrl}/Categories`, [
-        (jsonData) => {
-            CATEGORIES.NAMES.set(jsonData);
-            console.log("categoryNames", jsonData);
-        },
-    ])
-    .addCompletionFunc(() => {
-        effect(() => {
-            initCategoriesSidebar();
-        })        
-    });
+    ]);
 configureModsLoader(loader);
 
 var timestamp: string;
@@ -262,6 +133,13 @@ function registerOnLoad(fn: () => void): void {
     loader.addCompletionFunc(fn);
 }
 
+const hasRunKeys = new Set<string>();
+function runOnce(key: string, fn: (() => void) | (() => Promise<void>)) {
+    if (!hasRunKeys.has(key)) {
+        hasRunKeys.add(key);
+        fn();
+    }
+}
 function configureModsLoader(loader: AsyncDataResourceLoader): void {
     loader
         .addCompletionFunc(() => {
@@ -287,22 +165,25 @@ function configureModsLoader(loader: AsyncDataResourceLoader): void {
             )
         )
         .addCompletionFunc(() => {
-            const searchOptions = getSearchOptionsFromUrl();
-            setSortMode({
-                sortField: searchOptions.sortField,
-                sortDirection: searchOptions.sortDirection,
-            });
-            currentSelectedVersions =
-                searchOptions.versions?.map(
-                    (str) => [str, versionOrd(str)] as [string, number]
-                ) ?? [];
-            console.log(searchOptions, currentSelectedVersions);
-            searchTextChanged(undefined);
-            registerSortListener(({ sortMode: sortField, sortDirection }) => {
-                updateUrlFromSearchOptions({
-                    ...getSearchOptionsFromState(),
-                    sortField,
-                    sortDirection,
+            runOnce("URL State", () => {
+                // sync state to/from URL
+                const searchOptions = getSearchOptionsFromUrl();
+                setSortMode({
+                    sortField: searchOptions.sortField,
+                    sortDirection: searchOptions.sortDirection,
+                });
+                currentSelectedVersions =
+                    searchOptions.versions?.map(
+                        (str) => [str, versionOrd(str)] as [string, number]
+                    ) ?? [];
+                console.log(searchOptions, currentSelectedVersions);
+                searchTextChanged(undefined);
+                registerSortListener(({ sortMode: sortField, sortDirection }) => {
+                    updateUrlFromSearchOptions({
+                        ...getSearchOptionsFromState(),
+                        sortField,
+                        sortDirection,
+                    });
                 });
             });
         })
@@ -393,6 +274,7 @@ function configureModsLoader(loader: AsyncDataResourceLoader): void {
 }
 
 function init() {
+    categoriesLoader.fetchResources();
     localLoader.fetchResources();
     loader.fetchResources();
 }

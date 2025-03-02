@@ -249,7 +249,6 @@ export class CategoryEl {
         totalModCount: number,
         filteredModCount: number | null
     ) {
-        console.log("renderModCounts", totalModCount, filteredModCount)
         this._countElement.textContent = buildCategoryCountStr(
             totalModCount,
             filteredModCount
