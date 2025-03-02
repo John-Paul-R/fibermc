@@ -2,7 +2,6 @@ import { DefaultListElementRenderer } from "./list_elem_default.js";
 import { DetailedListElementRenderer } from "./list_elem_detailed.js";
 import { setModCategoryElements } from "./list_item_shared.js";
 import {
-    CATEGORIES,
     batch_containers,
     init,
     initSearch,
@@ -13,7 +12,8 @@ import {
 } from "./mod_search_logic.js";
 import { Mod } from "./mod_types.js";
 import { executeIfWhenDOMContentLoaded, getElementById } from "./util.js";
-import {IdempotentComponent} from "./idempotent_component"
+import { CATEGORIES } from "./initCategoriesSidebar"
+import { effect } from "./effect"
 
 type ListElementRenderFn = (modData: Mod) => HTMLLIElement;
 
@@ -71,11 +71,15 @@ preInitializationCallbacks.push(
 
 var modCategoryElements: (() => Node)[];
 preInitializationCallbacks.push(() => {
-    modCategoryElements = CATEGORIES
-        .map((c) => document.createElement("li") ||> .textContent = c.name)
-        .map((c) => () => c.cloneNode(true));
+    console.log("CREATE CATEGORY ELEMS", CATEGORIES.get())
+    effect(() => {
+        modCategoryElements = CATEGORIES.get()
+            .map((c) => document.createElement("li") ||> .textContent = c.name)
+            .map((c) => () => c.cloneNode(true));
 
-    setModCategoryElements(modCategoryElements);
+        setModCategoryElements(modCategoryElements);
+
+    })
 });
 
 function getLiHeight() {

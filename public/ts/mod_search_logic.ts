@@ -8,7 +8,10 @@ import {
 } from "./table_sort.js";
 import { BaseMod, Mod, baseModToMod, versionOrd } from "./mod_types.js";
 import { initMultiselectElement } from "./multiselect.js";
+import {  CATEGORY_NAMES, MOD_DATA, TOTAL_MOD_COUNT } from "./search_page_state"
 import { PGlite } from "@electric-sql/pglite";
+import { effect } from "./effect.js";
+import { CATEGORIES, initCategoriesSidebar, BoolMode, applyCategorySelections, getSelectedCategoryIds, updateCategoryModCounts } from "./initCategoriesSidebar.js";
 
 let prevTime = performance.now();
 function logtime(message: string) {
@@ -24,12 +27,8 @@ logtime("Database Ready!");
 export {
     init,
     initSearch,
-    initCategoriesSidebar,
-    fabric_category_id,
     mod_data,
     setModData,
-    CATEGORIES,
-    setCategories,
     resultsListElement,
     setResultsListElement,
     storeBatches,
@@ -47,22 +46,6 @@ export {
     registerOnLoad,
 };
 
-type CategoryElement = HTMLButtonElement & {
-    bool_mode: number | undefined;
-    cat_id: number;
-    selected: boolean | undefined;
-};
-
-const isCategoryElement = (el: any): el is CategoryElement =>
-    el.cat_id !== undefined;
-
-type Category = {
-    htmlElement: CategoryElement;
-    renderCount: () => void;
-    name: string;
-    modCount: number;
-    filteredModCount: number | null;
-};
 console.log("PROOF OF ALIVE");
 
 //==============
@@ -127,11 +110,15 @@ var localLoader = new AsyncDataResourceLoader({
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
-            categoryNames = jsonData;
-            console.log("categoryNames", categoryNames);
+            CATEGORY_NAMES.set(jsonData);
+            console.log("categoryNames", jsonData);
         },
     ])
-    .addCompletionFunc(initCategoriesSidebar);
+    .addCompletionFunc(() => {
+        effect(() => {
+            initCategoriesSidebar();
+        })        
+    });
 
 configureModsLoader(localLoader);
 
@@ -256,11 +243,15 @@ var loader = new AsyncDataResourceLoader({
     ])
     .addResource<string[]>(`${apiUrl}/Categories`, [
         (jsonData) => {
-            categoryNames = jsonData;
-            console.log("categoryNames", categoryNames);
+            CATEGORY_NAMES.set(jsonData);
+            console.log("categoryNames", jsonData);
         },
     ])
-    .addCompletionFunc(initCategoriesSidebar);
+    .addCompletionFunc(() => {
+        effect(() => {
+            initCategoriesSidebar();
+        })        
+    });
 configureModsLoader(loader);
 
 var timestamp: string;
@@ -422,36 +413,13 @@ function updateTimestamp(timestamp: Date) {
 var mod_data: Mod[];
 function setModData(n_mod_data: Mod[]) {
     mod_data = n_mod_data;
-}
-
-var categoryNames: string[];
-var CATEGORIES: Category[];
-function setCategories(n_categories: Category[]) {
-    CATEGORIES = n_categories;
+    MOD_DATA.set(n_mod_data)
 }
 
 //====================
 // Filter Search Data
 //====================
-function getSelectedCategoryIds() {
-    const selected_cat_ids: {
-        and: number[];
-        not: number[];
-    } = {
-        and: [],
-        not: [],
-    };
 
-    for (const category of CATEGORIES) {
-        const cat_elem = category.htmlElement;
-        if (cat_elem.bool_mode == 1) {
-            selected_cat_ids.and.push(cat_elem.cat_id);
-        } else if (cat_elem.bool_mode == 2) {
-            selected_cat_ids.not.push(cat_elem.cat_id);
-        }
-    }
-    return selected_cat_ids;
-}
 // Apply filter to search data (based on user selections)
 function getFilteredList() {
     const selected_cat_ids = getSelectedCategoryIds();
@@ -475,212 +443,6 @@ function getFilteredList() {
     }
     return search_objs;
 }
-var fabric_category_id: number;
-var categories_sidebar_elem: HTMLElement;
-function applyCategorySelection(cat_elem: CategoryElement) {
-    if (cat_elem.bool_mode == BoolMode.And) {
-        cat_elem.classList.add("and");
-    } else {
-        cat_elem.classList.remove("and"); //.border = '2px solid var(--color-element-1)';
-    }
-    if (cat_elem.bool_mode == BoolMode.Not) {
-        cat_elem.classList.add("not");
-    } else {
-        cat_elem.classList.remove("not"); //.border = '2px solid var(--color-element-1)';
-    }
-}
-
-function applyCategorySelections() {
-    CATEGORIES.map((cat) => cat.htmlElement).forEach(applyCategorySelection);
-}
-
-const buildCategoryCountStr = (
-    totalModCount: number,
-    filteredModCount: number | null
-) => {
-    return filteredModCount !== null
-        ? `${filteredModCount} / ${totalModCount}`
-        : totalModCount.toString();
-};
-var setTotalModCount: (count: number | null) => void;
-
-function initCategoryModCounts(mods: Mod[]) {
-    for (const category of CATEGORIES) {
-        category.modCount = 0;
-    }
-    // Mod Counts
-    for (const mod of mods) {
-        for (const cat_id of mod.categories) {
-            CATEGORIES[cat_id].modCount += 1;
-        }
-    }
-    updateCategoryModCounts(mod_data);
-}
-
-function updateCategoryModCounts(mods: Mod[]) {
-    const selectedCategories = getSelectedCategoryIds();
-    const isFiltering =
-        mod_data.length !== mods.length ||
-        selectedCategories.and.length > 0 ||
-        selectedCategories.not.length > 0;
-    if (isFiltering) {
-        for (const category of CATEGORIES) {
-            category.filteredModCount = 0;
-        }
-        // Mod Counts
-        for (const mod of mods) {
-            for (const cat_id of mod.categories) {
-                CATEGORIES[cat_id].filteredModCount! += 1;
-            }
-        }
-    } else {
-        for (const category of CATEGORIES) {
-            category.filteredModCount = null;
-        }
-    }
-
-    setTotalModCount(isFiltering ? mods.length : null);
-    for (const category of CATEGORIES) {
-        category.renderCount();
-    }
-}
-
-function initCategoriesSidebar() {
-    //TODO Group "Selected" items?
-    //TODO "select multiple" toggle
-    //TODO Option to sort categories by name or by num mods in category
-    //TODO Display "searching in these categories" under searchbar. With option to click them to remove.
-
-    const getCategoriesSidebarElem = () => {
-        const elem = document.getElementById("categories_list");
-        if (!elem) {
-            throw new Error(
-                "Could not find 'categories_sidebar_elem' (Element Id: 'categories_list')"
-            );
-        }
-        return elem;
-    };
-    categories_sidebar_elem = getCategoriesSidebarElem();
-
-    const createAllModsElement = () => {
-        const elem = document.createElement("button") as CategoryElement;
-
-        elem.classList.add("reset_button");
-        elem.cat_id = -1;
-        const title = "All mods (reset)";
-
-        elem.textContent = title + " ";
-        const mod_count = document.createElement("span");
-        mod_count.textContent = mod_data.length.toFixed(0);
-        elem.appendChild(mod_count);
-        elem.addEventListener("click", clearFilters);
-        categories_sidebar_elem.appendChild(elem);
-
-        elem.classList.add("reset_categories_button");
-
-        return {
-            setTotalModCount: (count: number | null) => {
-                mod_count.textContent = buildCategoryCountStr(
-                    mod_data.length,
-                    count
-                );
-            },
-        };
-    };
-    const allModsElementRet = createAllModsElement();
-    setTotalModCount = allModsElementRet.setTotalModCount;
-
-    const createCategoryElement = (categoryId: number): CategoryElement => {
-        const cat_elem = document.createElement("button") as CategoryElement;
-        cat_elem.classList.add("reset_button");
-        cat_elem.cat_id = categoryId; //category.categoryId;
-        return cat_elem;
-    };
-
-    {
-        // Init CATEGORIES
-        setCategories(
-            categoryNames.map((name, idx) => {
-                const categoryElement = createCategoryElement(idx);
-                const countElement = document.createElement("span");
-                categoryElement.textContent = name + " ";
-                categoryElement.appendChild(countElement);
-
-                return {
-                    name: name,
-                    modCount: 0,
-                    filteredModCount: null,
-                    renderCount() {
-                        countElement.textContent = buildCategoryCountStr(
-                            this.modCount,
-                            this.filteredModCount
-                        );
-                    },
-                    htmlElement: categoryElement,
-                };
-            })
-        );
-        initCategoryModCounts(mod_data);
-    }
-
-    for (let i = 0; i < CATEGORIES.length; i++) {
-        if (CATEGORIES[i].name.toUpperCase() === "FABRIC") {
-            fabric_category_id = i;
-            break;
-        }
-    }
-    // TODO Restructure this, jfc
-    for (let i = 0; i < CATEGORIES.length; i++) {}
-    const sorted_CATEGORIES = CATEGORIES.slice().sort(function (a, b) {
-        return b.modCount - a.modCount;
-    });
-    for (let i = 0; i < sorted_CATEGORIES.length; i++) {
-        const category = sorted_CATEGORIES[i];
-        if (category.modCount === 0) {
-            continue;
-        }
-        const cat_elem = category.htmlElement;
-        cat_elem.selected = false;
-        applyCategorySelection(cat_elem);
-        cat_elem.addEventListener("click", onClick);
-        categories_sidebar_elem.appendChild(cat_elem);
-    }
-
-    // 0=none, 1=AND, 2=NOT | OR??
-    const NUM_BOOL_OPS = 2;
-    function onClick(e: Event) {
-        const cat_elem = e.target;
-        if (!isCategoryElement(cat_elem)) {
-            throw new Error(
-                "Category click listener was applied to an element without CategoryElement metadata."
-            );
-        }
-        const bool_mode = cat_elem.bool_mode ?? BoolMode.None;
-        cat_elem.bool_mode =
-            bool_mode < NUM_BOOL_OPS ? bool_mode + 1 : BoolMode.None;
-        applyCategorySelection(cat_elem);
-        updateUrlFromSearchOptions(getSearchOptionsFromState());
-        searchTextChanged(undefined, true);
-    }
-    function clearFilters() {
-        for (const cat of CATEGORIES) {
-            const cat_elem = cat.htmlElement;
-            cat_elem.classList.remove("and");
-            cat_elem.classList.remove("not");
-            cat_elem.bool_mode = BoolMode.None;
-        }
-        applyCategorySelections();
-        updateUrlFromSearchOptions(getSearchOptionsFromState());
-        searchTextChanged(undefined, true);
-    }
-    selectCategories(getSearchOptionsFromUrl());
-}
-
-enum BoolMode {
-    None = 0,
-    And = 1,
-    Not = 2,
-}
 
 //==============
 // Search Logic
@@ -700,8 +462,8 @@ export type SearchOptions = Readonly<{
 
 // var searchOptions: SearchOptions;
 
-function getSearchOptionsFromState(): SearchOptions {
-    const categories = CATEGORIES.map((cat) => ({
+export function getSearchOptionsFromState(): SearchOptions {
+    const categories = CATEGORIES.get().map((cat) => ({
         name: cat.name,
         bool_mode: cat.htmlElement.bool_mode,
     }));
@@ -730,7 +492,7 @@ const urlFormatCategories = (categories: string[]) =>
 const urlDecodeCategories = (urlEncString: string | undefined | null) =>
     urlEncString ? urlEncString.split(encodeURIComponent(",")) : undefined;
 
-function updateUrlFromSearchOptions(options: SearchOptions) {
+export function updateUrlFromSearchOptions(options: SearchOptions) {
     if ("URLSearchParams" in window) {
         var searchParams = new URLSearchParams(window.location.search);
 
@@ -799,7 +561,7 @@ function getUrlSearchValue(): string | undefined {
     return searchParams.get("search") ?? undefined;
 }
 
-function getSearchOptionsFromUrl(): SearchOptions {
+export function getSearchOptionsFromUrl(): SearchOptions {
     var searchParams = new URLSearchParams(window.location.search);
     return {
         search: searchParams.get("search") ?? undefined,
@@ -818,16 +580,17 @@ function getSearchOptionsFromUrl(): SearchOptions {
     };
 }
 
-function selectCategories({
+export function selectCategories({
     categoryIncludes,
     categoryExcludes,
 }: SearchOptions): void {
+    const categories = CATEGORIES.get();
     categoryIncludes?.forEach((element) => {
-        CATEGORIES.find((cat) => cat.name === element)!.htmlElement.bool_mode =
+        categories.find((cat) => cat.name === element)!.htmlElement.bool_mode =
             BoolMode.And;
     });
     categoryExcludes?.forEach((element) => {
-        CATEGORIES.find((cat) => cat.name === element)!.htmlElement.bool_mode =
+        categories.find((cat) => cat.name === element)!.htmlElement.bool_mode =
             BoolMode.Not;
     });
     applyCategorySelections();
@@ -915,7 +678,7 @@ const filterByVersion = (results: Mod[]) => {
 //================
 // Input Handling
 //================
-function searchTextChanged(value?: string, resultsPersist?: boolean) {
+export function searchTextChanged(value?: string, resultsPersist?: boolean) {
     const search_objects = getFilteredList();
     const searchValue = value ?? defaultSearchInput.value;
 

@@ -19,6 +19,7 @@
         "typescript": "^5.8.2"
     },
     "dependencies": {
-        "@electric-sql/pglite": "^0.2.17"
+        "@electric-sql/pglite": "^0.2.17",
+        "signal-polyfill": "^0.2.2"
     }
 }

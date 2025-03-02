@@ -1,6 +1,6 @@
 import { ListElementRenderer } from "./list_elem_renderer.js";
 import { fillAuthorDiv, getElementForCategory } from "./list_item_shared.js";
-import { fabric_category_id } from "./mod_search_logic.js";
+import { fabric_category_id } from "./initCategoriesSidebar.js";
 import { Mod } from "./mod_types.js";
 import { formatNumberCompact } from "./number_formatter.js";
 import {

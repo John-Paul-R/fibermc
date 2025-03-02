@@ -2,22 +2,17 @@ import { createLoadbar, LoadbarResult } from "./loadbar.js";
 import {
     init,
     initSearch,
-    initCategoriesSidebar,
-    fabric_category_id,
     mod_data,
-    setModData,
-    CATEGORIES,
-    setCategories,
     resultsListElement,
     setResultsListElement,
     storeBatches,
     runBatches,
     resetBatches,
-    pxAboveTop,
     pxBelowBottom,
     data_batches as dataBatches,
     registerOnLoad,
 } from "./mod_search_logic";
+import { CATEGORIES, fabric_category_id } from "./initCategoriesSidebar.js";
 import { getElementById } from "./util.js";
 import {
     Mod,
@@ -72,11 +67,12 @@ function createListElement(modData: Mod) {
 
     const categories = document.createElement("td");
     categories.setAttribute("class", "item_categories");
+    const categoriesData = CATEGORIES.get();
     for (const category of modData.categories) {
         // if not "Fabric"
         if (category !== fabric_category_id) {
             const catElem = document.createElement("li");
-            catElem.textContent = CATEGORIES[category].name;
+            catElem.textContent = categoriesData[category].name;
             categories.appendChild(catElem);
         }
     }
@@ -228,18 +224,17 @@ registerOnLoad(() => {
         }
     }
 });
-registerOnLoad(() =>
-    setResultsListElement(getElementById("search_results_content"))
-);
-registerOnLoad(() =>
-    initSearch({
-        results_persist: true,
-        listElemCreationFunc: createListElement,
-        batchCreationFunc: createBatch,
-        listCreationFunc: buildTableBatched,
-        lazyLoadBatches: lazyLoadBatches,
-        batch_size: BATCH_SIZE,
-    })
-);
+
+initSearch({
+    results_persist: true,
+    listElemCreationFunc: createListElement,
+    batchCreationFunc: createBatch,
+    listCreationFunc: buildTableBatched,
+    lazyLoadBatches: lazyLoadBatches,
+    batch_size: BATCH_SIZE,
+    preInitializationCallbacks: [
+        () => setResultsListElement(getElementById("search_results_content"))
+    ]
+})
 
 init();
